@@ -1,0 +1,684 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.11 87bfad18",
+  "osm3s": {
+    "timestamp_osm_base": "2026-10-17T22:40:51Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+
+{
+  "type": "node",
+  "id": 150951153,
+  "lat": 41.2207642,
+  "lon": -112.7605308,
+  "tags": {
+    "ele": "1283",
+    "gnis:feature_id": "1437706",
+    "name": "Tresend",
+    "note": "railroad control point and most likely nothing else",
+    "place": "locality"
+  }
+},
+{
+  "type": "node",
+  "id": 150953528,
+  "lat": 41.2224303,
+  "lon": -112.8655343,
+  "tags": {
+    "ele": "1287",
+    "gnis:feature_id": "1437612",
+    "name": "Lakeside",
+    "place": "hamlet"
+  }
+},
+{
+  "type": "node",
+  "id": 150980749,
+  "lat": 41.2191321,
+  "lon": -112.6686628,
+  "tags": {
+    "ele": "1281",
+    "gnis:feature_id": "1437637",
+    "name": "Midlake",
+    "note": "former railroad control point and most likely nothing else",
+    "place": "locality"
+  }
+},
+{
+  "type": "node",
+  "id": 356673398,
+  "lat": 41.2205296,
+  "lon": -112.8732655,
+  "tags": {
+    "ele": "1415",
+    "gnis:feature_id": "1429443",
+    "name": "Lakeside Butte",
+    "natural": "peak"
+  }
+},
+{
+  "type": "node",
+  "id": 356673557,
+  "lat": 41.2554883,
+  "lon": -112.5007920,
+  "tags": {
+    "ele": "1281",
+    "gnis:feature_id": "1429825",
+    "name": "Little Valley Harbor",
+    "place": "locality"
+  }
+},
+{
+  "type": "node",
+  "id": 368981921,
+  "lat": 41.2215970,
+  "lon": -112.8708122,
+  "tags": {
+    "addr:state": "UT",
+    "aeroway": "helipad",
+    "ele": "1340",
+    "gnis:feature_id": "1435842",
+    "name": "Lakeside Heliport",
+    "source_ref": "geonames.usgs.gov"
+  }
+},
+{
+  "type": "node",
+  "id": 3816469882,
+  "lat": 41.2217054,
+  "lon": -112.8137482,
+  "tags": {
+    "railway": "switch"
+  }
+},
+{
+  "type": "node",
+  "id": 3816469910,
+  "lat": 41.2236493,
+  "lon": -112.8758197,
+  "tags": {
+    "railway": "switch"
+  }
+},
+{
+  "type": "node",
+  "id": 3819050311,
+  "lat": 41.2225336,
+  "lon": -112.6279629,
+  "tags": {
+    "railway": "level_crossing"
+  }
+},
+{
+  "type": "node",
+  "id": 3819050342,
+  "lat": 41.2109933,
+  "lon": -112.4268360,
+  "tags": {
+    "railway": "level_crossing"
+  }
+},
+{
+  "type": "node",
+  "id": 3819050470,
+  "lat": 41.2109520,
+  "lon": -112.4267862,
+  "tags": {
+    "railway": "level_crossing"
+  }
+},
+{
+  "type": "node",
+  "id": 3819050518,
+  "lat": 41.2109243,
+  "lon": -112.4267529,
+  "tags": {
+    "railway": "level_crossing"
+  }
+},
+{
+  "type": "node",
+  "id": 8925565490,
+  "lat": 41.2237626,
+  "lon": -112.8766205,
+  "tags": {
+    "railway": "level_crossing"
+  }
+},
+{
+  "type": "node",
+  "id": 10856132219,
+  "lat": 41.2215310,
+  "lon": -112.8847997,
+  "tags": {
+    "railway": "switch"
+  }
+},
+{
+  "type": "node",
+  "id": 10856132235,
+  "lat": 41.2202643,
+  "lon": -112.8871919,
+  "tags": {
+    "railway": "switch"
+  }
+},
+{
+  "type": "node",
+  "id": 10856132320,
+  "lat": 41.2197737,
+  "lon": -112.8879407,
+  "tags": {
+    "railway": "switch"
+  }
+},
+{
+  "type": "node",
+  "id": 10856132321,
+  "lat": 41.2218924,
+  "lon": -112.8839509,
+  "tags": {
+    "railway": "switch"
+  }
+},
+{
+  "type": "node",
+  "id": 10856132346,
+  "lat": 41.2232914,
+  "lon": -112.8741956,
+  "tags": {
+    "railway": "switch"
+  }
+},
+{
+  "type": "node",
+  "id": 10856132362,
+  "lat": 41.2232308,
+  "lon": -112.8732317,
+  "tags": {
+    "railway": "switch"
+  }
+},
+{
+  "type": "node",
+  "id": 10856132377,
+  "lat": 41.2233519,
+  "lon": -112.8766320,
+  "tags": {
+    "railway": "buffer_stop"
+  }
+},
+{
+  "type": "node",
+  "id": 10856132383,
+  "lat": 41.2232857,
+  "lon": -112.8750423,
+  "tags": {
+    "railway": "switch"
+  }
+},
+{
+  "type": "node",
+  "id": 10856132384,
+  "lat": 41.2232639,
+  "lon": -112.8754617,
+  "tags": {
+    "railway": "switch"
+  }
+},
+{
+  "type": "node",
+  "id": 10856132397,
+  "lat": 41.2227576,
+  "lon": -112.8794050,
+  "tags": {
+    "railway": "switch"
+  }
+},
+{
+  "type": "node",
+  "id": 10856132418,
+  "lat": 41.2199071,
+  "lon": -112.8857955,
+  "tags": {
+    "railway": "switch"
+  }
+},
+{
+  "type": "node",
+  "id": 10856132427,
+  "lat": 41.2232308,
+  "lon": -112.8760796,
+  "tags": {
+    "railway": "switch"
+  }
+},
+{
+  "type": "node",
+  "id": 10856132522,
+  "lat": 41.2222971,
+  "lon": -112.8547830,
+  "tags": {
+    "railway": "switch"
+  }
+},
+{
+  "type": "node",
+  "id": 10856336204,
+  "lat": 41.1514326,
+  "lon": -112.9585313,
+  "tags": {
+    "railway": "level_crossing"
+  }
+},
+{
+  "type": "node",
+  "id": 10856339976,
+  "lat": 41.2219825,
+  "lon": -112.8837816,
+  "tags": {
+    "railway": "level_crossing"
+  }
+},
+{
+  "type": "node",
+  "id": 10856340329,
+  "lat": 41.1865352,
+  "lon": -112.9224791,
+  "tags": {
+    "railway": "level_crossing"
+  }
+},
+{
+  "type": "node",
+  "id": 10856340523,
+  "lat": 41.2190162,
+  "lon": -112.8895878,
+  "tags": {
+    "railway": "level_crossing"
+  }
+},
+{
+  "type": "node",
+  "id": 10856340635,
+  "lat": 41.2231984,
+  "lon": -112.8767270,
+  "tags": {
+    "railway": "level_crossing"
+  }
+},
+{
+  "type": "node",
+  "id": 10856340636,
+  "lat": 41.2231494,
+  "lon": -112.8767099,
+  "tags": {
+    "railway": "level_crossing"
+  }
+},
+{
+  "type": "node",
+  "id": 10856340643,
+  "lat": 41.2185860,
+  "lon": -112.8854797,
+  "tags": {
+    "railway": "level_crossing"
+  }
+},
+{
+  "type": "node",
+  "id": 10856340748,
+  "lat": 41.2234192,
+  "lon": -112.8767004,
+  "tags": {
+    "railway": "level_crossing"
+  }
+},
+{
+  "type": "node",
+  "id": 12091147132,
+  "lat": 41.2552107,
+  "lon": -112.4969030,
+  "tags": {
+    "ele": "1277.051",
+    "ele:accuracy": "0.0305",
+    "ele:datum": "NGVD29",
+    "man_made": "monitoring_station",
+    "monitoring:water_level": "yes",
+    "name": "Great Salt Lake near Saline",
+    "official_name": "GREAT SALT LAKE NEAR SALINE, UT",
+    "operator": "United States Geological Survey",
+    "operator:short": "USGS",
+    "operator:type": "government",
+    "operator:wikidata": "Q193755",
+    "ref": "10010100",
+    "shef:location_id": "GSLU1",
+    "website": "https://waterdata.usgs.gov/monitoring-location/10010100",
+    "website:1": "https://water.noaa.gov/gauges/gslu1"
+  }
+},
+{
+  "type": "node",
+  "id": 12091147133,
+  "lat": 41.2341064,
+  "lon": -112.3371697,
+  "tags": {
+    "contact:webcam": "https://apps.usgs.gov/hivis/camera/UT_Bear_R_Bay_Outflow_at_Causeway_Brg_nr_Warren",
+    "ele": "1283.208",
+    "ele:accuracy": "3.048",
+    "ele:datum": "NGVD29",
+    "man_made": "monitoring_station",
+    "monitoring:water_level": "yes",
+    "monitoring:water_velocity": "yes",
+    "name": "Bear River Bay Outflow at Causeway Bridge near Warren",
+    "official_name": "BEAR R BAY OUTFLOW AT CAUSEWAY BRG NR WARREN, UT",
+    "operator": "United States Geological Survey",
+    "operator:short": "USGS",
+    "operator:type": "government",
+    "operator:wikidata": "Q193755",
+    "ref": "10010060",
+    "website": "https://waterdata.usgs.gov/monitoring-location/10010060"
+  }
+},
+{
+  "type": "node",
+  "id": 12091147134,
+  "lat": 41.2218028,
+  "lon": -112.7806972,
+  "tags": {
+    "disused:man_made": "monitoring_station",
+    "ele": "1277.722",
+    "ele:accuracy": "0.4877",
+    "ele:datum": "NAVD88",
+    "monitoring:water_level": "yes",
+    "name": "Great Salt Lake at north side of causeway, 6 miles east of Lakeside",
+    "official_name": "GSL N. SIDE OF CAUSEWAY, 6 MILES E OF LAKESIDE, UT",
+    "operator": "United States Geological Survey",
+    "operator:short": "USGS",
+    "operator:type": "government",
+    "operator:wikidata": "Q193755",
+    "ref": "10010027",
+    "website": "https://waterdata.usgs.gov/monitoring-location/10010027"
+  }
+},
+{
+  "type": "node",
+  "id": 12091147135,
+  "lat": 41.2208611,
+  "lon": -112.7663889,
+  "tags": {
+    "ele": "1285.32",
+    "ele:accuracy": "0.0305",
+    "ele:datum": "NAVD88",
+    "man_made": "monitoring_station",
+    "monitoring:air_humidity": "yes",
+    "monitoring:air_pressure": "yes",
+    "monitoring:air_temperature": "yes",
+    "monitoring:flow_rate": "yes",
+    "monitoring:water_level": "yes",
+    "monitoring:water_velocity": "yes",
+    "monitoring:wind_direction": "yes",
+    "monitoring:wind_speed": "yes",
+    "name": "Great Salt Lake Breach 6 miles east of Lakeside",
+    "official_name": "GSL BREACH 6 MILES E OF LAKESIDE, UT; S TO N FLOW",
+    "operator": "United States Geological Survey",
+    "operator:short": "USGS",
+    "operator:type": "government",
+    "operator:wikidata": "Q193755",
+    "ref": "10010025",
+    "start_date": "2016-12-06",
+    "website": "https://waterdata.usgs.gov/monitoring-location/10010025"
+  }
+},
+{
+  "type": "node",
+  "id": 12091147136,
+  "lat": 41.2208722,
+  "lon": -112.7572056,
+  "tags": {
+    "ele": "1279.855",
+    "ele:accuracy": "0.4877",
+    "ele:datum": "NAVD88",
+    "man_made": "monitoring_station",
+    "monitoring:water_level": "yes",
+    "name": "Great Salt Lake at south side of causeway, 6 miles east of Lakeside",
+    "official_name": "GSL S. SIDE OF CAUSEWAY, 6 MILES E OF LAKESIDE, UT",
+    "operator": "United States Geological Survey",
+    "operator:short": "USGS",
+    "operator:type": "government",
+    "operator:wikidata": "Q193755",
+    "ref": "10010024",
+    "website": "https://waterdata.usgs.gov/monitoring-location/10010024"
+  }
+},
+{
+  "type": "node",
+  "id": 12091147137,
+  "lat": 41.2224304,
+  "lon": -112.8499782,
+  "tags": {
+    "ele": "1283.208",
+    "ele:accuracy": "3.048",
+    "ele:datum": "NGVD29",
+    "man_made": "monitoring_station",
+    "monitoring:flow_rate": "yes",
+    "monitoring:water_level": "yes",
+    "name": "Great Salt Lake Breach at Lakeside",
+    "official_name": "GSL BREACH AT LAKESIDE, UT",
+    "operator": "United States Geological Survey",
+    "operator:short": "USGS",
+    "operator:type": "government",
+    "operator:wikidata": "Q193755",
+    "ref": "10010020",
+    "start_date": "1980-10-01",
+    "website": "https://waterdata.usgs.gov/monitoring-location/10010020"
+  }
+},
+{
+  "type": "node",
+  "id": 13433789822,
+  "lat": 41.2713889,
+  "lon": -112.3561110,
+  "tags": {
+    "ele": "1278.331",
+    "ele:accuracy": "0.3048",
+    "ele:datum": "NGVD29",
+    "man_made": "monitoring_station",
+    "monitoring:water_level": "yes",
+    "monitoring:water_velocity": "yes",
+    "name": "Bear River Bay Outflow at Great Salt Lake Minerals Corporation Bridge",
+    "official_name": "BEAR RIVER BAY OUTFLOW AT GSL MINERALS CORP BRIDGE",
+    "operator": "United States Geological Survey",
+    "operator:short": "USGS",
+    "operator:type": "government",
+    "operator:wikidata": "Q193755",
+    "ref": "411403112200801",
+    "start_date": "2004-02-23",
+    "website": "https://waterdata.usgs.gov/monitoring-location/411403112200801"
+  }
+},
+{
+  "type": "way",
+  "id": 101676678,
+  "bounds": {
+    "minlat": 41.2164876,
+    "minlon": -112.7615536,
+    "maxlat": 41.2208093,
+    "maxlon": -112.5242482
+  },
+  "geometry": [
+    { "lat": 41.2164876, "lon": -112.5242482 },
+    { "lat": 41.2208040, "lon": -112.7612826 },
+    { "lat": 41.2208093, "lon": -112.7615536 }
+  ],
+  "tags": {
+    "note": "former trestle",
+    "railway": "abandoned"
+  }
+},
+{
+  "type": "way",
+  "id": 361842416,
+  "bounds": {
+    "minlat": 41.2186074,
+    "minlon": -112.8671293,
+    "maxlat": 41.2223344,
+    "maxlon": -112.8543475
+  },
+  "geometry": [
+    { "lat": 41.2186074, "lon": -112.8671293 },
+    { "lat": 41.2196118, "lon": -112.8661865 },
+    { "lat": 41.2196873, "lon": -112.8661072 },
+    { "lat": 41.2197582, "lon": -112.8660208 },
+    { "lat": 41.2198243, "lon": -112.8659279 },
+    { "lat": 41.2198852, "lon": -112.8658289 },
+    { "lat": 41.2199406, "lon": -112.8657244 },
+    { "lat": 41.2199902, "lon": -112.8656148 },
+    { "lat": 41.2200400, "lon": -112.8654822 },
+    { "lat": 41.2200814, "lon": -112.8653445 },
+    { "lat": 41.2201141, "lon": -112.8652027 },
+    { "lat": 41.2201377, "lon": -112.8650578 },
+    { "lat": 41.2201521, "lon": -112.8649108 },
+    { "lat": 41.2202141, "lon": -112.8638510 },
+    { "lat": 41.2202261, "lon": -112.8636143 },
+    { "lat": 41.2202352, "lon": -112.8633773 },
+    { "lat": 41.2202426, "lon": -112.8630722 },
+    { "lat": 41.2202451, "lon": -112.8627669 },
+    { "lat": 41.2202662, "lon": -112.8608027 },
+    { "lat": 41.2202805, "lon": -112.8605792 },
+    { "lat": 41.2203042, "lon": -112.8603571 },
+    { "lat": 41.2203321, "lon": -112.8601671 },
+    { "lat": 41.2203669, "lon": -112.8599791 },
+    { "lat": 41.2204084, "lon": -112.8597935 },
+    { "lat": 41.2204618, "lon": -112.8595707 },
+    { "lat": 41.2205220, "lon": -112.8593509 },
+    { "lat": 41.2205887, "lon": -112.8591344 },
+    { "lat": 41.2206694, "lon": -112.8589015 },
+    { "lat": 41.2207577, "lon": -112.8586736 },
+    { "lat": 41.2208535, "lon": -112.8584510 },
+    { "lat": 41.2213929, "lon": -112.8573426 },
+    { "lat": 41.2215355, "lon": -112.8570130 },
+    { "lat": 41.2216732, "lon": -112.8566797 },
+    { "lat": 41.2218027, "lon": -112.8563509 },
+    { "lat": 41.2219274, "lon": -112.8560188 },
+    { "lat": 41.2221414, "lon": -112.8554365 },
+    { "lat": 41.2221899, "lon": -112.8552929 },
+    { "lat": 41.2222309, "lon": -112.8551453 },
+    { "lat": 41.2222578, "lon": -112.8550262 },
+    { "lat": 41.2222799, "lon": -112.8549053 },
+    { "lat": 41.2222971, "lon": -112.8547830 },
+    { "lat": 41.2223202, "lon": -112.8545660 },
+    { "lat": 41.2223344, "lon": -112.8543475 }
+  ],
+  "tags": {
+    "electrified": "no",
+    "gauge": "1435",
+    "railway": "disused",
+    "service": "spur"
+  }
+},
+{
+  "type": "way",
+  "id": 962069461,
+  "bounds": {
+    "minlat": 41.2208701,
+    "minlon": -112.7663563,
+    "maxlat": 41.2208806,
+    "maxlon": -112.7657151
+  },
+  "geometry": [
+    { "lat": 41.2208806, "lon": -112.7663563 },
+    { "lat": 41.2208701, "lon": -112.7657151 }
+  ],
+  "tags": {
+    "alt_name": "Lucin Cutoff",
+    "bridge": "yes",
+    "electrified": "no",
+    "gauge": "1435",
+    "layer": "1",
+    "maxspeed": "49 mph",
+    "name": "UP Lakeside Subdivision",
+    "old_railway_operator": "SP",
+    "operator": "Union Pacific Railroad",
+    "operator:wikidata": "Q725793",
+    "passenger_lines": "1",
+    "railway": "rail",
+    "railway:ptc": "yes",
+    "source": "Union Pacific Salt Lake City Area Timetable",
+    "usage": "main"
+  }
+},
+{
+  "type": "way",
+  "id": 962069462,
+  "bounds": {
+    "minlat": 41.2209400,
+    "minlon": -112.7663563,
+    "maxlat": 41.2209553,
+    "maxlon": -112.7657140
+  },
+  "geometry": [
+    { "lat": 41.2209553, "lon": -112.7663563 },
+    { "lat": 41.2209400, "lon": -112.7657140 }
+  ],
+  "tags": {
+    "access": "private",
+    "bridge": "yes",
+    "highway": "service",
+    "layer": "1",
+    "surface": "unpaved"
+  }
+},
+{
+  "type": "way",
+  "id": 1153090176,
+  "bounds": {
+    "minlat": 41.2576071,
+    "minlon": -112.5003066,
+    "maxlat": 41.2587737,
+    "maxlon": -112.4994624
+  },
+  "geometry": [
+    { "lat": 41.2587737, "lon": -112.4994624 },
+    { "lat": 41.2582581, "lon": -112.5003066 },
+    { "lat": 41.2576071, "lon": -112.5002520 }
+  ],
+  "tags": {
+    "man_made": "pier"
+  }
+},
+{
+  "type": "way",
+  "id": 1167373967,
+  "bounds": {
+    "minlat": 41.2212035,
+    "minlon": -112.8579389,
+    "maxlat": 41.2222971,
+    "maxlon": -112.8547830
+  },
+  "geometry": [
+    { "lat": 41.2212035, "lon": -112.8579389 },
+    { "lat": 41.2215710, "lon": -112.8571965 },
+    { "lat": 41.2216515, "lon": -112.8570102 },
+    { "lat": 41.2217295, "lon": -112.8568220 },
+    { "lat": 41.2218124, "lon": -112.8566125 },
+    { "lat": 41.2218922, "lon": -112.8564007 },
+    { "lat": 41.2220964, "lon": -112.8558269 },
+    { "lat": 41.2221485, "lon": -112.8556594 },
+    { "lat": 41.2221928, "lon": -112.8554880 },
+    { "lat": 41.2222289, "lon": -112.8553142 },
+    { "lat": 41.2222569, "lon": -112.8551378 },
+    { "lat": 41.2222796, "lon": -112.8549609 },
+    { "lat": 41.2222971, "lon": -112.8547830 }
+  ],
+  "tags": {
+    "electrified": "no",
+    "gauge": "1435",
+    "railway": "disused",
+    "service": "spur"
+  }
+}
+
+  ]
+}

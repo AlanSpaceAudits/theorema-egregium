@@ -1,0 +1,52 @@
+{
+ "form_gauss1827": {
+  "apa": "Gauss, C. F. (1902). General investigations of curved surfaces of 1827 and 1825 (J. C. Morehead & A. M. Hiltebeitel, Trans.). Princeton University Library. (Original work published 1827)",
+  "url": null,
+  "file": "pdf/1902_Gauss_General_Investigations_Curved_Surfaces.pdf",
+  "license": "public domain",
+  "shots": [
+   {
+    "img": "shots/form_gauss1827_art17_p26.png",
+    "page": "p. 26",
+    "caption": "Art. 17: the element of any line on the surface, ds = √(E dp² + 2F dp dq + G dq²).",
+    "quote": "Let s be the length of such a curve, measured from an arbitrary initial point, and in either direction chosen as positive. Let θ denote the angle which the element ds = √(E dp² + 2F dp.dq + G dq²) makes with the line of the first system [formula read from the page image]",
+    "hl": [
+     [
+      229,
+      386,
+      1359,
+      551
+     ]
+    ],
+    "why": "The general line element, before Gauss's choice of coordinates."
+   },
+   {
+    "img": "shots/form_gauss1827_art19_p28_E1F0.png",
+    "page": "p. 28",
+    "caption": "Art. 19, p. 28: F = 0 for lines at right angles, E = 1 for p measured along shortest lines, √G = m; and at the common point, m = 0 and ∂m/∂p = 1.",
+    "quote": "orthogonally the lines of the second system; i. e., in such a way that we have generally ω = 90°, or F = 0. [...] it is evident that p and q denote now the same quantities that were expressed in Arts. 15, 16 by r and φ, and that E = 1. Thus the two preceding formulae become: [...] or, setting √G = m, k = −(1/m)·∂²m/∂p² [symbols read from the page image] [...] But in the particular case where all the lines p go out from the same point, evidently we must have m = 0 for p = 0. [...] we shall have for an infinitely small value of p, m = p, and consequently, for p = 0, m = 0 at the same time, and ∂m/∂p = 1.",
+    "hl": [
+     [
+      229,
+      175,
+      1359,
+      248
+     ],
+     [
+      229,
+      789,
+      1359,
+      1133
+     ],
+     [
+      229,
+      1163,
+      1359,
+      1475
+     ]
+    ],
+    "why": "With E = 1, F = 0 and √G = m, the line element becomes ds² = dp² + m² dq²."
+   }
+  ]
+ }
+}

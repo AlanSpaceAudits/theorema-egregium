@@ -1,0 +1,73 @@
+{
+ "railt_ip_tt_1976": {
+  "apa": "Railways of Australia. (1976, November). Timetable for 'Indian-Pacific': Perth to Sydney eastbound; Sydney to Perth westbound [leaflet].",
+  "url": "https://comrails.com/library/timetables/IP%20Psgr%20Timetable%20197611.pdf",
+  "file": "pdf/railt_ip_timetable_197611.pdf",
+  "license": "copyrighted, excerpt only; scan hosted by ComRails",
+  "record_type": "primary record (public timetable issued by the railways)",
+  "shots": [
+   {
+    "img": "shots/railt_ip_tt_1976_eastbound.png",
+    "page": "PDF p. 1 (eastbound)",
+    "caption": "Kalgoorlie (657 km from Perth) dep. 7 00; Cook (W.S. time) arr. 1930, (C.S. time) dep. 2130; Port Augusta (2347 km) arr. 1035.",
+    "quote": "'Indian-Pacific' does not stop at all places shown; times are approximate and may be used to indicate the position of the train.",
+    "cited": "The page is the eastbound Indian-Pacific timetable of November 1976. Kalgoorlie is at 657 km from Perth and departs at 7 00. Cook arrives at 1930 Western time and departs at 2130 Central time, with watches put forward 1 1/2 hours. Port Augusta is at 2347 km and arrives at 1035. The note at the foot says the train does not stop at all places shown and the times are approximate.",
+    "why": "Slide 7 lists this leaflet as a record of the line's length: 2,347 less 657 is 1,690 km. Slide 9 uses its times: 7 00 to 1035 the next day is 27 hours 35 minutes on the clock, and 26 hours 5 minutes with the 1 1/2 hour clock change taken out.",
+    "hl": [
+     [
+      80,
+      1530,
+      655,
+      1585
+     ],
+     [
+      80,
+      2268,
+      655,
+      2358
+     ],
+     [
+      80,
+      3394,
+      655,
+      3423
+     ],
+     [
+      70,
+      4156,
+      1290,
+      4220
+     ]
+    ]
+   },
+   {
+    "img": "shots/railt_ip_tt_1976_westbound.png",
+    "page": "PDF p. 2 (westbound)",
+    "caption": "Port Augusta (1614 km from Sydney) dep. 1900; Cook (C.S. time) arr. 8 30, (W.S. time) dep. 7 35; Kalgoorlie (3304 km) arr. 1945. 3304 - 1614 = 1,690 km.",
+    "quote": "(Alter watches back 1½ hours)",
+    "cited": "The page is the westbound Indian-Pacific timetable of November 1976. Port Augusta is at 1614 km from Sydney and departs at 1900. Cook arrives at 8 30 Central time and departs at 7 35 Western time, with watches put back 1 1/2 hours. Kalgoorlie is at 3304 km and arrives at 1945.",
+    "why": "Slide 7 lists the 1976 leaflet as a record of the line's length, and this page gives the same figure from the Sydney end: 3,304 less 1,614 is 1,690 km. Slide 9 uses its times: 1900 to 1945 the next day is 24 hours 45 minutes on the clock, and 26 hours 15 minutes with the 1 1/2 hours added back.",
+    "hl": [
+     [
+      700,
+      1395,
+      1310,
+      1455
+     ],
+     [
+      700,
+      2458,
+      1310,
+      2547
+     ],
+     [
+      700,
+      3207,
+      1310,
+      3237
+     ]
+    ]
+   }
+  ]
+ }
+}

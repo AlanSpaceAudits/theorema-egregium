@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+<Document>
+	<name>Longitudal Study 003 WA.kmz</name>
+	<Style id="failed04">
+	</Style>
+	<StyleMap id="failed121">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#failed211</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#failed230</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="failed211">
+	</Style>
+	<Style id="failed230">
+	</Style>
+	<Style id="failed250">
+	</Style>
+	<StyleMap id="failed33">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#failed04</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#failed250</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="inline0122">
+		<LineStyle>
+			<color>ff0000ff</color>
+			<width>6</width>
+		</LineStyle>
+	</Style>
+	<Style id="inline1104">
+		<LineStyle>
+			<color>ff0000ff</color>
+			<width>6</width>
+		</LineStyle>
+	</Style>
+	<StyleMap id="inline483">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#inline0122</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#inline1104</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Folder>
+		<name>Longitudal Study 003 WA</name>
+		<open>1</open>
+		<Placemark>
+			<name>1246m with GPS/GE, 1251m with Wheel, 1246 with Totalstation.</name>
+			<styleUrl>#inline483</styleUrl>
+			<LineString>
+				<tessellate>1</tessellate>
+				<coordinates>
+					-123.248106,48.105205,153.1684083180936 -123.231381,48.105111,162.3448291106034 
+				</coordinates>
+			</LineString>
+		</Placemark>
+		<Placemark>
+			<name>GPS 48.105205,-123.248106</name>
+			<styleUrl>#failed121</styleUrl>
+			<Point>
+				<coordinates>-123.248106,48.10520499999999,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>GPS 48.105111,-123.231381</name>
+			<styleUrl>#failed33</styleUrl>
+			<Point>
+				<coordinates>-123.231381,48.105111,0</coordinates>
+			</Point>
+		</Placemark>
+	</Folder>
+</Document>
+</kml>

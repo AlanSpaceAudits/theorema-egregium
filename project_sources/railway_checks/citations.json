@@ -1,0 +1,242 @@
+{
+ "railc_cr_wtt_1961": {
+  "apa": "Commonwealth Railways. (1961). Trans-Australian line: Working time table No. 14, effective from 23rd July, 1961 until further notice. Commonwealth Railways.",
+  "url": "https://comrails.com/library/timetables/CR_TT_TAR_1961_07_23.pdf (listed at https://comrails.com/library/lib_tt.html)",
+  "file": "pdf/railc_cr_tar_working_timetable_1961_07.pdf",
+  "license": "public domain (Commonwealth of Australia publication older than 50 years); scan hosted by ComRails",
+  "record_type": "primary record (internal operating document of the railway)",
+  "shots": [
+   {
+    "img": "shots/railc_cr_wtt_1961_p43_curve_list_long_straight.png",
+    "page": "p. 43 (PDF p. 44)",
+    "caption": "List of permanent speed restrictions on curves. The last entry before the gap ends at 496 miles 03 chains (between Ooldea and Watson). The next entry starts at 793 miles 11 chains (after Loongana). Miles and chains from Port Pirie Junction.",
+    "quote": "Permanent local speed restrictions on account of curves, etc. (Continued)",
+    "hl": [
+     [
+      169,
+      1409,
+      1274,
+      1590
+     ]
+    ],
+    "cited": "This is page 43, the list of permanent speed restrictions on curves. The highlighted band holds the entry 485 miles 57 chains to 496 miles 03 chains, between Ooldea and Watson, and the next entry, 793 miles 11 chains to 798 miles 13 chains, after Loongana. Both are limited to 60 miles per hour.",
+    "why": "The deck states that no curve lies between 496 miles 3 chains and 793 miles 11 chains. The difference is 297 miles 8 chains, which is 478.1 km, the length of the long straight used in the grid test."
+   },
+   {
+    "img": "shots/railc_cr_wtt_1961_p08_mileages_port_augusta_cook.png",
+    "page": "p. 8 (PDF p. 9)",
+    "caption": "Mileages from Port Pirie Junction: Pt. Augusta 56 1/4, Ooldea 483 1/4, Watson 503 1/4, Cook 569",
+    "quote": "On the line, distances are marked by mile-posts, and pegs at the intervening half-miles, all reading from Port Pirie Junction.",
+    "hl": [
+     [
+      99,
+      616,
+      680,
+      648
+     ],
+     [
+      99,
+      1259,
+      680,
+      1312
+     ],
+     [
+      99,
+      1360,
+      680,
+      1388
+     ],
+     [
+      105,
+      1464,
+      1160,
+      1508
+     ]
+    ],
+    "cited": "This is page 8, the mileage table for Port Augusta to Cook. The column from Port Pirie Junction gives Pt. Augusta 56 and a quarter, Ooldea 483 and a quarter, Watson 503 and a quarter and Cook 569. A note below says distances on the line are marked by mile-posts that all read from Port Pirie Junction.",
+    "why": "The deck takes the track distance of 1,051 and a half miles, 1,692 km, from the 1961 mile-posts: Kalgoorlie at 1107 and three quarters less Port Augusta at 56 and a quarter. Cook at 569 is the start of the Cook to Deakin span of 86 and three quarter miles."
+   },
+   {
+    "img": "shots/railc_cr_wtt_1961_p10_mileages_cook_kalgoorlie.png",
+    "page": "p. 10 (PDF p. 11)",
+    "caption": "Mileages from Port Pirie Junction: Loongana 771 1/4, Nurina 800 1/2, Kalgoorlie 1107 3/4",
+    "quote": "On the line, distances are marked by mile-posts, and pegs at the intervening half-miles, all reading from Port Pirie Junction.",
+    "hl": [
+     [
+      112,
+      640,
+      680,
+      667
+     ],
+     [
+      112,
+      742,
+      680,
+      768
+     ],
+     [
+      112,
+      866,
+      680,
+      916
+     ],
+     [
+      112,
+      1312,
+      680,
+      1344
+     ],
+     [
+      112,
+      1382,
+      1165,
+      1424
+     ]
+    ],
+    "cited": "This is page 10, the mileage table for Cook to Kalgoorlie. The column from Port Pirie Junction gives Cook 569, Deakin 655 and three quarters, Loongana 771 and a quarter, Nurina 800 and a half and Kalgoorlie 1107 and three quarters.",
+    "why": "The deck uses these mile-posts twice. Cook 569 and Deakin 655 and three quarters give 86 and three quarter miles, 139.6 km. Kalgoorlie 1107 and three quarters less Port Augusta 56 and a quarter gives 1,051 and a half miles, 1,692 km."
+   },
+   {
+    "img": "shots/railc_cr_wtt_1961_p37_maximum_speeds.png",
+    "page": "p. 37 (PDF p. 38)",
+    "caption": "Maximum permitted speeds: GM class locomotives 60 miles per hour, Budd railcars 70",
+    "quote": "MAXIMUM PERMITTED SPEEDS FOR LOCOMOTIVES, RAILCARS, ETC.",
+    "hl": [
+     [
+      330,
+      868,
+      1240,
+      926
+     ],
+     [
+      330,
+      928,
+      1240,
+      952
+     ]
+    ],
+    "cited": "This is page 37, Speeds of Trains. The table of maximum permitted speeds gives Budd railcars without trailer 70 miles per hour and GM class locomotives 60 miles per hour, cab leading.",
+    "why": "The deck states that in 1961 the diesel locomotives were limited to 60 miles per hour. That limit is the GM class row of this table."
+   },
+   {
+    "img": "shots/railc_cr_wtt_1961_p26_express_port_augusta_cook.png",
+    "page": "p. 26 (PDF p. 27)",
+    "caption": "Train 75 Express: tabled maximum speed 60 m.p.h., Port Augusta depart 6.50 p.m.",
+    "quote": "TABLED MAX. SPEED",
+    "hl": [
+     [
+      680,
+      395,
+      920,
+      489
+     ],
+     [
+      673,
+      512,
+      924,
+      661
+     ]
+    ],
+    "cited": "This is page 26, the schedule from Port Augusta to Cook. In the column for train 75, Express, the yellow covers the tabled maximum speed of 60 m.p.h., the arrival at Pt. Augusta at 6.40 p.m. and the departure from Port Augusta at 6.50 p.m.",
+    "why": "The deck states that the 1961 express was tabled at the maximum of 60 miles per hour. The departure time from Port Augusta starts the timetabled hours the deck uses for 1961."
+   },
+   {
+    "img": "shots/railc_cr_wtt_1961_p29_express_cook_kalgoorlie.png",
+    "page": "p. 29 (PDF p. 30)",
+    "caption": "Train 75 Express: Cook arrive 8.46 a.m. (AT), depart 9.15 (AT) = 7.45 (PT); Loongana arrive 11.31; Kalgoorlie arrive 8.15 p.m.",
+    "quote": "TABLED MAX. SPEED",
+    "hl": [
+     [
+      490,
+      472,
+      742,
+      592
+     ],
+     [
+      190,
+      900,
+      742,
+      926
+     ],
+     [
+      190,
+      1554,
+      742,
+      1581
+     ]
+    ],
+    "cited": "This is page 29, the schedule from Cook to Kalgoorlie. In the column for train 75, Express, the yellow covers the tabled maximum speed of 60 m.p.h. and the Cook times: arrive 8.46 a.m. and depart 9.15 Adelaide time, which is 7.45 Perth time. The same column gives Loongana arrive 11.31 and Kalgoorlie arrive 8.15 p.m..",
+    "why": "The deck states that the 1961 express was tabled at 60 miles per hour. The arrival at Kalgoorlie ends the timetabled hours the deck uses for 1961, with the clock change between Adelaide and Perth time taken out."
+   },
+   {
+    "img": "shots/railc_cr_wtt_1961_title.png",
+    "page": "title page (PDF p. 2)",
+    "caption": "Title and date of the working time table",
+    "quote": "Effective from 23rd July, 1961 until further notice",
+    "cited": "This is the title page. It identifies the book as Commonwealth Railways, Trans-Australian Line, Working Time Table No. 14, effective from 23rd July, 1961 until further notice. The contents list below shows the sections on mileages, schedules and speeds of trains.",
+    "why": "It identifies the source of the 1961 curve list, mile-posts, speed limits and express times that the deck uses for the long straight and the timetable test."
+   }
+  ]
+ },
+ "railc_cr_booklet_c1960": {
+  "apa": "Commonwealth Railways. (ca. 1960). Trans-Australian Railway [passenger information booklet, print code C.522/60]. Melbourne: A. C. Brooks, Government Printer.",
+  "url": "https://comrails.com/library/downloads/TAR%20Psgr%20Information%20Booklet%20c1960.pdf (listed at https://comrails.com/library/lib_hb.html)",
+  "file": "pdf/railc_cr_tar_passenger_information_booklet_c1960.pdf",
+  "license": "public domain (Commonwealth of Australia publication older than 50 years); scan hosted by ComRails",
+  "record_type": "official publication of the railway (publicity booklet); the date is taken from the print code and the ComRails file name",
+  "shots": [
+   {
+    "img": "shots/railc_cr_booklet_c1960_p09_sleepers_rails.png",
+    "page": "p. 9 (PDF p. 6)",
+    "caption": "Sleepers and rails used in construction; 1,051 miles",
+    "quote": "Three thousand men, motor cars, steam shovels and hundreds of horses and camels co-ordinated the laying of 2,500,000 sleepers, 140,000 tons of rails, and the shifting of 5,000,000 cubic yards of earth and rock.",
+    "hl": [
+     [
+      83,
+      602,
+      687,
+      663
+     ],
+     [
+      83,
+      1304,
+      687,
+      1394
+     ]
+    ]
+   },
+   {
+    "img": "shots/railc_cr_booklet_c1960_p10_long_straight.png",
+    "page": "p. 10 (PDF p. 7)",
+    "caption": "The long straight and the diesel speed on it",
+    "quote": "Three hundred miles across the Nullarbor without a single curve in the whole distance!",
+    "hl": [
+     [
+      113,
+      880,
+      726,
+      988
+     ],
+     [
+      113,
+      1533,
+      726,
+      1670
+     ]
+    ]
+   },
+   {
+    "img": "shots/railc_cr_booklet_c1960_pdf02_27_hours.png",
+    "page": "p. 1 (PDF p. 2)",
+    "caption": "Journey time Port Pirie to Kalgoorlie",
+    "quote": "The 1,108 miles between Port Pirie and Kalgoorlie are covered in 27 hours"
+   },
+   {
+    "img": "shots/railc_cr_booklet_c1960_pdf19_freight_27_hours.png",
+    "page": "PDF p. 19",
+    "caption": "Express trains: 1,108 miles in 27 hours",
+    "quote": "The express trains travel from Port Pirie Junction to Kalgoorlie, a distance of 1,108 miles, in 27 hours."
+   }
+  ]
+ }
+}

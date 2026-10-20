@@ -1,0 +1,719 @@
+{
+ "rail_yearbook11_1918": {
+  "apa": "Commonwealth Bureau of Census and Statistics. (1918). Official year book of the Commonwealth of Australia, No. 11, 1918 (Section XVII, Railways, pp. 650, 663-666). Melbourne: Commonwealth Bureau of Census and Statistics.",
+  "url": "https://www.abs.gov.au/AUSSTATS/abs@.nsf/DetailsPage/1301.01918?OpenDocument (file '13010_1901_1917 section 17.pdf'); HTML transcription of the article at https://www.abs.gov.au/ausstats/abs@.nsf/b4005c38619c665aca25709000203b8d/3ddce9d66e30df18ca2569de0028b415!OpenDocument",
+  "file": "railway/pdf/rail_yearbook11_1918_section17_railways.pdf",
+  "also": [
+   "railway/web/rail_yearbook11_1918_federal_railways_abs.html",
+   "railway/web/rail_yearbook11_1918_federal_railways_abs.pdf"
+  ],
+  "license": "public domain (Commonwealth of Australia, 1918); ABS scan",
+  "shots": [
+   {
+    "img": "railway/shots/rail_yb11_1918_p663_length.png",
+    "page": "p. 663",
+    "caption": "Length of the line, the border mileage and the long straight",
+    "quote": "It may be mentioned that the line does not cross a single permanent stream of water at any part of its length of 1051.73 miles.",
+    "hl": [
+     [
+      161,
+      839,
+      1250,
+      880
+     ],
+     [
+      218,
+      1003,
+      1250,
+      1044
+     ],
+     [
+      159,
+      1630,
+      1092,
+      1671
+     ]
+    ],
+    "cited": "Three passages on page 663 are highlighted. The first says the line runs straight for no less than 309 miles on the Nullarbor Plain. The second says the South Australian border is reached 453.94 miles out from Kalgoorlie. The third gives the length of the line as 1051.73 miles.",
+    "why": "The deck takes the built length of the railway from this Year Book: 1,051.73 miles, which is 1,692.6 km. That length is the limit the deck sets against the 3,839 km straight line of the north-pole disc."
+   },
+   {
+    "img": "railway/shots/rail_yb11_1918_p664_railhead_rails.png",
+    "page": "p. 664, rate of construction",
+    "caption": "Rate of construction of line: on 17 October 1917 the rail-heads stood at 621 miles 58 chains ex Kalgoorlie and 430 miles 00 chains ex Port Augusta, total length constructed 1,051 miles 58 chains.",
+    "quote": "Oct. 17 ... 621 58 ... 430 00 ... 1051 58 [Position of Rail Head, Ex Kalgoorlie, Ex Port Augusta; Total Length Constructed, Mls. Chs.] In the above table it will be seen that between 1st September, 1913, and 17th October, 1917, the date on which the eastern and western divisions met at 621 miles 58 chains ex Kalgoorlie, a total mileage of 1036 miles 35 chains was completed.",
+    "hl": [
+     [
+      242,
+      949,
+      1200,
+      988
+     ],
+     [
+      155,
+      1115,
+      1244,
+      1183
+     ],
+     [
+      210,
+      1368,
+      1243,
+      1405
+     ],
+     [
+      155,
+      1432,
+      1248,
+      1532
+     ]
+    ],
+    "cited": "The last row of the table Rate of Construction of Line is highlighted: 17 October 1917, rail head 621 miles 58 chains ex Kalgoorlie, 430 miles 00 chains ex Port Augusta, total 1051 miles 58 chains. The text below repeats that the two divisions met at 621 miles 58 chains ex Kalgoorlie. The next highlighted lines give rails of 80 lbs to the yard, in lengths of 33 feet and 45 feet.",
+    "why": "621 mi 58 ch + 430 mi 00 ch = 1,051 mi 58 ch = 1,692.6 km: the built length when the two rail-heads met."
+   },
+   {
+    "img": "railway/shots/rail_yb11_1918_p664_railhead_rails.png",
+    "page": "p. 664",
+    "caption": "Rail head table: 621 mls 58 chs ex Kalgoorlie, 430 mls 00 chs ex Port Augusta, total 1051 mls 58 chs on 17 Oct 1917; rail weight and rail lengths",
+    "quote": "The permanent way consists of rails weighing 80 lbs. to the yard and is a single line throughout, with the exception of the lines at the terminal stations. The rails vary in length, some being 33 feet and others 45 feet, the latter having been adopted to reduce the number of rail joints.",
+    "hl": [
+     [
+      242,
+      949,
+      1200,
+      988
+     ],
+     [
+      155,
+      1115,
+      1244,
+      1183
+     ],
+     [
+      210,
+      1368,
+      1243,
+      1405
+     ],
+     [
+      155,
+      1432,
+      1248,
+      1532
+     ]
+    ],
+    "cited": "The last row of the table Rate of Construction of Line is highlighted: 17 October 1917, rail head 621 miles 58 chains ex Kalgoorlie, 430 miles 00 chains ex Port Augusta, total 1051 miles 58 chains. The text below repeats that the two divisions met at 621 miles 58 chains ex Kalgoorlie. The next highlighted lines give rails of 80 lbs to the yard, in lengths of 33 feet and 45 feet.",
+    "why": "The deck states that the rail-heads met on 17 October 1917 at 621 miles 58 chains from Kalgoorlie and 430 miles from Port Augusta. The sum is 1,051 miles 58 chains, which is 1,051.73 miles or 1,692.6 km. The 80 lb rail weight is the figure the deck uses to turn the rail tonnage into a track length."
+   },
+   {
+    "img": "railway/shots/rail_yb11_1918_p665_journey_time.png",
+    "page": "p. 665",
+    "caption": "Scheduled journey time and average speeds",
+    "quote": "The time allowed for the journey from Port Augusta to Kalgoorlie has been fixed at 37 hours 20 minutes (actual), which gives an average speed of 28.16 miles per hour throughout, inclusive of stoppages.",
+    "hl": [
+     [
+      168,
+      1839,
+      1252,
+      1878
+     ],
+     [
+      168,
+      1901,
+      1254,
+      1972
+     ],
+     [
+      168,
+      1995,
+      602,
+      2035
+     ]
+    ],
+    "cited": "The last paragraph of page 665 is highlighted. It fixes the journey from Port Augusta to Kalgoorlie at 37 hours 20 minutes, an average of 28.16 miles per hour with stoppages and about 30.5 miles per hour without them. The opposite direction takes 37 hours 30 minutes, 28.03 miles per hour, or 30.6 without stoppages.",
+    "why": "The timetable slide uses these hours as the 1918 journey time. The deck multiplies the hours by the top speed to find how far a train gets, and compares that with the 3,839 km the north-pole disc needs."
+   },
+   {
+    "img": "railway/shots/rail_yb11_1918_p666_deviation.png",
+    "page": "p. 666",
+    "caption": "Survey length reduced by deviations; summary table of mileage open and under construction at 30 June 1917",
+    "quote": "It should be mentioned that owing to deviations from the original route, the length of this line was reduced from 1063.39 miles to 1051.73 miles, a saving of 11.66 miles.",
+    "hl": [
+     [
+      207,
+      386,
+      1242,
+      425
+     ],
+     [
+      152,
+      449,
+      1238,
+      521
+     ],
+     [
+      147,
+      1206,
+      762,
+      1273
+     ],
+     [
+      1128,
+      1455,
+      1207,
+      1494
+     ]
+    ],
+    "cited": "The highlighted text says the first through train left Port Augusta on 22 October 1917, and that deviations reduced the line from 1063.39 miles to 1051.73 miles, a saving of 11.66 miles. In the table for 30 June 1917 the yellow marks 546.49 miles open from Kalgoorlie, 411.71 miles open from Port Augusta and 93.53 miles under construction.",
+    "why": "The deck gives 1,051.73 miles as the built length and 11.66 miles as the deviations taken out of the surveyed route. The three table figures add up to the same length: 546.49 plus 411.71 plus 93.53 is 1,051.73 miles."
+   },
+   {
+    "img": "railway/shots/rail_yb11_1918_p650_timetable.png",
+    "page": "p. 650",
+    "caption": "Brisbane to Perth timetable: Port Augusta dep. 10.30 p.m. Thursday, Kalgoorlie arr. 10.20 a.m. Saturday, actual time 37 h 20 m, intermediate distance 1051.30 miles, average speed 28.16 m.p.h.",
+    "quote": "Kalgoorlie ... 10.20 a.m. 5.40 p.m. Saturday 37 20 7 20 1051.30 3103.05 28.16",
+    "hl": [
+     [
+      168,
+      600,
+      1238,
+      641
+     ],
+     [
+      192,
+      1262,
+      1055,
+      1298
+     ],
+     [
+      269,
+      1673,
+      1058,
+      1727
+     ]
+    ],
+    "cited": "In the Brisbane to Perth table the Kalgoorlie row is highlighted: arrive 10.20 a.m. Saturday, actual time 37 hours 20 minutes, intermediate distance 1051.30 miles. In the Perth to Brisbane table the Port Augusta row is highlighted: 37 hours 30 minutes and 1,051.30 miles. A line of text above is also marked, giving 3471.25 miles from end to end, or 3476.27 miles via Newcastle.",
+    "why": "This is the 1918 timetable the deck cites for the journey of 37 hours 20 minutes. It is also the source for the official length of 1,051.30 miles, which the deck lists as 1,691.9 km."
+   }
+  ]
+ },
+ "rail_yearbook12_1919": {
+  "apa": "Commonwealth Bureau of Census and Statistics. (1919). Official year book of the Commonwealth of Australia, No. 12, 1919 (Section XVII, Railways, p. 638). Melbourne: Commonwealth Bureau of Census and Statistics.",
+  "url": "https://www.abs.gov.au/AUSSTATS/abs@.nsf/DetailsPage/1301.01919?OpenDocument (file '13010_1901_1918 section 17.pdf')",
+  "file": "railway/pdf/rail_yearbook12_1919_section17_railways.pdf",
+  "license": "public domain (Commonwealth of Australia, 1919); ABS scan",
+  "shots": [
+   {
+    "img": "railway/shots/rail_yb12_1919_length_revised.png",
+    "page": "p. 638",
+    "caption": "The next Year Book gives the built length as 1,051.30 miles, in the text and in the table of lines open",
+    "quote": "It should be mentioned that owing to deviations from the original route, the length of this line was reduced from 1,063.39 miles to 1,051.30 miles,",
+    "hl": [
+     [
+      197,
+      405,
+      1229,
+      440
+     ],
+     [
+      198,
+      1272,
+      1215,
+      1304
+     ]
+    ],
+    "cited": "The highlighted sentence on page 638 says the line was reduced from 1,063.39 miles to 1,051.30 miles. In the table for 30 June 1918 the row Trans-Australian, Port Augusta to Kalgoorlie is marked. Its figure in the Miles column is 1,051.30.",
+    "why": "It shows that the next Year Book gives the built length as 1,051.30 miles in both the text and the table. The deck lists this as the official length of 1918 and 1919, 1,691.9 km."
+   }
+  ]
+ },
+ "rail_act_1911": {
+  "apa": "Kalgoorlie to Port Augusta Railway Act 1911 (Cth), No. 7 of 1911, The Schedule.",
+  "url": "https://legislation.gov.au/C1911A00007/asmade/1911-12-12/text/original/pdf",
+  "file": "railway/pdf/rail_act_1911_kalgoorlie_port_augusta_railway.pdf",
+  "license": "public domain (Commonwealth Act, 1911); Federal Register of Legislation authorised version",
+  "shots": [
+   {
+    "img": "railway/shots/rail_act_1911_schedule_p4.png",
+    "page": "PDF p. 4 (The Schedule)",
+    "caption": "Surveyed route chainages in the Act: border at about 461 miles 77 chains 89 links, Port Augusta junction at about 1,061 miles 76 chains",
+    "quote": "finally joining the Quorn-Port Augusta Railway at about 1,061 miles 76 chains from Kalgoorlie and about 30 chains from the centre of Port Augusta platform.",
+    "hl": [
+     [
+      360,
+      1071,
+      1219,
+      1116
+     ],
+     [
+      360,
+      1655,
+      1219,
+      1729
+     ]
+    ],
+    "cited": "Two passages in The Schedule are highlighted. The first puts the South Australian border at about 461 miles 77 chains 89 links from the centre of Kalgoorlie station platform. The second says the line joins the Quorn to Port Augusta Railway at about 1,061 miles 76 chains from Kalgoorlie and about 30 chains from the centre of Port Augusta platform.",
+    "why": "This is the surveyed route in the 1911 Act, before the deviations. The deck lists the route survey and the Act at 1,709.7 to 1,711.4 km. 1,061 miles 76 chains plus 30 chains is 1,062.3 miles, which is 1,709.7 km."
+   }
+  ]
+ },
+ "rail_cr_passenger_map": {
+  "apa": "Commonwealth Railways. (ca. 1960s). The Trans-Australian Railway [map side of a folded leaflet given to passengers]. Port Augusta: Commonwealth Railways. Scan of a copy held at the National Railway Museum, Port Adelaide.",
+  "url": "https://commons.wikimedia.org/wiki/File:Trans-Australian_Railway_map_provided_to_passengers_circa_1960.png",
+  "file": "railway/pdf/rail_cr_passenger_map_c1960s.png",
+  "license": "public domain (as stated on Wikimedia Commons)",
+  "shots": [
+   {
+    "img": "railway/shots/rail_cr_map_port_augusta_end.png",
+    "page": "map, east end",
+    "caption": "Port Augusta marked 1051 miles from Kalgoorlie and 57 miles from Port Pirie Junction; Port Pirie Junction marked 1108",
+    "quote": "PORT AUGUSTA 1051 57",
+    "cited": "This is the east end of the passenger map. A blue box marks PORT AUGUSTA with the figures 1051 and 57. A second blue box marks PORT PIRIE JUNC. with the figure 1108.",
+    "why": "The map puts Port Augusta 1,051 miles from Kalgoorlie and 57 miles from Port Pirie Junction. The deck lists this record as 1,108 less 57, labelled 1,051 miles, which is 1,691 km."
+   },
+   {
+    "img": "railway/shots/rail_cr_map_long_straight_border.png",
+    "page": "map, centre",
+    "caption": "Long straight note (297 miles) and the border marked 454 miles from Kalgoorlie, 654 from Port Pirie Junction",
+    "quote": "The longest stretch of straight railway line in the world extends from this point for a distance of 297 miles and terminates at the 496 miles between Ooldea and Watson.",
+    "cited": "This is the centre of the passenger map. A blue box marks the note on the Long Straight: the longest stretch of straight railway line in the world runs for 297 miles and ends at the 496 miles between Ooldea and Watson. A second blue box marks BORDER with the figures 454 and 654.",
+    "why": "The 297 miles on the map agrees with the 297 miles 8 chains the deck takes from the 1961 working timetable for the long straight. The border figures are 454 miles from Kalgoorlie and 654 miles from Port Pirie Junction."
+   },
+   {
+    "img": "railway/shots/rail_cr_map_kalgoorlie_end.png",
+    "page": "map, west end",
+    "caption": "Kalgoorlie marked 1108 miles from Port Pirie Junction; legend explains the two mileage scales",
+    "quote": "MILES FROM KALGOORLIE 3 MILES FROM PORT PIRIE JUNC. 1105",
+    "cited": "This is the west end of the passenger map. A blue box marks KALGOORLIE with the figure 1108. A second blue box marks the legend, which shows the red figures as miles from Kalgoorlie and the other figures as miles from Port Pirie Junction.",
+    "why": "The legend explains the two mileage scales on the map. Kalgoorlie is 1,108 miles from Port Pirie Junction, and the deck takes 57 miles off that to get 1,051 miles, 1,691 km, from Port Augusta to Kalgoorlie."
+   }
+  ]
+ },
+ "rail_comrails_route": {
+  "apa": "Drymalik, C. (2026). Route information: Port Augusta to Tarcoola; Zanthus to Kalgoorlie. ComRails. (Compilation of Commonwealth Railways and Australian National working timetables, rate books and notices.)",
+  "url": "https://comrails.com/routes/route_tar_ptaug_tar.html ; https://comrails.com/routes/route_tar_zan_kal.html",
+  "file": "railway/web/rail_comrails_port_augusta_tarcoola.pdf",
+  "also": [
+   "railway/web/rail_comrails_zanthus_kalgoorlie.pdf",
+   "railway/web/rail_comrails_port_augusta_tarcoola.html",
+   "railway/web/rail_comrails_zanthus_kalgoorlie.html"
+  ],
+  "license": "CC BY-NC-SA 2.5 AU, excerpt only",
+  "note": "Secondary compilation. It transcribes Commonwealth Railways documents (for example the 1.11.1939 Goods and Livestock rates book). The original documents were not seen.",
+  "shots": [
+   {
+    "img": "railway/shots/rail_comrails_port_augusta_mileage.png",
+    "page": "web print p. 1",
+    "caption": "Port Augusta mileage from Port Pirie Junction",
+    "quote": "1.11.1939 Port Augusta 56 m 28 c 45l - [Goods & Livestock]",
+    "hl": [
+     [
+      72,
+      1182,
+      670,
+      1227
+     ],
+     [
+      126,
+      1686,
+      639,
+      1721
+     ]
+    ],
+    "cited": "Two lines are highlighted. The section heading gives Port Augusta at 92 km, 56 miles 28 chains 45 links. The dated entry for 1.11.1939 gives Port Augusta 56 m 28 c 45l, from the Goods and Livestock book.",
+    "why": "This is the 1939 mileage of Port Augusta from Port Pirie Junction. The deck subtracts it from the Kalgoorlie mileage to get the station-to-station length of 1,692.0 km."
+   },
+   {
+    "img": "railway/shots/rail_comrails_kalgoorlie_mileage.png",
+    "page": "web print p. 6",
+    "caption": "Kalgoorlie mileage from Port Pirie Junction",
+    "quote": "1.11.1939 Kalgoorlie 1107 m 54 c 93l - [Goods and Livestock ]",
+    "hl": [
+     [
+      72,
+      55,
+      623,
+      100
+     ],
+     [
+      72,
+      718,
+      641,
+      763
+     ],
+     [
+      126,
+      936,
+      658,
+      969
+     ]
+    ],
+    "cited": "Three lines are highlighted. The headings give Parkeston at 1776 km, 1105 miles 2 chains 25 links, and Kalgoorlie at 1781.5 km, 1107 miles 54 chains 93 links. The dated entry for 1.11.1939 gives Kalgoorlie 1107 m 54 c 93l, from the Goods and Livestock book.",
+    "why": "This is the 1939 mileage of Kalgoorlie from Port Pirie Junction. Less the Port Augusta mileage of 56 miles 28 chains 45 links it leaves 1,051 miles 26 chains 48 links, which the deck lists as 1,692.0 km."
+   }
+  ]
+ },
+ "rail_railway_wonders_1935": {
+  "apa": "Across Australia by train. (1935). In C. Winchester (Ed.), Railway wonders of the world. London: Amalgamated Press. (Part and page numbers not checked; web transcription used.)",
+  "url": "https://railwaywondersoftheworld.com/australian-railways.html",
+  "file": "railway/web/rail_railway_wonders_1935_across_australia.pdf",
+  "also": [
+   "railway/web/rail_railway_wonders_1935_across_australia.html"
+  ],
+  "license": "copyrighted, excerpt only",
+  "shots": [
+   {
+    "img": "railway/shots/rail_rww_1935_rails_sleepers_survey.png",
+    "page": "web print p. 9",
+    "caption": "Rail tonnage, sleeper count, and the two survey lengths (455 miles and 608 miles)",
+    "quote": "About 140,000 tons of rails and about 2,500,000 sleepers were used.",
+    "hl": [
+     [
+      174,
+      771,
+      1211,
+      807
+     ],
+     [
+      174,
+      816,
+      1223,
+      852
+     ],
+     [
+      174,
+      1019,
+      1227,
+      1055
+     ]
+    ],
+    "cited": "Three lines are highlighted. The survey party from Kalgoorlie had pegged out 455 miles by September 27. The party from Port Augusta had to plot 608 miles and reached the junction on March 13, 1909. The third line says about 140,000 tons of rails and about 2,500,000 sleepers were used.",
+    "why": "The two survey lengths add to 1,063 miles, the route before the deviations. The deck turns the rail tonnage into a length: two rails of 80 lb to the yard weigh about 125.7 long tons a mile, so 140,000 tons is about 1,114 miles, or about 1,792 km of track."
+   },
+   {
+    "img": "railway/shots/rail_rww_1935_1051_miles.png",
+    "page": "web print p. 8",
+    "caption": "Length between the two ends",
+    "quote": "Between Kalgoorlie and Port Augusta lay 1,051 miles of practically waterless and uninhabited country.",
+    "hl": [
+     [
+      174,
+      1073,
+      1144,
+      1109
+     ]
+    ],
+    "cited": "One line is highlighted. It says 1,051 miles of practically waterless and uninhabited country lay between Kalgoorlie and Port Augusta.",
+    "why": "It gives the length between the two ends of the line as 1,051 miles in a 1935 account. This agrees with the built length the deck uses."
+   },
+   {
+    "img": "railway/shots/rail_rww_1935_cook.png",
+    "page": "web print p. 14",
+    "caption": "Cook mileages from both ends",
+    "quote": "The change of engines in the run from Port Augusta is made at Cook, 513 miles from Port Augusta and 538 miles from Kalgoorlie.",
+    "hl": [
+     [
+      174,
+      418,
+      1228,
+      454
+     ],
+     [
+      174,
+      531,
+      1160,
+      567
+     ]
+    ],
+    "cited": "Two lines are highlighted. The first says engines are changed at Cook, 513 miles from Port Augusta and 538 miles from Kalgoorlie. The second names the two runs of 513 miles and 538 miles as the longest continuous locomotive workings in Australia.",
+    "why": "It gives the mileage of Cook from both ends of the line. 513 plus 538 is 1,051 miles, the same length the deck uses for Port Augusta to Kalgoorlie."
+   },
+   {
+    "img": "railway/shots/rail_rww_1935_wynbring.png",
+    "page": "web print p. 13",
+    "caption": "Wynbring mileage from Port Augusta",
+    "quote": "At Wynbring, 321 miles from Port Augusta, the granite, which has been hidden for 560 miles, comes to the surface again.",
+    "hl": [
+     [
+      174,
+      237,
+      1205,
+      273
+     ]
+    ],
+    "cited": "One line is highlighted. It says that at Wynbring, 321 miles from Port Augusta, the granite comes to the surface again after it has been hidden for 560 miles.",
+    "why": "It gives the mileage of Wynbring from the Port Augusta end of the line. This is one more station distance along the railway the deck measures."
+   }
+  ]
+ },
+ "rail_bte_1972": {
+  "apa": "Bureau of Transport Economics. (1972). Economic evaluation of timber and concrete sleepers for three railway lines (Report 004). Canberra: Bureau of Transport Economics.",
+  "url": "https://www.bitre.gov.au/sites/default/files/report_004.pdf (fetched from the Wayback Machine copy of 7 Aug 2025: https://web.archive.org/web/20250807033327/https://www.bitre.gov.au/sites/default/files/report_004.pdf)",
+  "file": "railway/pdf/rail_bte_1972_report004_sleepers.pdf",
+  "license": "Commonwealth of Australia, excerpt only",
+  "shots": [
+   {
+    "img": "railway/shots/rail_bte_1972_construction_rate.png",
+    "page": "p. 16 (PDF p. 22)",
+    "caption": "Re-sleepering rate for the Trans-Australian Railway and the total period",
+    "quote": "83.3 miles per annum (220,000 sleepers) for the Trans-Australian Railway.",
+    "hl": [
+     [
+      715,
+      1165,
+      1168,
+      1205
+     ],
+     [
+      146,
+      1207,
+      1104,
+      1245
+     ],
+     [
+      714,
+      1248,
+      1055,
+      1286
+     ],
+     [
+      151,
+      1291,
+      1002,
+      1326
+     ],
+     [
+      149,
+      1411,
+      633,
+      1447
+     ]
+    ],
+    "cited": "The highlighted lines under Construction Period give the rates of work: 144 miles per annum for the Tarcoola to Alice Springs Railway, 45 miles per annum for the Adelaide to Crystal Brook Railway, and 83.3 miles per annum (220,000 sleepers) for the Trans-Australian Railway. The last marked line gives 13.3 years for the third project.",
+    "why": "It gives the re-sleepering rate and the total period for the Trans-Australian Railway. 83.3 miles a year for 13.3 years is about 1,108 miles, which agrees with the 1,107 miles the same report gives for the line from Port Pirie."
+   },
+   {
+    "img": "railway/shots/rail_bte_1972_p12_sleepers_per_mile.png",
+    "page": "p. 12 (PDF p. 18)",
+    "caption": "Timber and concrete sleeper densities used for Commonwealth Railways",
+    "quote": "the timber sleeper spacings taken as appropriate for the evaluations were 2640 per mile for the two Commonwealth Railways projects",
+    "hl": [
+     [
+      165,
+      941,
+      1083,
+      979
+     ],
+     [
+      167,
+      1436,
+      1049,
+      1472
+     ]
+    ],
+    "cited": "Two lines on page 12 are highlighted. The first gives timber sleeper spacings of 2640 per mile for the two Commonwealth Railways projects. The second gives concrete sleeper spacing of 2400 per mile for the Commonwealth Railways projects.",
+    "why": "It gives the number of sleepers per mile used for the Commonwealth Railways lines. 220,000 sleepers a year at 2,640 per mile is 83.3 miles a year, the rate on page 16 of the same report."
+   },
+   {
+    "img": "railway/shots/rail_bte_1972_b2_1107_mile.png",
+    "page": "p. B2 (PDF p. 81)",
+    "caption": "Length of the line Port Pirie to Kalgoorlie as used in 1972",
+    "quote": "The requirements of the 1107 mile Trans-Australian Railway",
+    "hl": [
+     [
+      328,
+      281,
+      1171,
+      319
+     ]
+    ],
+    "cited": "One line on page B2 is highlighted. It refers to the requirements of the 1107 mile Trans-Australian Railway.",
+    "why": "It shows the length a government report used in 1972 for the line from Port Pirie to Kalgoorlie: 1,107 miles. This agrees with the Kalgoorlie mileage from Port Pirie Junction in the other records the deck lists."
+   }
+  ]
+ },
+ "rail_artc_ras_d7": {
+  "apa": "Australian Rail Track Corporation. (2022). Route access standard, defined interstate rail network, section page D7: Spencer Junction - Parkeston (Version 2.1, 4 October 2022). Adelaide: ARTC.",
+  "url": "https://www.artc.com.au/uploads/RAS-Section-Page-D7.pdf",
+  "file": "railway/pdf/rail_artc_ras_d7_spencer_junction_parkeston.pdf",
+  "license": "copyrighted (ARTC), excerpt only",
+  "shots": [
+   {
+    "img": "railway/shots/rail_artc_d7_network_diagram.png",
+    "page": "p. 3",
+    "caption": "The western end of the line: Kalgoorlie stands at 1781.500 km on the operator's kilometre scale (boxed, bottom right). Port Augusta stands at 92.194 km on the D6 page. 1,781.500 less 92.194 is 1,689.306 km of track.",
+    "quote": "Kalgoorlie 1781.500",
+    "hl": [
+     [
+      1019,
+      1743,
+      1204,
+      1780
+     ]
+    ],
+    "cited": "This is the network diagram for Spencer Junction to Parkeston, version 2.1, reviewed 4 October 2022. The last entry at the bottom right is highlighted: Kalgoorlie 1781.500.",
+    "why": "The deck takes the metric kilometrage of the line from the operator's diagrams: 1,781.500 less 92.194 is 1,689.306 km, listed as about 1,689 km. The note at the top of the page says the line maps are indicative only, and the deck repeats that."
+   }
+  ]
+ },
+ "rail_artc_ras_d6": {
+  "apa": "Australian Rail Track Corporation. (2022). Route access standard, defined interstate rail network, section page D6: Crystal Brook - Spencer Junction (Version 2.0, 29 August 2022). Adelaide: ARTC.",
+  "url": "https://www.artc.com.au/uploads/RAS-Section-Page-D6.pdf",
+  "file": "railway/pdf/rail_artc_ras_d6_crystal_brook_spencer_junction.pdf",
+  "license": "copyrighted (ARTC), excerpt only",
+  "shots": [
+   {
+    "img": "railway/shots/rail_artc_d6_network_diagram.png",
+    "page": "p. 3",
+    "caption": "The eastern end of the line: Port Augusta stands at 92.194 km on the operator's kilometre scale (boxed). Kalgoorlie stands at 1781.500 km on the D7 page. 1,781.500 less 92.194 is 1,689.306 km of track.",
+    "quote": "PORT AUGUSTA 92.194",
+    "hl": [
+     [
+      1033,
+      941,
+      1132,
+      1026
+     ]
+    ],
+    "cited": "This is the network diagram for Crystal Brook to Spencer Junction. The label PORT AUGUSTA 92.194 on the right-hand line is highlighted.",
+    "why": "This is the eastern end of the metric measurement. The deck subtracts it from the Kalgoorlie value: 1,781.500 less 92.194 is 1,689.306 km, listed as about 1,689 km."
+   }
+  ]
+ },
+ "rail_indian_pacific_2026": {
+  "apa": "Journey Beyond Rail. (2026). The Indian Pacific 2026 timetable. Adelaide: Journey Beyond.",
+  "url": "https://www.journeybeyondrail.com.au/guest-information/timetables/the-indian-pacific-2026-timetable/",
+  "file": "railway/web/rail_indian_pacific_2026_timetable.html",
+  "license": "copyrighted, excerpt only",
+  "note": "The page gives no Port Augusta time and no departure times for the stops, so it does not give a clean distance check.",
+  "shots": [
+   {
+    "img": "railway/shots/rail_indian_pacific_2026_timetable.png",
+    "page": "web page",
+    "caption": "Present-day times at Cook, Rawlinna and Kalgoorlie",
+    "quote": "FRIDAY 12.35 COOK | AFTERNOON EXPERIENCE 17.55 RAWLINNA | EVENING EXPERIENCE",
+    "cited": "This is the Indian Pacific 2026 timetable page. Westbound it lists Friday 12.35 at Cook and 17.55 at Rawlinna. Eastbound it lists Sunday 06.00 at Kalgoorlie and 22.04 at Cook.",
+    "why": "It gives the present-day clock times of the passenger train at Cook, Rawlinna and Kalgoorlie, three stops on the line the deck measures.",
+    "hl": [
+     [
+      160,
+      1270,
+      1242,
+      1310
+     ],
+     [
+      160,
+      1318,
+      1242,
+      1358
+     ],
+     [
+      160,
+      1754,
+      1242,
+      1794
+     ],
+     [
+      160,
+      1801,
+      1242,
+      1841
+     ]
+    ]
+   }
+  ]
+ },
+ "rail_station_coordinates": {
+  "apa": "OpenStreetMap contributors. (2026). Port Augusta railway station (way 234880691) and Kalgoorlie railway station (way 236077504) [map data, Nominatim lookup]. Cross-checked with Wikidata items Q19877164 and Q14935833.",
+  "url": "https://nominatim.openstreetmap.org/lookup?osm_ids=W234880691,W236077504&format=json",
+  "file": "railway/web/rail_osm_station_coordinates.json",
+  "also": [
+   "railway/web/rail_wikidata_station_coordinates.json"
+  ],
+  "license": "ODbL 1.0 (OpenStreetMap); CC0 (Wikidata)",
+  "shots": [],
+  "note": "Data files, no page image. Port Augusta -32.4936566, 137.7672991. Kalgoorlie -30.7462177, 121.4665943."
+ },
+ "rail_wise_2014_longitude": {
+  "apa": "Wise, P. (2014). Australian longitudes by wire and wireless. XNATMAP.",
+  "url": "https://web.archive.org/web/20250621210331/http://xnatmap.org/adnm/docs/2013/long_aust.htm (live site did not resolve on 11 Oct 2026)",
+  "file": "railway/web/rail_xnatmap_longitude_wire_wireless_wayback.pdf",
+  "also": [
+   "railway/web/rail_xnatmap_longitude_wire_wireless_wayback.html"
+  ],
+  "license": "copyrighted, excerpt only",
+  "note": "Secondary source. The primary report (Dodwell 1921) was not obtained.",
+  "shots": [
+   {
+    "img": "railway/shots/rail_xnatmap_deakin_1921.png",
+    "page": "web print p. 13",
+    "caption": "1921 wireless longitude work at Deakin on the Trans-Australian Railway",
+    "quote": "To attempt to ensure best possible time, wireless time signals from Lyons, Bordeaux (France), Annapolis (USA), Adelaide and Perth were received at Deakin.",
+    "hl": [
+     [
+      87,
+      344,
+      1232,
+      382
+     ],
+     [
+      130,
+      756,
+      1265,
+      789
+     ],
+     [
+      87,
+      811,
+      1290,
+      849
+     ],
+     [
+      87,
+      861,
+      1296,
+      923
+     ],
+     [
+      87,
+      994,
+      1270,
+      1056
+     ],
+     [
+      87,
+      1077,
+      1277,
+      1139
+     ]
+    ],
+    "cited": "Several lines are highlighted. They say the party proceeded to Deakin, Western Australia, on the Trans-Australian Railway, and that three observing pillars were built there. Wireless time signals from Lyons, Bordeaux, Annapolis, Adelaide and Perth were received at Deakin in 1921, and this was the first longitude determined from wireless time signals. The Deakin Obelisk was then built 2.82 kilometres east of the Deakin Pillar.",
+    "why": "The deck states that longitude in Australia was determined from telegraph and wireless time signals with star observations, including a 1921 determination at Deakin, on this line. This page is the source for that statement. The method uses clocks and stars, not ground distance."
+   }
+  ]
+ },
+ "rail_dodwell_1921": {
+  "apa": "Dodwell, G. F. (1921). Determination of longitude in Australia (including two points on 129th meridian east of Greenwich) by wireless telegraph signals directly received in both hemispheres. Adelaide: Government Printer.",
+  "url": null,
+  "file": null,
+  "license": "public domain",
+  "shots": [],
+  "missing": "Title found in a bibliography listing only (web search result for the Dodwell entry of 'Physics in Australia to 1945'). No scan found on archive.org or through web search. Trove and nla.gov.au refused automated access."
+ },
+ "rail_trove_first_train_1917": {
+  "apa": "Newspaper reports of the first through train, Port Augusta to Kalgoorlie, 22 to 24 October 1917 (Trove, National Library of Australia).",
+  "url": "https://trove.nla.gov.au/",
+  "file": null,
+  "license": "public domain",
+  "shots": [],
+  "missing": "Trove search pages, article pages and the API were all tried. The site returned a bot check (Anubis, 'Access Denied') and the API asked for a key. No article was read. The check was not bypassed."
+ },
+ "rail_nma_defining_moments": {
+  "apa": "National Museum of Australia. (n.d.). Trans-Australian Railway. Defining Moments.",
+  "url": "https://www.nma.gov.au/defining-moments/resources/trans-australian-railway",
+  "file": null,
+  "license": "copyrighted",
+  "shots": [],
+  "missing": "HTTP 403 on fetch. Not used."
+ }
+}

@@ -1,0 +1,46 @@
+{
+ "ds_adelaide_obs_1921": {
+  "apa": "Dodwell, G. F. (1924). Report of the Government Astronomer to the Board of Visitors of the Adelaide Observatory, read at the annual visitation of the Adelaide Observatory, February 16th, 1922 (pp. 8-14). Adelaide: R. E. E. Rogers, Government Printer.",
+  "url": "https://books.google.com/books?id=lVJOAAAAYAAJ",
+  "file": "deakin_stars/pdf/ds_adelaide_obs_report_1921_extract.pdf",
+  "license": "public domain (Google Books full view, University of Virginia copy); extract of title page and pp. 8-12, 14",
+  "shots": [
+   {
+    "img": "shots/ds_adelaide_obs_1921_p9_stars_instruments.png",
+    "page": "p. 9",
+    "caption": "Who observed stars at Deakin and with which instrument; no star names are given",
+    "quote": "For the determination of local time star observations were taken by Mr. Curlewis with the Perth almucantar, and by myself with the portable transit instrument lent by the Sydney Lands Department and brought up to date in Adelaide. Mr. Curlewis also used the almucantar instrument, and Mr. Hambidge his theodolite, for latitude determination."
+   },
+   {
+    "img": "shots/ds_adelaide_obs_1921_p9_signal_schedule.png",
+    "page": "p. 9",
+    "caption": "Wireless time-signal schedule and the dates each signal was received at Deakin, April-May 1921",
+    "quote": "General Ferrié again very kindly arranged a series of wireless signals from Lyons at 20h. 15m. Greenwich Civil Time (corresponding to 5 a.m. \"Central\" or Railway Time at the Border), and in addition sent us a cable announcing that the Lafayette station at Bordeaux, at this time the most powerful in the world, would send out signals at 20h. G.C.T. (4·45 a.m. Central Time at the Border), on triple power and wave length 23,400 metres. Admiral Hoogewerff also most kindly arranged to send out a special series of signals from Annapolis, near Washington, U.S.A., at 19h. 55m. G.C.T. All these signals were sent at the above times each day from April 21st to May 10th, 1921. We received them at Deakin as follows :— Bordeaux, 20h., G.C.T., April 21, 22, 23, 24, 26, 27, 28, 30, May 1, 2, 3, 4, 5, 6, 7, 8, 9, 10. Total 18 times. Lyons, 20h. 15m., G.C.T., April 22, 23, 24, 25, 26, 27, 28, 29, 30, May 1, 2, 3, 4, 5, 7, 9, 10. Total 17 times. Annapolis, 19h. 55m., G.C.T. (special series), April 26, 27, 29, 30, May 3, 5, 6, 7, 8, 9, 10. Total 11 times. Annapolis, 3h., G.C.T. (regular signals), April 25, 26, 27, 28, 29, 30, May 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11. Total 17 times."
+   },
+   {
+    "img": "shots/ds_adelaide_obs_1921_p8_arrival_cook.png",
+    "page": "p. 8",
+    "caption": "Arrival at Deakin 15 April 1921; the work at Cook on 13-14 April was magnetic",
+    "quote": "The party arrived at Deakin on April 15th. Mr. C. A. Maddern went with me in advance, and we made a series of magnetic observations at Cook on April 13th and 14th, and afterwards a similar series at Deakin, in addition to the longitude observations. Mr. H. B. Curlewis, Government Astronomer of Western Australia, met us at Deakin ; and the other members of the party were Messrs. C. M. Hambidge and A. Williams, of the Survey Department ; and H. S. Duncan, who came as a volunteer assistant, and gave us valuable help."
+   },
+   {
+    "img": "shots/ds_adelaide_obs_1921_p10_not_final.png",
+    "page": "p. 10",
+    "caption": "Provisional result and the concrete blocks for the transit and almucantar instruments",
+    "quote": "The above results are not final ; corrections for personal and instrumental errors are to be applied. The position of the 129th meridian in accordance with these figures is approximately 1¾ miles east of the observing site, marked by the concrete blocks on which the portable transit and almucantar instruments were mounted."
+   },
+   {
+    "img": "shots/ds_adelaide_obs_1921_p12_joint_report.png",
+    "page": "p. 12",
+    "caption": "A full joint report by Curlewis and Dodwell was planned",
+    "quote": "A full joint report of the undertaking will be made by Mr. Curlewis and myself when the observations are fully worked out, and after investigation of personal equation, &c., at Greenwich. The cost of printing the report will be part of the Western Australian contribution."
+   },
+   {
+    "img": "shots/ds_adelaide_obs_1921_p14_cook_deakin_rows.png",
+    "page": "p. 14",
+    "caption": "Field-work table: Cook, April-May 1921, magnetic only; Deakin, latitude, longitude and magnetic",
+    "quote": "1921. Apl.-May Cook .......... Magnetic .......... G. F. Dodwell and C. A. Maddern. Apl.-May Deakin .......... Latitude, longitude, and magnetic. Final determination of boundary, southern point. G. F. Dodwell, C. A. Maddern, and C. M. Hambidge, in co-operation with Mr. Curlewis"
+   }
+  ]
+ }
+}

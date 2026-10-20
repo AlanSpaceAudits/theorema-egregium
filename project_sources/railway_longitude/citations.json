@@ -1,0 +1,321 @@
+{
+ "raill_carnegie_1927": {
+  "apa": "Fisk, H. W. (1927). Magnetic results, 1921-1926. In Land magnetic and electric observations, 1918-1926 (Researches of the Department of Terrestrial Magnetism, Vol. VI; Carnegie Institution of Washington Publication No. 175, Vol. VI). Washington, DC: Carnegie Institution of Washington.",
+  "url": "https://archive.org/details/landmagneticelec00carn",
+  "file": "pdf/raill_carnegie_land_magnetic_1918_1926.pdf",
+  "license": "public domain (1927)",
+  "shots": [
+   {
+    "img": "shots/raill_carnegie1927_p55_railway_stations.png",
+    "page": "p. 55, Cook",
+    "caption": "Results table, the Cook row: latitude 30° 37′ S, longitude 130° 25′ E, observed 14 April 1921 by Dodwell and Maddern (D&M).",
+    "quote": "Cook ... 30 37 S 130 25 Apr 14, 21",
+    "hl": [
+     [
+      44,
+      498,
+      1336,
+      517
+     ],
+     [
+      44,
+      515,
+      1336,
+      524
+     ],
+     [
+      44,
+      522,
+      1336,
+      540
+     ],
+     [
+      44,
+      565,
+      1336,
+      590
+     ],
+     [
+      44,
+      601,
+      1336,
+      626
+     ]
+    ],
+    "cited": "Four rows of the results table on page 55 are highlighted. Ooldea is at latitude 30 degrees 27.5 minutes south, longitude 131 degrees 48 minutes east. Cook is at 30 degrees 37 minutes south, 130 degrees 25 minutes east, observed 14 April 1921. Deakin is at 30 degrees 46.0 minutes south, 128 degrees 58 minutes east, observed 2 May 1921 by GFD. Mile-Post 632 is at 30 degrees 49.4 minutes south, 128 degrees 25 minutes east.",
+    "why": "The deck takes the 1921 longitudes of Cook and Deakin from this table: 130 degrees 25 minutes and 128 degrees 58 minutes east. With the 86 and three quarter miles between their mile-posts, the grid test gives a radius of 6,370 km for the Cook to Deakin span."
+   },
+   {
+    "img": "shots/raill_carnegie1927_p55_railway_stations.png",
+    "page": "p. 55",
+    "caption": "Results table: Ooldea, Cook, Tarcoola, Deakin, Mile-Post 632 with latitude and longitude. Deakin observed 2-3 May 1921 by G. F. Dodwell (GFD)",
+    "quote": "Deakin 30 46.0 S 128 58 May 2, 21",
+    "hl": [
+     [
+      44,
+      498,
+      1336,
+      517
+     ],
+     [
+      44,
+      515,
+      1336,
+      524
+     ],
+     [
+      44,
+      522,
+      1336,
+      540
+     ],
+     [
+      44,
+      565,
+      1336,
+      590
+     ],
+     [
+      44,
+      601,
+      1336,
+      626
+     ]
+    ],
+    "cited": "Four rows of the results table on page 55 are highlighted. Ooldea is at latitude 30 degrees 27.5 minutes south, longitude 131 degrees 48 minutes east. Cook is at 30 degrees 37 minutes south, 130 degrees 25 minutes east, observed 14 April 1921. Deakin is at 30 degrees 46.0 minutes south, 128 degrees 58 minutes east, observed 2 May 1921 by GFD. Mile-Post 632 is at 30 degrees 49.4 minutes south, 128 degrees 25 minutes east.",
+    "why": "The deck takes the 1921 longitudes of Cook and Deakin from this table: 130 degrees 25 minutes and 128 degrees 58 minutes east. With the 86 and three quarter miles between their mile-posts, the grid test gives a radius of 6,370 km for the Cook to Deakin span."
+   },
+   {
+    "img": "shots/raill_carnegie1927_p137_table22.png",
+    "page": "p. 137",
+    "caption": "D. G. Coleman, Table 22 (1923): Mile-Post 632 on the Transcontinental Railway and Port Augusta",
+    "quote": "Mile-Post 632 Apr 24 30 49.4 128 25",
+    "hl": [
+     [
+      598,
+      1090,
+      686,
+      1117
+     ],
+     [
+      330,
+      1232,
+      1336,
+      1258
+     ]
+    ],
+    "cited": "The label Table 22 and the row for station 2 are highlighted. The row reads Mile-Post 632, April 24 1923, latitude 30 degrees 49.4 minutes south, longitude 128 degrees 25 minutes east.",
+    "why": "It is the observer's own field report for the station at mile-post 632 on this railway. It gives the same position as the results table on page 55, so the mile-post and the position belong to one place."
+   },
+   {
+    "img": "shots/raill_carnegie1927_p247_milepost632_station.png",
+    "page": "p. 247",
+    "caption": "Description of the station at mile-post 632",
+    "quote": "south of Transcontinental Railway line, 179.5 feet (54.71 meters) south of first iron telegraph-pole east of water-tank and ninth east of mile-post 632",
+    "hl": [
+     [
+      679,
+      1308,
+      1205,
+      1330
+     ],
+     [
+      718,
+      1330,
+      1205,
+      1389
+     ]
+    ],
+    "cited": "The entry Mile-Post 632, Western Australia, 1923 on page 247 describes the station. It is south of the Transcontinental Railway line, 179.5 feet (54.71 meters) south of the first iron telegraph-pole east of the water-tank and ninth east of mile-post 632.",
+    "why": "It fixes the observing station to a numbered mile-post on the railway. The deck notes that the positions of 1921 to 1923 are for the observing stations beside the line."
+   },
+   {
+    "img": "shots/raill_carnegie1927_p245_deakin_station.png",
+    "page": "p. 245",
+    "caption": "Description of the Deakin station: beside the three piers used for the 1921 boundary determination",
+    "quote": "the westernmost of three slate-topped concrete piers 20 feet (6.1 meters) north of railway-line used in determination of boundary in 1921 between South Australia and Western Australia",
+    "hl": [
+     [
+      133,
+      636,
+      425,
+      657
+     ],
+     [
+      175,
+      715,
+      655,
+      816
+     ]
+    ],
+    "cited": "The entry Deakin, Western Australia, 1921 on page 245 describes the station. It is north of the railway line, 255.4 feet true north of the portable-transit pier, the westernmost of three slate-topped concrete piers 20 feet north of the railway line used in the determination of the boundary in 1921 between South Australia and Western Australia.",
+    "why": "It shows that the Deakin position in the results table belongs to a station beside the piers of the 1921 boundary determination, next to the railway. The deck uses the Deakin longitude of 128 degrees 58 minutes east for the Cook to Deakin span."
+   },
+   {
+    "img": "shots/raill_carnegie1927_p32_observers.png",
+    "page": "p. 32",
+    "caption": "Key to observer initials: GFD is G. F. Dodwell, D&M is Dodwell and Madderne",
+    "quote": "G. F. Dodwell, Astronomer, A. L. Kennedy, Assistant Astronomer, C. A. Maddern, and L. M. Waterford, of the Adelaide Observatory, South Australia.",
+    "hl": [
+     [
+      191,
+      998,
+      460,
+      1020
+     ],
+     [
+      493,
+      1164,
+      860,
+      1186
+     ],
+     [
+      185,
+      1490,
+      1285,
+      1528
+     ]
+    ],
+    "cited": "Table 7 on page 32 lists the observers and their designations. G. F. Dodwell has the designation GFD, and Dodwell and Maddern have D&M. Footnote e says G. F. Dodwell, Astronomer, A. L. Kennedy, C. A. Maddern and L. M. Waterford are of the Adelaide Observatory, South Australia.",
+    "why": "It is the key to the observer initials in the results table. The Deakin row is marked GFD and the Cook row D&M, so the 1921 positions the deck uses were observed by the staff of the Adelaide Observatory."
+   },
+   {
+    "img": "shots/raill_carnegie1927_p207_table54_cook.png",
+    "page": "p. 207",
+    "caption": "Table 54: Adelaide Observatory stations. Cook, 14-15 April 1921, 30 37 S, 130 25 E; Deakin, 2-3 May 1921, 30 46.0 S, 128 58 E; footnote: stations 1 and 2 occupied by Mr. Dodwell.",
+    "quote": "Mr. Dodwell secured some data on a trip to the western boundary of the state",
+    "hl": [
+     [
+      140,
+      228,
+      1180,
+      275
+     ],
+     [
+      268,
+      555,
+      1050,
+      575
+     ],
+     [
+      140,
+      852,
+      1060,
+      890
+     ]
+    ]
+   },
+   {
+    "img": "shots/raill_carnegie1927_p244_cook_station.png",
+    "page": "p. 244",
+    "caption": "Description of the Cook station, 1921: 1,000 feet north of the railway line, with true bearings to the station buildings.",
+    "quote": "Cook, South Australia, 1921—On flat limestone plain, 1,000 feet (304.8 meters) north of east-west railway line; marked by peg and cairn of stones.",
+    "hl": [
+     [
+      205,
+      665,
+      730,
+      878
+     ]
+    ]
+   }
+  ]
+ },
+ "raill_mnras_1923": {
+  "apa": "Royal Astronomical Society. (1923). Report of the Council to the hundred and third annual general meeting: Adelaide Observatory. Monthly Notices of the Royal Astronomical Society, 83(4), 282-283.",
+  "url": "https://archive.org/details/monthly-notices-of-the-royal-astronomical-society_1923-02-09_83_4",
+  "file": "pdf/raill_mnras_1923_v83n4.pdf",
+  "license": "public domain (1923)",
+  "shots": [
+   {
+    "img": "shots/raill_mnras1923_p282_deakin_kimberley.png",
+    "page": "p. 282",
+    "caption": "1921 longitude work at Deakin and Kimberley by wireless signals; who took part",
+    "quote": "carried out the field observations at Deakin and Kimberley, and were successful in receiving wireless signals from Lyons, Bordeaux, Annapolis, Adelaide, and Perth, the overseas signals circling the earth in both directions.",
+    "hl": [
+     [
+      159,
+      723,
+      710,
+      766
+     ],
+     [
+      160,
+      984,
+      1260,
+      1025
+     ]
+    ]
+   }
+  ]
+ },
+ "raill_porter_1990": {
+  "apa": "Porter, J. R. (1990). Longitude 129 degrees east, and why it is not the longest, straight line in the world. Technical papers, 32nd Australian Surveyors Congress, Canberra, 31 March - 6 April 1990, Paper 8, 1-16. Institution of Surveyors, Australia.",
+  "url": "https://web.archive.org/web/20220109181904/https://www.xnatmap.org/adnm/docs/1genmap/sgcnr/1porter.pdf",
+  "file": "pdf/raill_porter_1990_longitude_129.pdf",
+  "license": "copyrighted, excerpt only",
+  "note": "Secondary source. It cites Dodwell (1921) for the Deakin value. Scanned images without a text layer; page numbers are the printed 'Paper 8' page numbers.",
+  "shots": [
+   {
+    "img": "shots/raill_porter1990_p9_deakin_1921.png",
+    "page": "Paper 8, p. 8",
+    "caption": "Deakin 1921 result and the 1926 chaining along the railway to the border",
+    "quote": "The value of the East longitude of the pedestals was determined to be 128°58'00\".63. This placed them approximately 2.8 kilometres west of the border.",
+    "hl": [
+     [
+      415,
+      690,
+      1312,
+      724
+     ],
+     [
+      253,
+      862,
+      1312,
+      895
+     ]
+    ]
+   },
+   {
+    "img": "shots/raill_porter1990_p10_obelisk_agd.png",
+    "page": "Paper 8, p. 9",
+    "caption": "Deakin Obelisk longitude on the Australian Geodetic Datum",
+    "quote": "The longitude of the Deakin Obelisk is now accepted as 129°00'01\".8584E (1965 spheroid, Australian Geodetic Datum) which places it 49.8 metres east of 129°East.",
+    "hl": [
+     [
+      160,
+      176,
+      910,
+      210
+     ]
+    ]
+   },
+   {
+    "img": "shots/raill_porter1990_p7_railway_survey.png",
+    "page": "Paper 8, p. 6",
+    "caption": "1909 railway survey: post at the border with the terminal mileage",
+    "quote": "At the crossing point on the South Australian border, a substantial post was put in with the terminal mileage stamped thereon.",
+    "hl": [
+     [
+      1127,
+      1609,
+      1331,
+      1642
+     ],
+     [
+      684,
+      1641,
+      1138,
+      1674
+     ]
+    ]
+   },
+   {
+    "img": "shots/raill_porter1990_p1_title.png",
+    "page": "Paper 8, p. 1",
+    "caption": "Title page",
+    "quote": "LONGITUDE 129 DEGREES EAST"
+   }
+  ]
+ }
+}

@@ -1,0 +1,234 @@
+{
+ "gauss1827": {
+  "apa": "Gauss, C. F. (1902). General investigations of curved surfaces of 1827 and 1825 (J. C. Morehead & A. M. Hiltebeitel, Trans.). Princeton University Library. (Original work published 1827)",
+  "url": null,
+  "file": "pdf/1902_Gauss_General_Investigations_Curved_Surfaces.pdf",
+  "license": "public domain",
+  "shots": [
+   {
+    "img": "shots/gauss1827_title.png",
+    "page": "title page",
+    "caption": "Title page of the 1902 Princeton translation.",
+    "quote": "KARL FRIEDRICH GAUSS GENERAL INVESTIGATIONS OF CURVED SURFACES OF 1827 AND 1825 TRANSLATED WITH NOTES AND A BIBLIOGRAPHY BY JAMES CADDALL MOREHEAD, A.M., M.S., AND ADAM MILLER HILTEBEITEL, A.M. [...] THE PRINCETON UNIVERSITY LIBRARY 1902",
+    "cited": "This is the title page. It names Karl Friedrich Gauss, General Investigations of Curved Surfaces of 1827 and 1825, translated with notes and a bibliography by James Caddall Morehead and Adam Miller Hiltebeitel, The Princeton University Library, 1902.",
+    "why": "It identifies the edition the deck quotes for every Gauss article and page number: Art. 12 on slide 3, Art. 19 on slides 12 and 13, Art. 20 and Art. 28 on slide 15."
+   },
+   {
+    "img": "shots/gauss1827_art12_theorem_p20.png",
+    "page": "p. 20",
+    "caption": "Art. 12: the linear element and the theorem that development keeps the measure of curvature.",
+    "quote": "THEOREM. If a curved surface is developed upon any other surface whatever, the measure of curvature in each point remains unchanged.",
+    "hl": [
+     [
+      225,
+      692,
+      1351,
+      774
+     ]
+    ],
+    "cited": "The highlighted passage is the theorem at the end of Art. 12 on p. 20: if a curved surface is developed upon any other surface whatever, the measure of curvature in each point remains unchanged. Above it the page gives the linear element as the square root of E dp squared plus 2 F dp dq plus G dq squared, and says this expression alone is sufficient to find the measure of curvature.",
+    "why": "Slide 3 quotes this theorem word for word and writes the same linear element as ds squared = E dp squared + 2F dp dq + G dq squared. Slide 2 states that lengths fix the curvature K, and slide 21 closes with Art. 12: a rule that returns all the listed lengths cannot have K = 0."
+   },
+   {
+    "img": "shots/gauss1827_art12_developable_p21.png",
+    "page": "p. 21",
+    "caption": "Art. 12, next page: integral curvature kept; surfaces developable upon a plane have measure of curvature zero.",
+    "quote": "Also it is evident that any finite part whatever of the curved surface will retain the same integral curvature after development upon another surface. Surfaces developable upon a plane constitute the particular case to which geometers have heretofore restricted their attention. Our theory shows at once that the measure of curvature at every point of such surfaces is equal to zero.",
+    "hl": [
+     [
+      55,
+      241,
+      1170,
+      348
+     ]
+    ],
+    "cited": "The highlighted passage on p. 21 says that surfaces developable upon a plane are the particular case geometers studied before, and that the measure of curvature at every point of such surfaces is equal to zero. The line above it says any finite part of the surface keeps the same integral curvature after development.",
+    "why": "Slide 3 ends with this statement: on p. 21 Gauss adds that surfaces which can be developed on a plane have curvature zero at every point. The deck's table row for the plane, K = 0 and lays flat with lengths kept, rests on it."
+   },
+   {
+    "img": "shots/gauss1827_art19_formula_p28.png",
+    "page": "p. 28",
+    "caption": "Art. 19: with F = 0, E = 1 and sqrt(G) = m, the measure of curvature k = -(1/m) d2m/dp2.",
+    "quote": "or, setting √G = m, k = −(1/m)·∂²m/∂p², dθ = −(∂m/∂p)·dq [formula read from the page image]. Generally speaking, m will be a function of p, q, and m dq the expression for the element of any line whatever of the second system.",
+    "hl": [
+     [
+      225,
+      891,
+      1064,
+      1018
+     ]
+    ],
+    "cited": "The highlighted lines on p. 28 set the square root of G equal to m and give k = minus 1 over m times the second derivative of m with respect to p, and d theta = minus the derivative of m with respect to p times dq. The text before it takes F = 0 and E = 1, and the text after it says m dq is the element of a line of the second system, with m = 0 and the derivative of m equal to 1 at p = 0.",
+    "why": "Slide 12 prints this formula for K and uses it twice: m = p gives K = 0 for the plane, and m = R sin(p/R) gives K = 1 over R squared. Slide 13 takes the starting values m = 0 and rate 1 at the Pole from the same page."
+   },
+   {
+    "img": "shots/gauss1827_art20_p29.png",
+    "page": "p. 29",
+    "caption": "Art. 20, start: a triangle formed by shortest lines and its integral curvature.",
+    "quote": "We have thus on the curved surface a triangle formed by shortest lines. [...] Let us now examine the integral curvature of this triangle, which is equal to ∫ k dσ,",
+    "hl": [
+     [
+      775,
+      575,
+      1152,
+      609
+     ],
+     [
+      39,
+      609,
+      605,
+      643
+     ],
+     [
+      721,
+      846,
+      1152,
+      887
+     ],
+     [
+      39,
+      882,
+      613,
+      921
+     ],
+     [
+      530,
+      925,
+      665,
+      975
+     ]
+    ],
+    "cited": "The highlighted words on p. 29, in Art. 20, read: let us now examine the integral curvature of this triangle, which is equal to. The integral of k d sigma follows on the next line. Earlier in the same paragraph Gauss says the points A, B and C give a triangle formed by shortest lines on the curved surface.",
+    "why": "Slide 15 cites Art. 20, pp. 29 to 30, for the statement that in a triangle made of shortest lines the angle sum minus 180 degrees equals the curvature added up over the triangle. This page sets up that triangle and its integral curvature."
+   },
+   {
+    "img": "shots/gauss1827_art20_p30.png",
+    "page": "p. 30",
+    "caption": "Art. 20, result: integral curvature = A + B + C − π; the excess theorem in words.",
+    "quote": "Now by a second integration, taken from q = 0 to q = A, we obtain for the integral curvature A + θ′ − θ°, or A + B + C − π. [...] The excess over 180° of the sum of the angles of a triangle formed by shortest lines on a concavo-concave curved surface, or the deficit from 180° of the sum of the angles of a triangle formed by shortest lines on a concavo-convex curved surface, is measured by the area of the part of the sphere which corresponds, through the directions of the normals, to that triangle, if the whole surface of the sphere is set equal to 720 degrees.",
+    "hl": [
+     [
+      239,
+      575,
+      1386,
+      768
+     ],
+     [
+      256,
+      1071,
+      1384,
+      1273
+     ]
+    ],
+    "cited": "Two passages on p. 30 are highlighted. The first gives the integral curvature after the second integration, from q = 0 to q = A, as A + B + C minus pi. The second states the theorem in words: the excess over 180 degrees of the angle sum of a triangle formed by shortest lines is measured by the area of the corresponding part of the sphere, with the whole sphere set equal to 720 degrees.",
+    "why": "Slide 15 writes this result as A + B + C minus pi = the integral of K over the triangle, and from it K = excess divided by area. Slide 21 uses the same rule for the triangle test."
+   },
+   {
+    "img": "shots/gauss1827_art28_triangle_p43.png",
+    "page": "p. 43",
+    "caption": "Art. 28: the Hohehagen, Brocken, Inselberg triangle, excess 14\".85348.",
+    "quote": "Thus, e. g., in the greatest of the triangles which we have measured in recent years, namely, that between the points Hohehagen, Brocken, Inselberg, where the excess of the sum of the angles was 14\".85348, the calculation gave the following reductions to be applied to the angles: Hohehagen −4\".95113 Brocken −4\".95104 Inselberg −4\".95131.",
+    "hl": [
+     [
+      73,
+      384,
+      1193,
+      526
+     ]
+    ],
+    "cited": "The highlighted passage on p. 43, in Art. 28, names the greatest triangle Gauss measured, between Hohehagen, Brocken and Inselberg, and gives the excess of the sum of its angles as 14.85348 seconds of arc. Below it the page lists the reductions for the three angles, each close to minus 4.951 seconds.",
+    "why": "Slide 15 gives the excess of Gauss's own largest triangle as 14.85 seconds of arc and cites Art. 28, p. 43. Slide 21 repeats the 14.85 seconds in the summary."
+   },
+   {
+    "img": "shots/gauss1827_note_sides_p77.png",
+    "page": "p. 77",
+    "caption": "Translators' note to Art. 28: side lengths of the triangle.",
+    "quote": "Art. 28, p. 43, l. 7. The sides of this triangle are Hohehagen-Brocken, Inselberg-Hohehagen, Brocken-Inselberg, and their lengths are about 107, 85, 69 kilometers respectively, according to Wangerin.",
+    "hl": [
+     [
+      84,
+      377,
+      1202,
+      487
+     ]
+    ],
+    "cited": "The highlighted translators' note on p. 77 refers to Art. 28, p. 43, line 7. It says the sides of the triangle are Hohehagen to Brocken, Inselberg to Hohehagen and Brocken to Inselberg, and that their lengths are about 107, 85 and 69 kilometers, according to Wangerin.",
+    "why": "Slide 15 gives the sides of the Hohehagen, Brocken, Inselberg triangle as near 107, 85 and 69 km and cites the translators' note on p. 77 for them."
+   }
+  ]
+ },
+ "snyder1987": {
+  "apa": "Snyder, J. P. (1987). Map projections: A working manual (U.S. Geological Survey Professional Paper 1395). U.S. Government Printing Office. https://pubs.usgs.gov/pp/1395/report.pdf",
+  "url": "https://pubs.usgs.gov/pp/1395/report.pdf",
+  "file": "pdf/1987_Snyder_Map_Projections_Working_Manual.pdf",
+  "license": "public domain",
+  "shots": [
+   {
+    "img": "shots/snyder1987_summary_p191.png",
+    "page": "p. 191 (PDF page 203)",
+    "caption": "Azimuthal Equidistant projection, summary.",
+    "quote": "Distances measured from the center are true. Distances not measured along radii from the center are not correct. [...] Parallels on the polar projection are circles spaced at true intervals (equidistant for the sphere).",
+    "hl": [
+     [
+      236,
+      289,
+      952,
+      351
+     ],
+     [
+      237,
+      502,
+      1053,
+      564
+     ]
+    ],
+    "cited": "Three lines of the summary on p. 191, Azimuthal Equidistant Projection, are highlighted. They say distances measured from the center are true, distances not measured along radii from the center are not correct, and parallels on the polar projection are circles spaced at true intervals.",
+    "why": "Slide 5 describes its flat disc as a plane with the North Pole at the centre, where each latitude circle has the radius measured along the meridian. These lines state the same properties for the polar azimuthal equidistant map that slide 14 names."
+   },
+   {
+    "img": "shots/snyder1987_features_p192.png",
+    "page": "p. 192 (PDF page 204)",
+    "caption": "Features of the polar aspect.",
+    "quote": "The polar aspect (fig. 41A), like other polar azimuthals, has circles for parallels of latitude, all centered about the North or South Pole, and equally spaced radii of these circles for meridians. The parallels are, however, spaced equidistantly on the spherical form (or according to actual parallel spacings on the ellipsoid). A world map can extend to the opposite pole, but distortion becomes infinite. Even though the map is finite, the point for the opposite pole is shown as a circle twice the radius of the mapped Equator, thus giving an infinite scale factor along that circle. Likewise, the countries of the outer hemisphere are visibly increasingly distorted as the distance from the center increases, while the inner hemisphere has little enough distortion to appear rather satisfactory to the eye, although the east-west scale along the Equator is almost 60 percent greater than the scale at the center.",
+    "hl": [
+     [
+      354,
+      312,
+      1174,
+      641
+     ]
+    ],
+    "cited": "The highlighted paragraph on p. 192 describes the polar aspect: circles for parallels centered on the Pole, equally spaced, with straight radii for meridians. It says the opposite pole is shown as a circle twice the radius of the mapped Equator, and that the east-west scale along the Equator is almost 60 percent greater than the scale at the center.",
+    "why": "It supports the flat disc column on slide 5, where a degree of longitude on the disc is longer than on the sphere at every latitude and the stretch grows toward the south. Slide 14 cites Snyder for the scale of this map type."
+   },
+   {
+    "img": "shots/snyder1987_formulas_p195.png",
+    "page": "p. 195 (PDF page 207)",
+    "caption": "Formulas for the sphere, north polar aspect, with the scale factors k and h.",
+    "quote": "The term k′ is the scale factor in a direction perpendicular to the radius from the center of the map, not along the parallel, except in the polar aspect. The scale factor h′ in the direction of the radius is 1.0. For the north polar aspect, with φ₁ = 90°, x = R(π/2 − φ) sin (λ − λ₀) (25-3) y = −R(π/2 − φ) cos (λ − λ₀) (25-4) k = (π/2 − φ)/cos φ (25-5) h = 1.0 ρ = R(π/2 − φ) (25-6) θ = λ − λ₀ (20-9)",
+    "hl": [
+     [
+      234,
+      892,
+      1051,
+      981
+     ],
+     [
+      257,
+      972,
+      1051,
+      981
+     ],
+     [
+      257,
+      979,
+      1051,
+      1197
+     ]
+    ],
+    "cited": "The highlighted part of p. 195 gives the formulas for the north polar aspect on the sphere. Equation 25-5 is k = (pi/2 minus phi) over cos phi, and h = 1.0. The lines above say k is the scale factor perpendicular to the radius from the center and h is the scale factor along the radius.",
+    "why": "Slide 5 says the last column of its table equals this scale factor along a parallel, k = (pi/2 minus phi) over cos phi, and cites eq. 25-5. Slide 14 cites the same equation for the scale of a polar azimuthal equidistant map."
+   }
+  ]
+ }
+}

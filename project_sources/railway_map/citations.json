@@ -1,0 +1,32 @@
+{
+ "map_osm_tar_railway": {
+  "apa": "OpenStreetMap contributors. (2026). OpenStreetMap: Railway ways tagged railway=rail and usage=main, bounding box 33.0 to 30.4 S, 121.3 to 137.9 E [Data set]. OpenStreetMap Foundation. Retrieved October 20, 2026, from https://www.openstreetmap.org via the Overpass API.",
+  "url": "https://overpass-api.de/api/interpreter",
+  "file": "railway_map/web/osm/tar_rail_ways/rail_main_ways.json",
+  "license": "Open Database License (ODbL) 1.0, attribution: (c) OpenStreetMap contributors",
+  "query": "[out:json][timeout:240]; way[\"railway\"=\"rail\"][\"usage\"=\"main\"](-33.0,121.3,-30.4,137.9); out geom tags;",
+  "osm_base_timestamp": "2026-10-20T20:54:03Z",
+  "shots": []
+ },
+ "map_ne_50m_countries": {
+  "apa": "Natural Earth. (2022). Admin 0: Countries, 1:50m scale (Version 5.2.0-pre) [Data set]. Retrieved October 20, 2026, from https://github.com/nvkelso/natural-earth-vector",
+  "url": "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_50m_admin_0_countries.geojson",
+  "file": "railway_map/web/ne_50m_admin_0_countries/ne_50m_admin_0_countries.geojson",
+  "license": "public domain",
+  "shots": []
+ },
+ "map_ne_10m_admin1_lines": {
+  "apa": "Natural Earth. (2022). Admin 1: States, provinces, boundary lines, 1:10m scale (Version 5.2.0-pre) [Data set]. Retrieved October 20, 2026, from https://github.com/nvkelso/natural-earth-vector",
+  "url": "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_admin_1_states_provinces_lines.geojson",
+  "file": "railway_map/web/ne_10m_admin_1_lines/ne_10m_admin_1_states_provinces_lines.geojson",
+  "license": "public domain",
+  "shots": []
+ },
+ "map_ne_10m_lakes": {
+  "apa": "Natural Earth. (2021). Lakes and reservoirs, 1:10m scale (Version 5.2.0-pre) [Data set]. Retrieved October 20, 2026, from https://github.com/nvkelso/natural-earth-vector",
+  "url": "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_lakes.geojson",
+  "file": "railway_map/web/ne_10m_lakes/ne_10m_lakes.geojson",
+  "license": "public domain",
+  "shots": []
+ }
+}

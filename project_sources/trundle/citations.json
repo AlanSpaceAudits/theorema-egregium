@@ -1,0 +1,106 @@
+{
+ "trundle_fromjesse_2024": {
+  "apa": "fromjesse. (2024, July 5). Trundle town! Measuring physical surface distance of one arcminute of longitude at 48 North [Video]. YouTube. https://youtu.be/NX3h5nklXVI",
+  "url": "https://youtu.be/NX3h5nklXVI",
+  "file": "web/trundle_fromjesse_2024.info.json",
+  "license": "copyrighted, excerpt only (video frames)",
+  "shots": [
+   {
+    "img": "shots/trundle_fromjesse_0344_total_station.png",
+    "page": "3:44",
+    "caption": "Nikon total station display, slope distance between the two ends",
+    "quote": "HA: 0°00'11\" VA: -0°06'31\" SDx 1246.0604"
+   },
+   {
+    "img": "shots/trundle_fromjesse_0400_sheet_on_screen.png",
+    "page": "4:00",
+    "caption": "Companion spreadsheet as shown in the video: wheel legs, wheel average, total station distance, end longitudes",
+    "quote": "Trundle wheel Westbound 1252.9 meters / Trundle wheel Eastbound 1249.7 meters / Trundle wheel Average 1251.3 meters / Total Station Distance 1246.1 meters / Google Earth Distance 1245.6 meters / Longitude at West End: -123.248106 degrees / Longitude at East End: -123.231381 degrees / East-West distance: 1.0035 Arc minutes"
+   }
+  ]
+ },
+ "trundle_fromjesse_sheet": {
+  "apa": "fromjesse. (2024). Companion spreadsheet, updated [Data set]. Google Sheets. https://docs.google.com/spreadsheets/d/1yvQ3nBPFUjeT3t_uIBK6gySN7Of105Dedb7h-WedNAE/edit?gid=0#gid=0",
+  "url": "https://docs.google.com/spreadsheets/d/1yvQ3nBPFUjeT3t_uIBK6gySN7Of105Dedb7h-WedNAE/edit?gid=0#gid=0",
+  "file": "web/trundle_fromjesse_sheet.xlsx",
+  "license": "copyrighted, excerpt only",
+  "accessed": "2026-10-17",
+  "shots": [
+   {
+    "img": "shots/trundle_fromjesse_sheet_A1-D15_values.png",
+    "page": "Sheet1!A1:D15 (values)",
+    "caption": "Spreadsheet cells used by the sim: wheel legs and average (B2:B4), total station (B5), end longitudes (B8:B9)",
+    "quote": "Trundle Wheel Westbound 1252.9 meters / Trundle Wheel Eastbound 1249.7 meters / Trundle Wheel Average 1251.3 meters / Total Station Distance 1246.1 meters / Longitude at West End: -123.248106 degrees / Longitude at East End: -123.231381 degrees"
+   },
+   {
+    "img": "shots/trundle_fromjesse_sheet_A1-D15_formulas.png",
+    "page": "Sheet1!A1:D15 (formulas)",
+    "caption": "Same range with formulas: B4 is the mean of B2:B3, B11 is the longitude difference in arc minutes",
+    "quote": "=AVERAGE(B2:B3) / =(B8-B9)*60"
+   }
+  ]
+ },
+ "trundle_fromjesse_kml": {
+  "apa": "fromjesse. (2024). Longitudal study 003 WA USA updated to have exact line endpoints from GPS [KML file]. Google Drive. https://drive.google.com/drive/folders/1PWnjdBXzMEG6cEyzBqxsNgWxOVvLZjX9",
+  "url": "https://drive.google.com/drive/folders/1PWnjdBXzMEG6cEyzBqxsNgWxOVvLZjX9",
+  "file": "web/trundle_fromjesse_endpoints.kml",
+  "license": "copyrighted, excerpt only",
+  "accessed": "2026-10-17",
+  "shots": [
+   {
+    "img": "shots/trundle_fromjesse_kml_endpoints.png",
+    "page": "Placemarks (GPS end points)",
+    "caption": "Averaged GPS end points of the line, latitude and longitude of both ends",
+    "quote": "GPS 48.105205,-123.248106 / GPS 48.105111,-123.231381"
+   }
+  ]
+ },
+ "trundle_roohif_2024": {
+  "apa": "roohif. (2024, June 18). Taking you all down to TRUNDLE TOWN! [Video]. YouTube. https://youtu.be/-g-437wi9Ds",
+  "url": "https://youtu.be/-g-437wi9Ds",
+  "file": "web/trundle_roohif_2024.info.json",
+  "license": "copyrighted, excerpt only (video frames)",
+  "shots": [
+   {
+    "img": "shots/trundle_roohif_0350_endpoints.png",
+    "page": "3:50",
+    "caption": "End coordinates of the line (START is the east end, END is the west end)",
+    "quote": "START 33.802284 S 151.215225 E / END 33.802425 S 151.203674 E / 0.011551 degrees or 0.693 arc minutes"
+   },
+   {
+    "img": "shots/trundle_roohif_0400_wheel_counters.png",
+    "page": "4:00",
+    "caption": "Trundle wheel counters at the end of each leg",
+    "quote": "First Leg / Second Leg"
+   },
+   {
+    "img": "shots/trundle_roohif_0415_wheel_distances.png",
+    "page": "4:15",
+    "caption": "Wheel distance for each leg and the average",
+    "quote": "1st Leg 1,076.2 m / 2nd Leg 1,075.0 m / Average 1,075.6 m"
+   }
+  ]
+ },
+ "trundle_roohif_gps_data": {
+  "apa": "roohif. (2024). GPS_data.xlsx [Data set]. GitHub. https://github.com/roohif/longitude",
+  "url": "https://raw.githubusercontent.com/roohif/longitude/main/GPS_data.xlsx",
+  "file": "web/trundle_roohif_GPS_data.xlsx",
+  "license": "copyrighted, excerpt only",
+  "accessed": "2026-10-17",
+  "commit": "1699c2808a (2024-06-18, \"GPS data in Excel\")",
+  "shots": [
+   {
+    "img": "shots/trundle_roohif_GPS_data_A1-C38_east_end.png",
+    "page": "Data!A1:C38",
+    "caption": "Start of the log at the east end; rows 2 to 36 (23:20:38 to 23:21:12 UTC) hold the east end value",
+    "quote": "23:20:38 -33.802284 151.215225"
+   },
+   {
+    "img": "shots/trundle_roohif_GPS_data_A788-C834_west_end.png",
+    "page": "Data!A788:C834",
+    "caption": "Turn-around at the west end; rows 794 to 800 and 824 to 830 hold the west end value",
+    "quote": "23:33:50 -33.802425 151.203674"
+   }
+  ]
+ }
+}

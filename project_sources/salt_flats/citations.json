@@ -1,0 +1,191 @@
+{
+ "salt_short_builtmysteries_2026": {
+  "apa": "Built Mysteries. (2026, October 15). Utah built a railroad across a lake. Then the lake turned two different colors. [Video]. YouTube. https://www.youtube.com/watch?v=A_2YCf9X4X0",
+  "url": "https://youtube.com/shorts/A_2YCf9X4X0",
+  "file": "salt_flats/web/yt_meta/short.info.json",
+  "also": [
+   "salt_flats/web/yt_meta/short.en.vtt",
+   "salt_flats/web/yt_video/short.mp4"
+  ],
+  "license": "copyrighted, excerpt only (video frames)",
+  "shots": [
+   {
+    "img": "shots/salt_short_frames_straight_across.png",
+    "page": "0:05 and 0:11",
+    "caption": "Opening shot of the line on the causeway, and the map with the straight crossing",
+    "quote": "It's the Great Salt Lake, and a railroad runs straight across the middle of it."
+   },
+   {
+    "img": "shots/salt_short_frames_12mi_20mi.png",
+    "page": "0:15 and 0:25",
+    "caption": "The 1904 wooden bridge (about 12 mi) and the 1950s rock fill (about 20 mi)",
+    "quote": "At first, the tracks crossed on a wooden bridge almost 12 mi long ... In the 1950s, the railroad replaced it with a solid wall of rock and gravel, almost 20 mi long."
+   },
+   {
+    "img": "shots/salt_short_frames_claims.png",
+    "page": "0:05, 0:11, 0:15, 0:25",
+    "caption": "Four frames at the times of the spoken claims (straight across, 1904 route, 12 mi trestle, 20 mi fill)",
+    "quote": "In 1904, the Southern Pacific wanted a shortcut west, and instead of going around the lake, it went straight across."
+   }
+  ],
+  "note": "Words are from the automatic English captions (short.en.vtt). Channel Built Mysteries, uploaded 2026-10-15, 70 s."
+ },
+ "salt_sp_1987": {
+  "apa": "Southern Pacific Transportation Company, Sacramento Division. (1987). [Letter of welcome, maps and elevation chart for American Railroad Engineering Association members attending the Fall Technical Conference, Great Salt Lake field trip] [Unpublished booklet, signed by J. W. Lynch, Superintendent, and J. J. Deis, Division Engineer]. Ogden, UT: Southern Pacific Transportation Company.",
+  "url": "https://utahrails.net/pdf/SP_Great-Salt-Lake_Fall-1987-AREA.pdf",
+  "file": "salt_flats/pdf/area1987/SP_Great-Salt-Lake_Fall-1987-AREA.pdf",
+  "license": "copyrighted, excerpt only",
+  "shots": [
+   {
+    "img": "shots/salt_sp1987_p1_lucin_mileposts.png",
+    "page": "p. 1 (unnumbered; PDF p. 2)",
+    "caption": "End points of the Lucin Cutoff by milepost",
+    "quote": "The Lucin Cutoff, between Lucin, Utah (MP 678.5) and Ogden, Utah (MP 781.1)"
+   },
+   {
+    "img": "shots/salt_sp1987_p2_length_crossing.png",
+    "page": "p. 2 (PDF p. 3)",
+    "caption": "Length of the Cutoff, mileposts of the five parts of the lake crossing, length of the trestle",
+    "quote": "The new Cutoff was 102.6 miles long, at a cost of 8.4 million dollars. Originally, the Great Salt Lake crossing was as follows: 1. Rambo Fill, MP 735.2 (Lakeside) to MP 739.7 (Tresend). 2. Great Salt Lake Trestle, MP 739.7 (Tresend) to MP 752.2 (Bridge). Built to elevation of 4,217 feet above sea level (Hood's Datum). 3. Saline Fill, MP 752.2 (Bridge) to MP 753.6 (Saline). 4. Promontory Peninsula, MP 753.6 (Saline) to MP 759.0 (Promontory Point). 5. Bagley Fill, MP 759.0 (Promontory Point) to MP 766.62 (Little Mountain). ... The trestle, when completed, was to be twelve miles long, consisting of 28,250 piles, ranging from 100-150 feet in length."
+   },
+   {
+    "img": "shots/salt_sp1987_map_mileposts.png",
+    "page": "map, Sacramento Division sheet no. 2 (PDF p. 7)",
+    "caption": "Route map with milepost flags 678.5 (Lucin), 735.2 (Lakeside) and 781.1 (Ogden)",
+    "quote": "678.5 ... 735.2 ... 781.1"
+   },
+   {
+    "img": "shots/salt_sp1987_chart_12mile.png",
+    "page": "chart 'Elevations of the Great Salt Lake', dated Sept. 29, 1987 (PDF p. 8)",
+    "caption": "Time line labels for the 1902 trestle and the 1959 causeway",
+    "quote": "LUCIN CUT-OFF AND 12-MILE TRESTLE CONSTRUCTED 1902 ... 12-MILE CAUSEWAY TO REPLACE TRESTLE BUILT 1959"
+   }
+  ]
+ },
+ "salt_nrhp_1972": {
+  "apa": "U.S. National Park Service. (1972). Southern Pacific Railroad: Ogden-Lucin Cut-Off Trestle (National Register of Historic Places nomination, reference no. 72001257; file includes the 2018 removal request) [Nomination form]. U.S. Department of the Interior.",
+  "url": "https://npgallery.nps.gov/GetAsset/833377c9-4d2d-4fc3-b339-d91ffc7c40b5",
+  "file": "salt_flats/pdf/nps/salt_nps_1972_nrhp_72001257.pdf",
+  "license": "public domain (U.S. Government work)",
+  "shots": [
+   {
+    "img": "shots/salt_nps1972_p9_trestle_1188mi.png",
+    "page": "Section 7, Description (PDF p. 9)",
+    "caption": "Lengths of temporary and permanent trestle and fill; length of the trestle in 1971",
+    "quote": "Approximately 12 miles of temporary trestle (four - 40 foot piles per bent) and 11 miles of permanent trestle (five - 70 foot piles per bent) were constructed in addition to the 10 miles of fill. ... The present 11.88 mile trestle consists of the original permanent structure in addition to the engle siding which is built over the temporary trestle piling. Today the trestle supplements the adjacent causeway (c. 1959) with overload and emergency rail traffic."
+   },
+   {
+    "img": "shots/salt_nps1972_p10_route.png",
+    "page": "Section 8, Significance (PDF p. 10)",
+    "caption": "Route of the cut-off from Ogden across the lake to Lucin",
+    "quote": "The cut-off eliminated 44 miles of extreme grades and curves found on the original transcontinental route through the Promontory Mountains. The new route ran 20 miles west from Ogden to the Great Salt Lake, crossed the lake at Promontory Point, and continued for 50 miles over the Great Salt Desert to Lucin."
+   }
+  ]
+ },
+ "salt_gnis_2026": {
+  "apa": "U.S. Geological Survey. (2026). Geographic Names Information System (GNIS) domestic names for UT (published 20260929) [Data set]. U.S. Geological Survey.",
+  "url": "https://prd-tnm.s3.amazonaws.com/StagedProducts/GeographicNames/DomesticNames/DomesticNames_UT_Text.zip",
+  "file": "salt_flats/web/gnis/DomesticNames_UT_Text.zip",
+  "license": "public domain (U.S. Government work)",
+  "record_type": "federal gazetteer; positions given to 1 arc second (prim_lat_dms / prim_long_dms) and in decimal degrees.",
+  "data": {
+   "1437627 Lucin (Populated Place, Box Elder, Lucin quad)": [
+    41.3482572,
+    -113.9050093
+   ],
+   "1444049 Ogden (Populated Place, Weber, Ogden quad)": [
+    41.223,
+    -111.9738304
+   ],
+   "1437612 Lakeside (Populated Place, Box Elder, Lakeside quad)": [
+    41.2224303,
+    -112.8655343
+   ],
+   "1437706 Tresend (Populated Place, Box Elder, Lakeside quad)": [
+    41.2207642,
+    -112.7605308
+   ],
+   "1437637 Midlake (Populated Place, Box Elder, Carrington Island NW quad)": [
+    41.2238206,
+    -112.6646917
+   ],
+   "1437675 Saline (Populated Place, Box Elder, Promontory Point quad)": [
+    41.2141013,
+    -112.472735
+   ]
+  },
+  "shots": [],
+  "note": "Data file, no page image. No GNIS record named 'Bridge' was found in Box Elder County."
+ },
+ "salt_osm_2026": {
+  "apa": "OpenStreetMap contributors. (2026). Railway ways (railway=rail) of the UP Lakeside Subdivision between Lucin and Ogden, abandoned way 101676678 'former trestle', place nodes and Union Station (way 40893828) [Data set, Overpass API extract, 17 October 2026]. OpenStreetMap.",
+  "url": "https://overpass-api.de/api/interpreter",
+  "file": [
+   "salt_flats/web/osm/rail_gsl.json",
+   "salt_flats/web/osm/features_gsl.json",
+   "salt_flats/web/osm/rail_lucin_ogden.json"
+  ],
+  "license": "ODbL 1.0 (OpenStreetMap)",
+  "record_type": "open map data, used for track geometry and the trestle end points. Not an official survey record.",
+  "data": {
+   "trestle west end (way 101676678)": [
+    41.2208093,
+    -112.7615536
+   ],
+   "trestle east end (way 101676678)": [
+    41.2164876,
+    -112.5242482
+   ],
+   "Lucin end, track node nearest GNIS Lucin": [
+    41.3493296,
+    -113.9067596
+   ],
+   "Ogden end, track node nearest Union Station": [
+    41.2205825,
+    -111.9824921
+   ],
+   "Union Station (way 40893828), bounding box centre": [
+    41.22117125,
+    -111.97972335
+   ]
+  },
+  "shots": []
+ },
+ "salt_usgs_1969": {
+  "apa": "U.S. Geological Survey. (1969). Lakeside, Utah; Carrington Island NE, Utah; Carrington Island NW, Utah [7.5-minute orthophotomap (topographic) quadrangles, 1:24,000]. U.S. Geological Survey.",
+  "url": "https://prd-tnm.s3.amazonaws.com/StagedProducts/Maps/HistoricalTopo/PDF/UT/24000/UT_Lakeside_250247_1969_24000_geo.pdf ; https://prd-tnm.s3.amazonaws.com/StagedProducts/Maps/HistoricalTopo/PDF/UT/24000/UT_Carrington%20Island%20NE_248450_1969_24000_geo.pdf ; https://prd-tnm.s3.amazonaws.com/StagedProducts/Maps/HistoricalTopo/PDF/UT/24000/UT_Carrington%20Island%20NW_248452_1969_24000_geo.pdf",
+  "file": [
+   "salt_flats/pdf/usgs_lakeside_1969/UT_Lakeside_250247_1969_24000_geo.pdf",
+   "salt_flats/pdf/usgs_cine_1969/UT_Carrington_Island_NE_248450_1969_24000_geo.pdf",
+   "salt_flats/pdf/usgs_cinw_1969/UT_Carrington_Island_NW_248452_1969_24000_geo.pdf"
+  ],
+  "license": "public domain (U.S. Government work)",
+  "shots": [
+   {
+    "img": "shots/salt_usgs1969_lakeside_tresend.png",
+    "page": "Lakeside, Utah, 1969 sheet: map face near the east neatline, and bottom margin",
+    "caption": "West end of the Great Salt Lake trestle at Tresend (box); sheet datum and accuracy note in the margin",
+    "quote": "Tresend ... Polyconic projection. 1927 North American datum ... THIS MAP COMPLIES WITH NATIONAL MAP ACCURACY STANDARDS"
+   },
+   {
+    "img": "shots/salt_usgs1969_cine_bridge.png",
+    "page": "Carrington Island NE, Utah, 1969 sheet: map face near the east neatline, and bottom margin",
+    "caption": "East end of the trestle at Bridge, where the 1959 causeway rejoins the old line (box); sheet datum note in the margin",
+    "quote": "Bridge ... Lucin BM 4210 ... Polyconic projection. 1927 North American datum"
+   }
+  ],
+  "note": "Trestle end coordinates read from these sheets are CALC values (NOTES_SALT.md, data set B2)."
+ },
+ "salt_noaa_ncat": {
+  "apa": "National Geodetic Survey. (2026). NGS Coordinate Conversion and Transformation Tool (NCAT) [Web service]. National Oceanic and Atmospheric Administration.",
+  "url": "https://geodesy.noaa.gov/api/ncat/llh",
+  "file": [
+   "salt_flats/web/ncat/tresend.json",
+   "salt_flats/web/ncat/bridge.json",
+   "salt_flats/web/ncat/corner.json"
+  ],
+  "license": "public domain (U.S. Government work)",
+  "shots": [],
+  "note": "NAD27 to NAD83(2011) shifts for the two trestle ends. Data output, no page image."
+ }
+}

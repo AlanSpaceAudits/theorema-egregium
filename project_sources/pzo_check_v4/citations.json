@@ -1,0 +1,92 @@
+{
+ "pz4_dixon_1981": {
+  "apa": "Dixon, R. J. (1981). Ten years of concrete sleepers on the Australian National Railways (ID/WG.347/35). Workshop on Cement and Concrete Products, Brisbane, Australia, 18-29 May 1981. United Nations Industrial Development Organization.",
+  "url": "https://downloads.unido.org/ot/47/91/4791699/10001-15000_10963.pdf",
+  "license": "UNIDO fair use policy: may be quoted for education and research with credit",
+  "note": "The last digit of the symbol ID/WG.347/3x is not clear in the scan; 35 is the best reading. UNIDO document number 10963. The deck's address (unido.org/publications/ot/9645984/pdf) returned HTTP 403.",
+  "shots": [
+   {
+    "img": "shots/pz4_dixon_1981_pdf04_title.png",
+    "page": "title page (PDF p. 4)",
+    "caption": "Title page: author, workshop and date.",
+    "quote": "TEN YEARS OF CONCRETE SLEEPERS ON THE AUSTRALIAN NATIONAL RAILWAYS by R.J. Dixon",
+    "hl": [
+     [
+      270,
+      672,
+      1075,
+      698
+     ],
+     [
+      600,
+      832,
+      760,
+      858
+     ],
+     [
+      210,
+      412,
+      700,
+      478
+     ]
+    ]
+   },
+   {
+    "img": "shots/pz4_dixon_1981_p1_1780_km_sleepers.png",
+    "page": "p. 1 (PDF p. 5)",
+    "caption": "Sleepers installed to date, the 1780 km length and the sleepers still to be laid.",
+    "quote": "Reference to a map of Australia shows the Trans-Australian Railway extends from Port Pirie through Port Augusta to Kalgoorlie, a distance of 1780 km and the Tarcoola to Alice Springs Railway covers a distance of 830 km.",
+    "quote2": "The programmed rate of insertion for this project is 240 000-No. concrete sleepers per annum; some 1 470 000-No. sleepers or 980 km of track is still to be completed.",
+    "quote3": "Trans-Australian Railway 1 200 000",
+    "hl": [
+     [
+      288,
+      798,
+      1106,
+      872
+     ],
+     [
+      288,
+      969,
+      1132,
+      1068
+     ],
+     [
+      310,
+      688,
+      1058,
+      714
+     ]
+    ]
+   },
+   {
+    "img": "shots/pz4_dixon_1981_p2_timber_1640_per_km.png",
+    "page": "p. 2 (PDF p. 6)",
+    "caption": "Timber sleeper density on the Trans-Australian Railway before the concrete programme.",
+    "quote": "At the time the railway track standard on the Trans-Australian Railway was 47 kg rails welded into 82 metre lengths on timber sleepers spaced at the rate of 1640 per kilometre. A light structure.",
+    "hl": [
+     [
+      264,
+      1474,
+      1104,
+      1548
+     ]
+    ]
+   },
+   {
+    "img": "shots/pz4_dixon_1981_p5_667_mm_1500_per_km.png",
+    "page": "p. 5 (PDF p. 9)",
+    "caption": "Concrete sleeper spacing adopted.",
+    "quote": "it was decided to adopt a closer spacing of 667 mm or 1 500 sleepers per kilometre.",
+    "hl": [
+     [
+      284,
+      375,
+      1064,
+      446
+     ]
+    ]
+   }
+  ]
+ }
+}

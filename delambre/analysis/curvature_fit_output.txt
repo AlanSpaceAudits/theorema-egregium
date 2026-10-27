@@ -1,0 +1,7 @@
+95 triangles with observed sums and three printed sides; left out for a missing printed side: none
+mean area 72,850,550 square toises = 277 km2
+observed angle sums: K = 1.3188e-13 per square toise = 3.4717e-14 per square metre; R = 2,753,661 toises = 5,367.0 km (1-sigma 2,650,357 to 2,870,071 toises = 5,166 to 5,594 km)
+  K / sigma = 12.6 (distance from K = 0, a plane); scatter of sum about the fit 1.76 arcsec
+with a constant bias per triangle: bias +0.24 arcsec
+  slope: K = 1.1966e-13 per square toise = 3.1499e-14 per square metre; R = 2,890,886 toises = 5,634.4 km (1-sigma 2,663,384 to 3,188,822 toises = 5,191 to 6,215 km)
+the survey's own printed excess (for comparison only): K = 9.3249e-14 per square toise = 2.4547e-14 per square metre; R = 3,274,754 toises = 6,382.6 km

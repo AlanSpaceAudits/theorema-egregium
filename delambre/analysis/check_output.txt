@@ -1,0 +1,28 @@
+1. Observed angle sums against the printed sum line (vol. 1)
+   DM.60: calc -3600.00 printed +0.00  
+   115 triangles, 1 mismatches
+
+2. Sine rule: side / sin(angle - E/3), relative spread
+   vol. 2 spherical angles: 115 triangles, max spread 1.5e-04 (DM.68)
+   above 1e-5: DM.68 1.5e-04
+   above 1e-5: DM.61 5.9e-05
+   above 1e-5: DM.87 2.2e-05
+   above 1e-5: DM.44 2.2e-05
+   above 1e-5: DM.29 1.4e-05
+   vol. 1 observed angles: 95 triangles, max spread 5.8e-05 (DM.61), median 8.4e-07
+
+3. Sides printed in more than one triangle
+   Cassel - Helfaut: [(10735.3041, 'DM.4'), (10735.2833, 'DM.5')]  difference 0.0208 toise
+   Fiefs - Helfaut: [(11317.8639, 'DM.5'), (11317.9013, 'DM.10')]  difference 0.0374 toise
+   Béthune - Fiefs: [(11754.5611, 'DM.7'), (11754.7597, 'DM.8'), (11754.5885, 'DM.10')]  difference 0.1986 toise
+   Béthune - Cassel: [(16191.6433, 'DM.7'), (16191.7072, 'DM.9')]  difference 0.0639 toise
+   Mailli - Villersbreton: [(12337.4122, 'DM.15'), (12337.1202, 'DM.20')]  difference 0.2920 toise
+   Arvillers - Villersbreton: [(8546.1433, 'DM.18'), (8545.8617, 'DM.21')]  difference 0.2816 toise
+   Amiens - Villersbreton: [(8065.8132, 'DM.22'), (8066.0602, 'DM.23')]  difference 0.2470 toise
+   Clermont - St.-Christophe: [(9557.6826, 'DM.28'), (9557.106, 'DM.29')]  difference 0.5766 toise
+   Dammartin - St.-Martin: [(12964.9017, 'DM.31'), (12964.5002, 'DM.32')]  difference 0.4015 toise
+   Clermont - Dammartin: [(20997.2711, 'DM.32'), (20997.4717, 'DM.33')]  difference 0.2006 toise
+   Dammartin - Jonquières: [(19428.1978, 'DM.33'), (19428.4787, 'DM.34')]  difference 0.2809 toise
+   Soême - Vouzon: [(11730.3715, 'DM.58'), (11731.1857, 'DM.60')]  difference 0.8142 toise
+   Ennordre - Soême: [(7487.9119, 'DM.62'), (7487.9511, 'DM.63')]  difference 0.0392 toise
+   13 shared sides, 13 differ by more than 0.0002 toise

@@ -13,6 +13,17 @@ Aether Cosmology Research Group. Pre-release draft, October 2026. Not peer revie
 - Click any formula card, record row or fact marked ⤢ to see the cited source pages.
 - `railway_lengths.kml` opens in Google Earth: the Port Augusta to Kalgoorlie line, Cook to Deakin, the Great Salt Lake trestle and the Lucin Cutoff, with their A and B ends.
 
+## Also in this repository
+
+| Item | Open | Folder | Author |
+|---|---|---|---|
+| Four Ways to Solve for k and R: derivations of the single-cut, two-cut, three-cut and triangle-excess methods, with a numerical test | [Read](https://alanspaceaudits.github.io/theorema-egregium/four_ways/) | `four_ways/` | Aether Cosmology Research Group |
+| The Shape of Distance (v23): presentation | [Launch](https://alanspaceaudits.github.io/theorema-egregium/shape_of_distance/) | `shape_of_distance/` | Pezzio |
+| Curvature measured from surveyors' triangles: report and the pre-declared analysis rule ([`RULE.md`](goose/RULE.md)) | [Read](https://alanspaceaudits.github.io/theorema-egregium/goose/) | `goose/` | Goose ([source repository](https://github.com/rooster-ninja/TheoremaEgregium_CurvatureMeasuredFromSurveyorsTriangles)) |
+| Gauss_Sim: desktop calculator for K and R from lengths measured on the surface (Rust). Build with `cargo run --release` | [Source](gauss_sim/) | `gauss_sim/` | Aether Cosmology Research Group |
+
+The copy in `goose/` holds the report page, its figures and its Markdown files. Its data, scripts, spreadsheet and source PDFs link to the author's repository.
+
 ## Sources
 
 `project_sources/` holds the sources the presentation cites: the page images with the cited passages marked, the source files, and one `citations.json` per folder (format in `project_sources/SCHEMA.md`). Copyrighted sources are included for reference and remain the property of their owners.

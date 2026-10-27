@@ -1,0 +1,11 @@
+[package]
+name = "gauss_sim"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+eframe = "0.37"
+egui_plot = "0.38"
+
+[profile.release]
+opt-level = 3

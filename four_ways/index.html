@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Four Ways to Solve for k and R</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=STIX+Two+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+/* Layout: single-column journal article, 40em measure, numbered sections, labelled equations. */
+:root{
+  --paper:#ffffff; --ink:#1b1d22; --mute:#5b6070; --rule:#d9dbe1; --accent:#1f4e79; --tint:#f3f5f9;
+  --serif:"STIX Two Text","STIX Two","Times New Roman",Times,serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#16181d;--ink:#e4e4e0;--mute:#9da2ae;--rule:#343843;--accent:#93b9e3;--tint:#1e2128;color-scheme:dark}}
+:root[data-theme="dark"]{--paper:#16181d;--ink:#e4e4e0;--mute:#9da2ae;--rule:#343843;--accent:#93b9e3;--tint:#1e2128;color-scheme:dark}
+body{background:var(--paper);color:var(--ink);font:18px/1.62 var(--serif);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+article{max-width:42em;margin:0 auto;padding-block:56px 96px}
+h1{font-weight:600;font-size:2.05em;line-height:1.15;text-align:center;text-wrap:balance;margin:0}
+.byline{text-align:center;color:var(--mute);margin:.6em 0 2.2em;font-style:italic}
+.abstract{border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:1em 0;margin-bottom:2.4em;font-size:.95em}
+.abstract b{font-variant:small-caps;letter-spacing:.04em}
+h2{font-weight:600;font-size:1.3em;margin:2.2em 0 .5em;text-wrap:balance}
+h2 .n,h3 .n{color:var(--accent);margin-right:.5em}
+h3{font-weight:600;font-style:italic;font-size:1.06em;margin:1.6em 0 .3em}
+p{margin:.7em 0}
+.tbl{overflow-x:auto;margin:1.2em 0}
+table{border-collapse:collapse;width:100%;font-size:.9em;font-variant-numeric:tabular-nums}
+caption{caption-side:top;text-align:left;font-style:italic;color:var(--mute);padding-bottom:.4em}
+th,td{text-align:left;vertical-align:top;padding:.35em .6em;border-bottom:1px solid var(--rule)}
+thead th{border-bottom:1.5px solid var(--ink);font-weight:600}
+tbody tr:last-child td{border-bottom:1.5px solid var(--ink)}
+td.num{text-align:right}
+.box{background:var(--tint);border-left:3px solid var(--accent);padding:.6em 1em;margin:1.2em 0}
+.box b{font-variant:small-caps;letter-spacing:.04em}
+ol.steps{padding-left:1.4em}
+ol.steps li{margin:.35em 0}
+mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;max-width:100%;padding:.15em 0}
+.refs p{padding-left:2em;text-indent:-2em}
+a{color:var(--accent)}
+</style>
+<script>
+window.MathJax={tex:{tags:"ams",inlineMath:[["\\(","\\)"]]},svg:{fontCache:"global"}};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.min.js"></script>
+
+</head>
+<body>
+<article>
+<h1>Four Ways to Solve for \(k\) and \(R\) from Surface Measurements</h1>
+<p class="byline">A worked analysis of the single-cut, two-cut, three-cut and triangle-excess methods</p>
+
+<div class="abstract"><b>Abstract.</b>
+This paper derives four methods that find the measure of curvature \(k\) and the radius \(R\) from measurements made only on the surface. All four methods start from one result of Gauss (1902, Art. 19). This result is the law of cosines for a surface of constant curvature. Each method reduces to one equation in the single unknown \(t=\sqrt{k}=1/R\). Every measured length enters this equation only as the product \(t\times\text{length}\), that is, as the length divided by \(R\). Each equation also contains the flat case \(k=0\) as its limit. The paper gives the derivation of each equation step by step, the first approximation, the exact root search and the error behavior. A numerical test on a sphere of radius \(R=6371\) km confirms each solver.</div>
+
+<h2><span class="n">1</span>Notation</h2>
+<p>All symbols in this table keep one meaning in the whole paper. Lengths are in one unit, for example kilometers. Angles are in radians unless the text gives degrees.</p>
+<div class="tbl"><table>
+<caption>Table 1. Symbols.</caption>
+<thead><tr><th>Symbol</th><th>Meaning</th><th>Unit</th></tr></thead>
+<tbody>
+<tr><td>\(O\)</td><td>The 0,0: the station where the two legs start</td><td>point</td></tr>
+<tr><td>\(p\)</td><td>Length along a leg from \(O\) (a shortest line)</td><td>length</td></tr>
+<tr><td>\(q\)</td><td>Direction of a leg at \(O\)</td><td>rad</td></tr>
+<tr><td>\(\Delta q\)</td><td>Angle between the two legs at \(O\)</td><td>rad</td></tr>
+<tr><td>\(h\)</td><td>\(\sin(\Delta q/2)\)</td><td>none</td></tr>
+<tr><td>\(s\)</td><td>Cut: the shortest line across between the two legs at distance \(p\)</td><td>length</td></tr>
+<tr><td>\(s_1,\ s_2\)</td><td>Cuts at \(p\) and at \(p/2\) (Way 2)</td><td>length</td></tr>
+<tr><td>\(s_-,\ s,\ s_+\)</td><td>Cuts at \(p-dp\), \(p\), \(p+dp\) (Way 3)</td><td>length</td></tr>
+<tr><td>\(dp\)</td><td>Step in \(p\) between two neighboring cuts (Way 3)</td><td>length</td></tr>
+<tr><td>\(m(p,q)\)</td><td>Gauss's reduced length: the scale of a small turn \(dq\) at distance \(p\)</td><td>length</td></tr>
+<tr><td>\(k\)</td><td>Gauss's measure of curvature</td><td>length\(^{-2}\)</td></tr>
+<tr><td>\(t\)</td><td>Trial value of \(\sqrt{k}\) (sphere) or \(\sqrt{-k}\) (saddle)</td><td>length\(^{-1}\)</td></tr>
+<tr><td>\(R\)</td><td>Radius: \(R=1/t\)</td><td>length</td></tr>
+<tr><td>\(m_k(u)\)</td><td>\(m\) on a surface of constant \(k\), evaluated at length \(u\)</td><td>length</td></tr>
+<tr><td>\(\mu\)</td><td>A half-cut converted to the \(m\) scale: \(\mu=m_k(s/2)\)</td><td>length</td></tr>
+<tr><td>\(\rho\)</td><td>Ratio of a measured length to its flat prediction</td><td>none</td></tr>
+<tr><td>\(g\)</td><td>Gap from flat in Way 2: \(g=2s_2-s_1\)</td><td>length</td></tr>
+<tr><td>\(f(t),\ f'(t)\)</td><td>Residual of a method and its derivative. \(f=0\) at the answer.</td><td>none</td></tr>
+<tr><td>\(k_0,\ R_0\)</td><td>First answer from a series expansion</td><td>as \(k\), \(R\)</td></tr>
+<tr><td>\(a,b,c\)</td><td>Sides of a triangle</td><td>length</td></tr>
+<tr><td>\(\alpha,\beta,\gamma\)</td><td>Angles of the triangle, opposite \(a,b,c\)</td><td>rad</td></tr>
+<tr><td>\(u\)</td><td>Half the perimeter: \(u=\tfrac12(a+b+c)\)</td><td>length</td></tr>
+<tr><td>\(\varepsilon\)</td><td>Measured excess: \(\alpha+\beta+\gamma-\pi\)</td><td>rad</td></tr>
+<tr><td>\(E(t)\)</td><td>Excess that a surface with scale \(t\) gives for sides \(a,b,c\)</td><td>rad</td></tr>
+<tr><td>\(A\)</td><td>Area of the triangle</td><td>length\(^2\)</td></tr>
+<tr><td>\(\sigma_\theta\)</td><td>Standard deviation of one observed angle</td><td>rad</td></tr>
+<tr><td>\(\sigma_i\)</td><td>Standard deviation of the excess \(\varepsilon_i\) of triangle \(i\)</td><td>rad</td></tr>
+<tr><td>\(w_i\)</td><td>Weight of triangle \(i\): \(w_i=1/\sigma_i^2\)</td><td>rad\(^{-2}\)</td></tr>
+<tr><td>\(\sigma_k\)</td><td>Standard deviation of the pooled \(k\)</td><td>length\(^{-2}\)</td></tr>
+</tbody></table></div>
+
+<h2><span class="n">2</span>The common basis</h2>
+
+<h3><span class="n">2.1</span>Gauss's measure of curvature</h3>
+<p>Gauss draws shortest lines out from one point \(O\). He labels each point by its distance \(p\) along the line and by the direction \(q\) of the line at \(O\). In these coordinates the line element is (Gauss, 1902, Art. 19, p. 28):</p>
+\begin{equation} ds^2 = dp^2 + m^2\,dq^2 \label{eq:ds} \end{equation}
+<p>The quantity \(m\) tells how fast two neighboring legs spread apart. At \(O\), \(m=0\) and \(\partial m/\partial p=1\). Gauss then gives the measure of curvature from \(m\) alone (Art. 19):</p>
+\begin{equation} k = -\frac{1}{m}\,\frac{\partial^2 m}{\partial p^2} \label{eq:gauss19} \end{equation}
+<p>Equation \eqref{eq:gauss19} uses only lengths on the surface. It contains no reference to a space outside the surface. On a plane the legs spread at a constant rate, so \(\partial^2 m/\partial p^2=0\) and \(k=0\).</p>
+
+<h3><span class="n">2.2</span>Surfaces of constant curvature</h3>
+<p>If \(k\) has the same value everywhere, Equation \eqref{eq:gauss19} becomes \(m''+k\,m=0\) with \(m(0)=0\) and \(m'(0)=1\). The solution is</p>
+\begin{equation} m_k(u)=\begin{cases}\dfrac{\sin(\sqrt{k}\,u)}{\sqrt{k}}, & k>0 \text{ (sphere)}\\[1.2ex] u, & k=0 \text{ (plane)}\\[1ex] \dfrac{\sinh(\sqrt{-k}\,u)}{\sqrt{-k}}, & k<0 \text{ (saddle)}\end{cases} \label{eq:mk} \end{equation}
+<p>For a sphere of radius \(R\), \(k=1/R^2\). Thus \(t=\sqrt{k}=1/R\). This is the link between \(k\) and \(R\) in all four ways:</p>
+\begin{equation} R=\frac{1}{\sqrt{k}}\ \ (k>0),\qquad R=\frac{1}{\sqrt{-k}}\ \ (k<0),\qquad \text{no } R\ \ (k=0) \label{eq:R} \end{equation}
+
+<h3><span class="n">2.3</span>The law of cosines with curvature</h3>
+<p>Take a triangle with sides \(a\) and \(b\) that meet at the angle \(\gamma\). The third side is \(c\). On a surface of constant \(k>0\), with \(t=\sqrt{k}\), the law of cosines is</p>
+\begin{equation} \cos(tc)=\cos(ta)\cos(tb)+\sin(ta)\sin(tb)\cos\gamma \label{eq:loc} \end{equation}
+<p>On a saddle, \(\cosh\) replaces \(\cos\), \(\sinh\) replaces \(\sin\), and the sign of the last term changes. The lengths enter Equation \eqref{eq:loc} only as \(ta\), \(tb\) and \(tc\), that is, as \(a/R\), \(b/R\) and \(c/R\). The value of \(t\) is therefore the one scale that makes the curved prediction agree with the measured lengths.</p>
+<p>The flat limit follows from \(\cos x\approx 1-x^2/2\) and \(\sin x\approx x\):</p>
+\begin{equation} 1-\tfrac12 t^2c^2 \approx \big(1-\tfrac12 t^2a^2\big)\big(1-\tfrac12 t^2b^2\big)+t^2ab\cos\gamma \label{eq:loc-exp} \end{equation}
+<p>The constant terms cancel. Division of the \(t^2\) terms by \(-\tfrac12 t^2\) gives the plane law of cosines:</p>
+\begin{equation} c^2=a^2+b^2-2ab\cos\gamma \label{eq:loc-flat} \end{equation}
+
+<h3><span class="n">2.4</span>The half-cut relation</h3>
+<p>Ways 1, 2 and 3 use one isosceles triangle. Its two legs of length \(p\) start at \(O\) with the angle \(\Delta q\) between them. The cut \(s\) closes the triangle. Put \(a=b=p\), \(c=s\) and \(\gamma=\Delta q\) into Equation \eqref{eq:loc}:</p>
+\begin{equation} \cos(ts)=\cos^2(tp)+\sin^2(tp)\cos\Delta q \label{eq:iso} \end{equation}
+<p>Replace each cosine of a full angle with the half-angle form \(\cos x = 1-2\sin^2(x/2)\):</p>
+\begin{equation} 1-2\sin^2\frac{ts}{2}=\cos^2(tp)+\sin^2(tp)\Big(1-2\sin^2\frac{\Delta q}{2}\Big) \label{eq:iso2} \end{equation}
+<p>Use \(\cos^2(tp)+\sin^2(tp)=1\):</p>
+\begin{equation} 1-2\sin^2\frac{ts}{2}=1-2\sin^2(tp)\,\sin^2\frac{\Delta q}{2} \label{eq:iso3} \end{equation}
+<p>Take the positive root. This is permitted because \(0\lt tp\lt\pi\) and \(0\lt ts/2\lt\pi/2\):</p>
+\begin{equation} \sin\frac{ts}{2}=\sin(tp)\,\sin\frac{\Delta q}{2} \label{eq:half} \end{equation}
+<p>Division by \(t\) writes Equation \eqref{eq:half} in Gauss's \(m\):</p>
+\begin{equation} m_k\!\left(\frac{s}{2}\right)=m_k(p)\,h,\qquad h=\sin\frac{\Delta q}{2} \label{eq:half-m} \end{equation}
+<p>On a plane, \(m_k(u)=u\) and Equation \eqref{eq:half-m} gives the flat cut \(s=2p\,h\). Every cut method below is Equation \eqref{eq:half-m}, applied at one, two or three values of \(p\).</p>
+
+<h2><span class="n">3</span>Way 1: single cut (one line and an observed angle)</h2>
+<p><b>Inputs.</b> The leg length \(p\), the cut \(s\), and the angle \(\Delta q\) observed with a theodolite at \(O\).</p>
+
+<h3><span class="n">3.1</span>Comparison with flat ground</h3>
+\begin{equation} \rho=\frac{s}{2p\sin\frac{\Delta q}{2}} \label{eq:w1rho} \end{equation}
+<p>A plane gives \(\rho=1\) exactly, and the method stops with \(k=0\). On a sphere the legs spread more slowly than on a plane, so \(\rho\lt 1\). On a saddle they spread faster, so \(\rho\gt 1\), and the hyperbolic branch applies.</p>
+
+<h3><span class="n">3.2</span>The equation for \(t\)</h3>
+<p>Move all terms of Equation \eqref{eq:half} to one side:</p>
+\begin{equation} f(t)=\sin\frac{ts}{2}-\sin(tp)\,\sin\frac{\Delta q}{2} \label{eq:w1f} \end{equation}
+<p>The value \(t=0\) is always a root of Equation \eqref{eq:w1f}, because all lengths vanish in the flat limit. The physical root is the other root, in the interval \(0\lt t\lt\pi/p\).</p>
+
+<h3><span class="n">3.3</span>First answer</h3>
+<p>Put \(\sin x\approx x-x^3/6\) into Equation \eqref{eq:w1f}:</p>
+\begin{equation} \frac{ts}{2}-\frac{t^3s^3}{48}-h\Big(tp-\frac{t^3p^3}{6}\Big)=0 \label{eq:w1a} \end{equation}
+<p>Divide by \(t\) to remove the trivial root:</p>
+\begin{equation} \frac{s}{2}-hp=t^2\Big(\frac{s^3}{48}-\frac{hp^3}{6}\Big) \label{eq:w1b} \end{equation}
+<p>Solve for \(t^2=k_0\):</p>
+\begin{equation} k_0=\frac{hp-s/2}{hp^3/6-s^3/48},\qquad R_0=\frac{1}{\sqrt{k_0}} \label{eq:w1k0} \end{equation}
+
+<h3><span class="n">3.4</span>Exact answer</h3>
+<ol class="steps">
+<li>Set the bracket to \(t\in[\,10^{-9}/p,\ \pi/p\,]\). The lower limit stays clear of the trivial root \(t=0\). The upper limit keeps the legs shorter than half a great circle.</li>
+<li>Calculate \(f\) at the middle of the bracket.</li>
+<li>Keep the half of the bracket where \(f\) changes sign.</li>
+<li>Do steps 2 and 3 again, 200 times in total.</li>
+<li>Calculate \(k=t^2\) and \(R=1/t\).</li>
+</ol>
+
+<h2><span class="n">4</span>Way 2: two cuts (distances only)</h2>
+<p><b>Inputs.</b> The leg length \(p\), the cut \(s_1\) at \(p\), and the cut \(s_2\) at \(p/2\). This method needs no angle.</p>
+
+<h3><span class="n">4.1</span>How the angle cancels</h3>
+<p>Apply Equation \eqref{eq:half} at \(p\) and at \(p/2\):</p>
+\begin{equation} \sin\frac{ts_1}{2}=\sin(tp)\,h \label{eq:w2a} \end{equation}
+\begin{equation} \sin\frac{ts_2}{2}=\sin\frac{tp}{2}\,h \label{eq:w2b} \end{equation}
+<p>Divide Equation \eqref{eq:w2a} by Equation \eqref{eq:w2b}. The unknown \(h\) cancels:</p>
+\begin{equation} \frac{\sin(ts_1/2)}{\sin(ts_2/2)}=\frac{\sin(tp)}{\sin(tp/2)} \label{eq:w2c} \end{equation}
+<p>Apply the double-angle identity \(\sin(2x)=2\sin x\cos x\) to the numerator \(\sin(tp)\):</p>
+\begin{equation} \frac{\sin(ts_1/2)}{\sin(ts_2/2)}=2\cos\frac{tp}{2} \label{eq:w2d} \end{equation}
+<p>The cosine \(\cos(tp/2)\) carries all of the curvature in this method. On a plane it equals 1, and the line at \(p\) is exactly twice the line at \(p/2\).</p>
+
+<h3><span class="n">4.2</span>Gap from flat ground</h3>
+\begin{equation} g=2s_2-s_1,\qquad \rho=\frac{s_1}{2s_2} \label{eq:w2g} \end{equation}
+<p>A plane gives \(g=0\), and the method stops with \(k=0\). A sphere gives \(g\gt 0\). A saddle gives \(g\lt 0\).</p>
+
+<h3><span class="n">4.3</span>The equation for \(t\)</h3>
+\begin{equation} f(t)=\sin\frac{ts_1}{2}-2\cos\frac{tp}{2}\,\sin\frac{ts_2}{2} \label{eq:w2f} \end{equation}
+
+<h3><span class="n">4.4</span>First answer</h3>
+<p>Put \(\sin x\approx x-x^3/6\) and \(\cos x\approx 1-x^2/2\) into Equation \eqref{eq:w2f}, and keep terms to \(t^3\):</p>
+\begin{equation} \frac{ts_1}{2}-\frac{t^3s_1^3}{48}=ts_2-\frac{t^3s_2^3}{24}-\frac{t^3p^2s_2}{8} \label{eq:w2e1} \end{equation}
+<p>Divide by \(t\) and collect the \(t^2\) terms:</p>
+\begin{equation} s_2-\frac{s_1}{2}=t^2\Big(\frac{s_2p^2}{8}+\frac{s_2^3}{24}-\frac{s_1^3}{48}\Big) \label{eq:w2e2} \end{equation}
+<p>Multiply by 2 and solve for \(t^2=k_0\):</p>
+\begin{equation} k_0=\frac{2s_2-s_1}{\dfrac{s_2p^2}{4}+\dfrac{s_2^3}{12}-\dfrac{s_1^3}{24}},\qquad R_0=\frac{1}{\sqrt{k_0}} \label{eq:w2k0} \end{equation}
+
+<h3><span class="n">4.5</span>Exact answer by Newton's method</h3>
+<p>The derivative of Equation \eqref{eq:w2f} is</p>
+\begin{equation} f'(t)=\frac{s_1}{2}\cos\frac{ts_1}{2}+p\,\sin\frac{tp}{2}\,\sin\frac{ts_2}{2}-s_2\cos\frac{tp}{2}\,\cos\frac{ts_2}{2} \label{eq:w2fp} \end{equation}
+<p>Start at \(t=\sqrt{k_0}\) and repeat this step one or two times:</p>
+\begin{equation} t_{\text{new}}=t-\frac{f(t)}{f'(t)} \label{eq:newton} \end{equation}
+<p>Then \(k=t^2\) and \(R=1/t\). The bisection of Section 3.4 on \([\,10^{-9}/p,\ \pi/p\,]\) finds the same root. For a saddle (\(k_0\lt 0\)), start at \(t=\sqrt{-k_0}\), use \(\sinh\) and \(\cosh\) in place of \(\sin\) and \(\cos\), and set \(k=-t^2\).</p>
+
+<h3><span class="n">4.6</span>The angle as an output</h3>
+<p>Way 2 does not need \(\Delta q\), but it returns \(\Delta q\). Solve Equation \eqref{eq:w2b} for \(h\). Equation \eqref{eq:w2a} gives the same value as a check:</p>
+\begin{equation} \Delta q=2\arcsin\frac{\sin(ts_2/2)}{\sin(tp/2)}=2\arcsin\frac{\sin(ts_1/2)}{\sin(tp)} \label{eq:w2dq} \end{equation}
+<p>A comparison of this value with an angle observed at \(O\) is an independent test of the result.</p>
+
+<h2><span class="n">5</span>Way 3: three cuts (distances only)</h2>
+<p><b>Inputs.</b> The cuts \(s_-\), \(s\), \(s_+\) at \(p-dp\), \(p\), \(p+dp\), and the values of \(p\) and \(dp\). This method needs no angle. It reads Gauss's Equation \eqref{eq:gauss19} directly off the ground.</p>
+
+<h3><span class="n">5.1</span>Conversion of the cuts to the \(m\) scale</h3>
+<p>A cut \(s\) is a shortest line across, not an arc along the circle of equal \(p\). Equation \eqref{eq:half-m} converts it to the \(m\) scale:</p>
+\begin{equation} \mu_-=m_k\!\left(\frac{s_-}{2}\right),\qquad \mu=m_k\!\left(\frac{s}{2}\right),\qquad \mu_+=m_k\!\left(\frac{s_+}{2}\right) \label{eq:w3mu} \end{equation}
+<p>By Equation \eqref{eq:half-m}, each \(\mu\) equals \(h\) times \(m\) at its own \(p\). The factor \(h\) is the same for all three cuts.</p>
+
+<h3><span class="n">5.2</span>The sum-of-cosines relation</h3>
+<p>The sum formula \(\sin(x+y)+\sin(x-y)=2\sin x\cos y\) applies to \(m_k\) of Equation \eqref{eq:mk}:</p>
+\begin{equation} m_k(p+dp)+m_k(p-dp)=2\,m_k(p)\cos(t\,dp) \label{eq:sum} \end{equation}
+<p>Multiply Equation \eqref{eq:sum} by \(h\). By Section 5.1 this gives an exact relation between the three converted cuts:</p>
+\begin{equation} \mu_++\mu_-=2\mu\cos(t\,dp) \label{eq:w3exact} \end{equation}
+<p>On a plane, \(\cos(t\,dp)=1\), and the three values of \(\mu\) lie on a straight line.</p>
+
+<h3><span class="n">5.3</span>Gauss's second difference</h3>
+<p>Subtract \(2\mu\) from both sides of Equation \eqref{eq:w3exact}:</p>
+\begin{equation} \mu_+-2\mu+\mu_-=-2\mu\big(1-\cos(t\,dp)\big) \label{eq:w3d1} \end{equation}
+<p>For a small step, \(1-\cos(t\,dp)\approx\tfrac12 t^2dp^2=\tfrac12 k\,dp^2\). Solve for \(k\):</p>
+\begin{equation} k=-\frac{\mu_+-2\mu+\mu_-}{\mu\,dp^2} \label{eq:w3k} \end{equation}
+<p>Equation \eqref{eq:w3k} is Equation \eqref{eq:gauss19} as a finite difference. The second difference divided by \(dp^2\) is \(h\,\partial^2m/\partial p^2\). The factor \(h\) cancels against the \(h\) in \(\mu\), so the angle at \(O\) drops out.</p>
+
+<h3><span class="n">5.4</span>Procedure</h3>
+<ol class="steps">
+<li>Start with \(k=0\). Then \(m_k(u)=u\) and \(\mu=s/2\). Equation \eqref{eq:w3k} gives the first answer:
+\begin{equation} k_0=-\frac{s_+-2s+s_-}{s\,dp^2} \label{eq:w3k0} \end{equation}</li>
+<li>Calculate \(\mu_-\), \(\mu\), \(\mu_+\) from Equation \eqref{eq:w3mu} with the current \(k\).</li>
+<li>Calculate a new \(k\) from Equation \eqref{eq:w3k}.</li>
+<li>Do steps 2 and 3 again until the new \(k\) agrees with the old \(k\) to 14 digits, or for 80 passes at most. The loop is necessary because \(\mu\) depends on \(k\) and \(k\) depends on \(\mu\).</li>
+<li>Calculate \(R\) from Equation \eqref{eq:R}.</li>
+<li>Calculate the angle at \(O\) from Equation \eqref{eq:half-m}:
+\begin{equation} \Delta q=2\arcsin\frac{\mu}{m_k(p)} \label{eq:w3dq} \end{equation}</li>
+</ol>
+
+<h3><span class="n">5.5</span>Error from the step size</h3>
+<p>Equation \eqref{eq:w3k} replaces \(2(1-\cos x)\) with \(x^2\). The exact value of Equation \eqref{eq:w3d1} gives the size of this replacement. If \(\hat k\) is the value from Equation \eqref{eq:w3k}, then on a surface of constant \(k\)</p>
+\begin{equation} \hat k=\frac{4}{dp^2}\sin^2\frac{t\,dp}{2}\approx k\Big(1-\frac{k\,dp^2}{12}\Big) \label{eq:w3bias} \end{equation}
+<p>The second difference therefore gives a value of \(k\) that is slightly low. Its relative error is \(k\,dp^2/12\), so the error decreases with the square of the step. If the curvature is constant across the three cuts, either form below removes this error:</p>
+\begin{equation} t=\frac{2}{dp}\arcsin\frac{dp\sqrt{\hat k}}{2}\qquad\text{or}\qquad t=\frac{1}{dp}\arccos\frac{\mu_++\mu_-}{2\mu} \label{eq:w3fix} \end{equation}
+<p>Equation \eqref{eq:w3k} remains the correct form for a surface whose curvature changes from place to place. On such a surface Way 3 gives the curvature at the one place \(p\). Ways 1 and 2 give one value of \(k\) that fits the full distance from \(O\) to \(p\).</p>
+
+<h2><span class="n">6</span>Way 4: triangle excess (angles and sides)</h2>
+<p><b>Inputs.</b> The sides \(a,b,c\) and the observed angles \(\alpha,\beta,\gamma\) of one or more triangles.</p>
+
+<h3><span class="n">6.1</span>The excess</h3>
+\begin{equation} \varepsilon=\alpha+\beta+\gamma-\pi \label{eq:eps} \end{equation}
+<p>Gauss (1902, Art. 20, pp. 29&ndash;30) shows that the excess of a triangle bounded by shortest lines equals the total curvature inside it. If \(k\) is constant, this is</p>
+\begin{equation} \varepsilon=k\,A \label{eq:art20} \end{equation}
+<p>A plane gives \(\varepsilon=0\) for every triangle, and the method stops with \(k=0\). A sphere gives \(\varepsilon\gt 0\). A saddle gives \(\varepsilon\lt 0\), and \(\tanh\) replaces \(\tan\) in Equation \eqref{eq:lhuilier}.</p>
+
+<h3><span class="n">6.2</span>Exact answer from L'Huilier's formula</h3>
+<p>For a trial \(t\), L'Huilier's formula gives the excess of a triangle with sides \(a,b,c\) on a sphere of radius \(1/t\):</p>
+\begin{equation} E(t)=4\arctan\sqrt{\tan\frac{ut}{2}\,\tan\frac{(u-a)t}{2}\,\tan\frac{(u-b)t}{2}\,\tan\frac{(u-c)t}{2}} \label{eq:lhuilier} \end{equation}
+<p>\(E(t)\) increases with \(t\). The solution is the value of \(t\) where the predicted excess equals the measured excess:</p>
+<ol class="steps">
+<li>Set the bracket to \(t\in[\,0,\ \pi/u\,]\). The upper limit keeps each tangent finite.</li>
+<li>Calculate \(E\) at the middle of the bracket.</li>
+<li>If \(E\lt\varepsilon\), keep the upper half. If not, keep the lower half.</li>
+<li>Do steps 2 and 3 again, 200 times in total.</li>
+<li>Calculate \(k=t^2\) and \(R=1/t\).</li>
+</ol>
+
+<h3><span class="n">6.3</span>Short form for a survey triangle</h3>
+<p>For a survey triangle the excess is small. Heron's formula then gives the area from the three sides:</p>
+\begin{equation} A=\sqrt{u(u-a)(u-b)(u-c)} \label{eq:heron} \end{equation}
+\begin{equation} k=\frac{\varepsilon}{A},\qquad R=\frac{1}{\sqrt{k}} \label{eq:short} \end{equation}
+<p>Heron's formula gives the area of the flat triangle with the same sides. By Legendre's theorem, the curved area is larger by the relative amount \((a^2+b^2+c^2)/(24R^2)\). Equation \eqref{eq:short} therefore gives a value of \(k\) that is high by this amount. For sides of a few hundred kilometers on a sphere of radius 6371 km, the amount is near \(3\times10^{-4}\) (Table 3).</p>
+
+<h3><span class="n">6.4</span>Many triangles together</h3>
+<p>One small triangle has a noisy excess. The pooled result uses many triangles. Each triangle \(i\) has its own excess \(\varepsilon_i\), area \(A_i\) and noise \(\sigma_i\). The model is a straight line through zero:</p>
+\begin{equation} \varepsilon_i=k\,A_i+e_i,\qquad \operatorname{sd}(e_i)=\sigma_i \label{eq:model} \end{equation}
+<p>Weighted least squares makes \(S(k)=\sum_i w_i(\varepsilon_i-kA_i)^2\) a minimum, with \(w_i=1/\sigma_i^2\). Set \(dS/dk=0\):</p>
+\begin{equation} \sum_i w_iA_i(\varepsilon_i-kA_i)=0 \label{eq:normal} \end{equation}
+<p>Solve for \(k\). The second expression is the standard deviation of the result:</p>
+\begin{equation} k=\frac{\sum_i w_iA_i\varepsilon_i}{\sum_i w_iA_i^2},\qquad \sigma_k=\frac{1}{\sqrt{\sum_i w_iA_i^2}},\qquad R=\frac{1}{\sqrt{k}} \label{eq:wls} \end{equation}
+<p>If all surveys have the same angle noise, set \(w_i=1\). Then \(\sigma_k\) in Equation \eqref{eq:wls} must be multiplied by the common \(\sigma_i\).</p>
+
+<h3><span class="n">6.5</span>Size of the signal</h3>
+<p>The excess sums three observed angles. If each angle has the independent noise \(\sigma_\theta\), the noise of the excess is</p>
+\begin{equation} \sigma_i=\sqrt{3}\,\sigma_\theta \label{eq:sig3} \end{equation}
+<p>For one triangle, Equation \eqref{eq:wls} reduces to \(\sigma_k=\sigma_i/A_i\). On a sphere of radius 6371 km, Equation \eqref{eq:art20} gives an excess of 5.08″ for each 1000 km² of area. With \(\sigma_\theta=1''\), \(\sigma_i=1.73''\). One triangle must therefore be much larger than about 340 km² before its excess rises clearly above its noise. Smaller triangles contribute only through the pooled sums of Equation \eqref{eq:wls}.</p>
+
+<div class="box"><b>Data rule.</b> Equation \eqref{eq:eps} needs observed angles only. Many published survey angles are adjusted. An adjustment forces each angle sum to \(\pi\) plus an excess calculated from an assumed spheroid. Such angles return the radius of that spheroid, so they cannot test it. Corrections that do not use a surface shape stay permitted: reduction to the station center, the mean of repeated rounds, and the instrument corrections.</div>
+
+<h2><span class="n">7</span>How \(R\) is matched to \(k\)</h2>
+<p>All four ways do the same thing. Each one writes the measurements into one identity in which every length appears only as \(t\times\text{length}\). Each one then searches for the single \(t\) that makes the identity true. That value fixes \(k=t^2\) and \(R=1/t\). Table 2 lists the identity and the trigonometric step of each way.</p>
+<div class="tbl"><table>
+<caption>Table 2. The identity that fixes \(t=1/R\) in each way.</caption>
+<thead><tr><th>Way</th><th>Identity in \(t\)</th><th>Step that produces it</th><th>Flat limit</th></tr></thead>
+<tbody>
+<tr><td>1. Single cut</td><td>\(\sin\frac{ts}{2}=\sin(tp)\sin\frac{\Delta q}{2}\)</td><td>Law of cosines \eqref{eq:loc} and half-angle form</td><td>\(s=2p\sin\frac{\Delta q}{2}\)</td></tr>
+<tr><td>2. Two cuts</td><td>\(\sin\frac{ts_1}{2}=2\cos\frac{tp}{2}\sin\frac{ts_2}{2}\)</td><td>Double-angle identity removes \(\Delta q\)</td><td>\(s_1=2s_2\)</td></tr>
+<tr><td>3. Three cuts</td><td>\(\mu_++\mu_-=2\mu\cos(t\,dp)\)</td><td>Sum formula for \(\sin(x\pm y)\) removes \(\Delta q\)</td><td>\(\mu_+-2\mu+\mu_-=0\)</td></tr>
+<tr><td>4. Triangle excess</td><td>\(E(t)=\varepsilon\), with \(\varepsilon=kA\)</td><td>Gauss Art. 20 and L'Huilier's formula</td><td>\(\varepsilon=0\)</td></tr>
+</tbody></table></div>
+<p>The cosine is the term that holds the curvature in each case. In Ways 1 to 3 it comes from the law of cosines \eqref{eq:loc}, from the double-angle identity, or from the sum formula. On a plane each cosine equals 1. Each identity then becomes a flat-ground rule, and the solver stops with \(k=0\). In Way 4 the pooled sums \(\sum w_iA_i\varepsilon_i\) and \(\sum w_iA_i^2\) do the same task for many triangles at once.</p>
+
+<h2><span class="n">8</span>Numerical test</h2>
+<p>The test uses exact shortest-line lengths on a sphere of radius \(R=6371\) km. The values are \(\Delta q=1.3^\circ\), \(p=800\) km and \(dp=50\) km. The triangle for Way 4 has sides 300, 350 and 280 km. Each solver received only the inputs that its way allows.</p>
+<div class="tbl"><table>
+<caption>Table 3. Radius returned by each solver (true value 6371.000 km).</caption>
+<thead><tr><th>Way</th><th>Step</th><th class="num">\(R\) (km)</th></tr></thead>
+<tbody>
+<tr><td>1. Single cut</td><td>First answer \eqref{eq:w1k0}</td><td class="num">6373.512</td></tr>
+<tr><td></td><td>Bisection, 200 passes</td><td class="num">6371.000</td></tr>
+<tr><td>2. Two cuts</td><td>First answer \eqref{eq:w2k0}</td><td class="num">6372.047</td></tr>
+<tr><td></td><td>Newton, 3 passes; \(\Delta q\) returned as 1.300°</td><td class="num">6371.000</td></tr>
+<tr><td>3. Three cuts</td><td>First answer \eqref{eq:w3k0}</td><td class="num">6371.418</td></tr>
+<tr><td></td><td>Loop of Section 5.4</td><td class="num">6371.016</td></tr>
+<tr><td></td><td>Step-size correction \eqref{eq:w3fix}</td><td class="num">6371.000</td></tr>
+<tr><td>4. Triangle excess</td><td>Excess \(\varepsilon=205.37''\); L'Huilier bisection</td><td class="num">6371.000</td></tr>
+<tr><td></td><td>Short form \eqref{eq:short}</td><td class="num">6370.049</td></tr>
+</tbody></table></div>
+<p>The remaining error of the three-cut loop, 0.016 km, agrees with Equation \eqref{eq:w3bias}, which predicts 0.016 km for this step. The short form of Way 4 is low in \(R\) by 0.015%. This agrees with the Legendre amount of Section 6.3, \(2.99\times10^{-4}\) in \(k\), which is half of that in \(R\).</p>
+
+<h2><span class="n">9</span>Summary</h2>
+<p>Each way uses only measurements made on the surface. Each way gives \(k=0\) on a plane and ends with \(R=1/\sqrt{|k|}\). Way 1 needs the angle at the 0,0. Ways 2 and 3 need no angle, because a trigonometric identity removes it. Way 4 needs the observed angles of each triangle. In all four ways, \(t=1/R\) is the one scale that makes the curved geometry agree with the measured lengths and angles.</p>
+
+<h2 class="refs-h">References</h2>
+<div class="refs">
+<p>Gauss, C. F. (1902). <i>General investigations of curved surfaces of 1827 and 1825</i> (J. C. Morehead &amp; A. M. Hiltebeitel, Trans.). Princeton University Library.</p>
+</div>
+</article>
+
+</body>
+</html>

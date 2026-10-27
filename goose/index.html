@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Curvature from the Arcs</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: single reading column of numbered cards on a cream ground (Surface Lab template) */
+:root{
+  --bg:#f6f1e7; --card:#fbf8f1; --ink:#1d1d1b; --muted:#5a5650; --rule:#ddd5c4;
+  --blue:#2a5fa8; --accent:#b24a1e; --btn:#1d1d1b; --btn-ink:#f6f1e7; --good:#2f7a4a;
+  --display:"Fraunces",Georgia,"Times New Roman",serif;
+  --body:"Source Serif 4",Georgia,serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#1b1a17; --card:#23221e; --ink:#ece7dc; --muted:#b2ab9c; --rule:#3a372f;
+  --blue:#82aee8; --accent:#e58a5f; --btn:#ece7dc; --btn-ink:#1b1a17; --good:#6cc08c; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#1b1a17; --card:#23221e; --ink:#ece7dc; --muted:#b2ab9c; --rule:#3a372f;
+  --blue:#82aee8; --accent:#e58a5f; --btn:#ece7dc; --btn-ink:#1b1a17; --good:#6cc08c; color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font:17px/1.6 var(--body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:40px 64px}
+main{max-width:860px;margin:0 auto;display:grid;gap:28px}
+.eyebrow{font:500 12px/1.4 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--blue)}
+h1{font:600 clamp(34px,6vw,56px)/1.05 var(--display);margin:6px 0 10px;text-wrap:balance;letter-spacing:-.01em}
+h2{font:600 26px/1.2 var(--display);margin:4px 0 8px;text-wrap:balance}
+.plates{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;margin:16px 0}
+.plates figure img{border:1px solid var(--rule);background:#fff}
+.plates figcaption{font-size:13.5px}
+.plates figcaption span{display:block;font:12px var(--mono);color:var(--muted);margin-top:3px}
+h3{font:600 13px/1.4 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--blue);margin:26px 0 10px}
+ol{margin:0 0 12px;padding-left:22px;max-width:68ch}
+ul ul{margin-top:6px}
+td[rowspan]{vertical-align:top;font-weight:600}
+p{margin:0 0 12px;max-width:68ch}
+.lede{font-size:19px;color:var(--muted)}
+.card{background:var(--card);border:1px solid var(--rule);border-radius:6px;padding:24px clamp(16px,4vw,32px);min-width:0}
+.verdict{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:18px;margin-top:8px}
+.verdict div{border-top:2px solid var(--ink);padding-top:8px}
+.verdict b{display:block;font:600 28px/1.1 var(--display);font-variant-numeric:tabular-nums}
+.verdict span{font:12px/1.4 var(--mono);color:var(--muted);letter-spacing:.04em}
+math{font-size:1.12em}
+.formula{display:block;margin:14px 0;overflow-x:auto;padding:4px 0}
+figure{margin:0}
+figure img{display:block;width:100%;border-radius:4px;border:1px solid var(--rule)}
+figcaption{font-size:14px;color:var(--muted);margin-top:8px;max-width:72ch}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14.5px;font-variant-numeric:tabular-nums}
+th{font:600 12.5px/1.3 var(--body);font-variant:all-small-caps;letter-spacing:.06em;color:var(--muted);text-align:left;border-bottom:1.5px solid var(--ink);padding:6px 8px;white-space:nowrap}
+td{padding:6px 8px;border-bottom:1px solid var(--rule);white-space:nowrap}
+td.n,th.n{text-align:right}
+tr.pooled td{font-weight:600;border-top:1.5px solid var(--ink)}
+.flag{color:var(--accent)}
+ul{margin:0 0 12px;padding-left:20px;max-width:68ch}
+li{margin-bottom:6px}
+.src-btn{font:500 13px var(--mono);letter-spacing:.06em;background:var(--btn);color:var(--btn-ink);border:0;border-radius:4px;padding:12px 18px;cursor:pointer;justify-self:start}
+.src-btn:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+#sources{font-size:15px}
+#sources code{font:13px var(--mono)}
+blockquote{margin:8px 0 12px;padding-left:14px;border-left:2px solid var(--rule);color:var(--muted);font-size:14.5px}
+</style>
+<style>*{box-sizing:border-box}img{max-width:100%;height:auto}[hidden]{display:none!important}</style>
+</head>
+<body>
+<main>
+<header>
+  <div class="eyebrow">Theorema Egregium · arcs_parallel_master.kml</div>
+  <h1>Curvature measured from surveyors' triangles</h1>
+  <p class="lede">Each historical triangle's angle excess, divided by its area, gives the Gaussian curvature of the ground it was drawn on. Under a selection and weighting rule fixed before the run, 391 triangles with angles and side lengths measured on the ground give an intrinsic K within 0.6–1.0σ of the ellipsoid's extrinsic curvature 1/(MN).</p>
+  <div class="verdict">
+    <div><b>2.450 ± 0.012</b><span>K_intrinsic, ×10⁻¹⁴ m⁻² (±0.019 with survey scatter)</span></div>
+    <div><b>2.462</b><span>K_ellipsoid = 1/(MN) for the same triangles, ×10⁻¹⁴ m⁻²</span></div>
+    <div><b>6389 km</b><span>1/√K, 6373–6404 (6364–6414 with survey scatter)</span></div>
+    <div><b>0.995 ± 0.005</b><span>ratio: −1.0σ from 1 (−0.6σ with survey scatter); over 100σ from flat</span></div>
+  </div>
+</header>
+
+<figure>
+  <img src="figures/globe_3d_labelled.png" alt="Two shaded globes with every survey network labelled: US 39th parallel and Eastern Oblique Arc, the European arcs, Maclear's Cape arc, Transvaal–Rhodesia and India">
+  <figcaption>The KML's 1,005 triangle polygons on two faces of the globe. Colour marks region: United States (39th parallel, Eastern Oblique Arc), Europe (Helmert's 52° N arc, Roy, Cassini–Lacaille, Brousseaud), Southern Africa (Maclear's Cape arc, Gordon's Transvaal–Rhodesia link), India (Lambton's GTS).</figcaption>
+</figure>
+
+<section class="card">
+  <div class="eyebrow">1 · What the file contains</div>
+  <h2>Twelve folders, 957 stations, 1,005 triangles</h2>
+  <p>Every station carries its latitude and longitude as printed in the source, plus a citation. Every triangle carries its printed angles, the printed angle sum, the printed spherical excess, printed sides, and a page reference. All heights are zero, so this is a purely horizontal data set.</p>
+  <ul>
+    <li><b>Struve Geodetic Arc:</b> the folder is empty, although its heading says 257 triangles.</li>
+    <li><b>Lambton, Madras–Mangalore:</b> 41 stations and no triangle polygons.</li>
+    <li><b>Brousseaud 45°43′:</b> 2 of the 142 triangles named in the heading. Its "spherical" angles are mean angles plus ε/3, so the excess is computed and those two are excluded.</li>
+    <li><b>US 39th parallel:</b> 465 of 504 polygons present.</li>
+    <li><b>Faults, checked against the printed sources:</b> five triangles have angles that cannot close. Three are misprints in Schott's own tables, confirmed against the scanned pages. In each, one angle's degrees are wrong: Ibepah printed 10° for 110° (1900, p. 591), Cherry Ridge 20° for 28° (1900, p. 414), and Mount Pleasant 19° for 91° (1902, p. 131). The side lengths Schott printed alongside give the true angle by the law of cosines, so these three are corrected and kept. The other two, one in Helmert and one in Lambton, cannot be checked yet and are dropped. <i>Correction:</i> an earlier version of this page also wrongly dropped 25 of the largest 39th-parallel triangles. Their printed angle sums give seconds only, and sums more than 30″ above 180° were misread. They are now included.</li>
+    <li><b>Source check:</b> 45 triangles (135 angles) on five pages of Schott 1900 and 1902 were compared with the KML entry by entry. Every value matches, including Schott's convention of carrying seconds above 60 (for example 48° 03′ 65.671″).</li>
+  </ul>
+  <p>That leaves 935 triangles with three usable observed angles. Areas run from 0.36 to 14,527 km², and observed excesses from −16″ to +75″ (mean 4.8″).</p>
+</section>
+
+<section class="card">
+  <div class="eyebrow">2 · The intrinsic measurement</div>
+  <h2>Angle excess over area is curvature</h2>
+  <p>For a small geodesic triangle, the Gauss–Bonnet theorem ties the excess of the three angles over π to the curvature integrated over the triangle's area:</p>
+  <math display="block" class="formula"><mrow><msub><mi>ε</mi><mtext>obs</mtext></msub><mo>=</mo><msub><mi>α</mi><mn>1</mn></msub><mo>+</mo><msub><mi>α</mi><mn>2</mn></msub><mo>+</mo><msub><mi>α</mi><mn>3</mn></msub><mo>−</mo><mi>π</mi><mo>=</mo><mrow><munder><mo>∬</mo><mi>T</mi></munder><mi>K</mi><mspace width="0.17em"/><mi>d</mi><mi>A</mi></mrow><mo>≈</mo><mi>K</mi><mspace width="0.17em"/><mi>A</mi></mrow></math>
+  <p>Both the angles and the area are measured on the surface. No reference to a third dimension enters. The ellipsoid's curvature, computed from how it bends in space, is the product of its principal curvatures:</p>
+  <math display="block" class="formula"><mrow><msub><mi>K</mi><mtext>ell</mtext></msub><mo>=</mo><msub><mi>κ</mi><mn>1</mn></msub><msub><mi>κ</mi><mn>2</mn></msub><mo>=</mo><mfrac><mn>1</mn><mrow><mi>M</mi><mi>N</mi></mrow></mfrac><mo>,</mo><mspace width="1em"/><mi>M</mi><mo>=</mo><mfrac><mrow><mi>a</mi><mo>(</mo><mn>1</mn><mo>−</mo><msup><mi>e</mi><mn>2</mn></msup><mo>)</mo></mrow><msup><mrow><mo>(</mo><mn>1</mn><mo>−</mo><msup><mi>e</mi><mn>2</mn></msup><msup><mi>sin</mi><mn>2</mn></msup><mi>φ</mi><mo>)</mo></mrow><mrow><mn>3</mn><mo>/</mo><mn>2</mn></mrow></msup></mfrac><mo>,</mo><mspace width="0.6em"/><mi>N</mi><mo>=</mo><mfrac><mi>a</mi><msqrt><mn>1</mn><mo>−</mo><msup><mi>e</mi><mn>2</mn></msup><msup><mi>sin</mi><mn>2</mn></msup><mi>φ</mi></msqrt></mfrac></mrow></math>
+  <p>The fit is the ratio <i>q</i> = K<sub>intrinsic</sub>/K<sub>ell</sub>, estimated by weighted least squares through the origin on ε<sub>obs</sub> against A·K<sub>ell</sub>(φ). It is pooled across surveys for the main result and also reported for each survey (section 4). Areas come from the printed side lengths, so they are measured on the ground. Coordinate areas, used in the first pass (Appendix C), agree with them to a few parts in 10,000. The excess uses the angles as observed: Helmert's observed seconds rather than his adjusted finals, Roy and Mudge's observed column, and Cassini's angles reduced to centre.</p>
+</section>
+
+<section class="card" id="methodology">
+  <div class="eyebrow">3 · Methodology</div>
+  <h2>How the surveys were made, and how sure we can be of them</h2>
+  <p>The core three surveys are the US 39th parallel, the US Eastern Oblique Arc and Maclear's Cape arc. Their full reports are scanned and online, and they carry most of the weight. The other surveys are summarised in the appendix rows. Where a fact comes from a secondary source rather than the original report, it is marked as such. Facts not yet confirmed are marked "unconfirmed".</p>
+
+  <h3>3.1 · Surveys, dates and reports</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Survey</th><th>Field work</th><th>Published</th><th>Report</th><th>Scan</th></tr></thead>
+    <tbody>
+      <tr><td><b>US Eastern Oblique Arc</b>, Calais ME to New Orleans</td><td>1833–1898</td><td>1902</td><td>Schott, C&amp;GS Special Pub. 7 (440 pp.)</td><td>archive.org, full text</td></tr>
+      <tr><td><b>US 39th parallel</b>, Cape May NJ to Point Arena CA</td><td>1871–c. 1898 (western section 1876–1896)</td><td>1900</td><td>Schott, C&amp;GS Special Pub. 4 (930 pp.)</td><td>HathiTrust, full view</td></tr>
+      <tr><td><b>Maclear, Cape of Good Hope</b></td><td>1837–1848</td><td>1866</td><td>Maclear, <i>Verification and Extension of La Caille's Arc</i>, 2 vols, ed. Airy</td><td>HathiTrust, full view</td></tr>
+      <tr><td>Helmert, Europe 52° N</td><td>compiled from national triangulations; dates vary</td><td>1893, 1896</td><td>Helmert, <i>Längengradmessung in 52° Breite</i>, Heft 1; Börsch &amp; Krüger</td><td>Silesian Digital Library (not opened)</td></tr>
+      <tr><td>Transvaal–Rhodesia connection</td><td>unconfirmed</td><td>1908</td><td>Morris &amp; Gill, Geodetic Survey of South Africa Vol. V</td><td>not found</td></tr>
+      <tr><td>Lambton, Great Arc, 8° 9′–18° 3′ N</td><td>1800–c. 1815</td><td>1816, 1820</td><td><i>Asiatick Researches</i> vols 12, 13</td><td>archive.org</td></tr>
+      <tr><td>Lambton, Madras–Mangalore</td><td>1802–1806</td><td>1811</td><td>Lambton 1811</td><td>not checked</td></tr>
+      <tr><td>England OS arcs near 50° 44′ N</td><td>1787–1796</td><td>1790–1801</td><td>Roy; Williams &amp; Mudge</td><td>not checked</td></tr>
+      <tr><td>Anglo-French Greenwich–Paris link</td><td>1784 (base), 1787–1788</td><td>1790</td><td>Roy, <i>Phil. Trans.</i></td><td>not checked</td></tr>
+      <tr><td>Cassini de Thury &amp; Lacaille, 43° 32′ N</td><td>1739–1740</td><td>1744</td><td>Cassini de Thury, <i>La méridienne vérifiée</i></td><td>not checked</td></tr>
+    </tbody>
+  </table></div>
+  <figure style="margin-top:14px">
+    <img src="figures/timeline.png" alt="Timeline from 1739 to 1908 showing field work spans for each survey, publication marks, and base-line measurements coloured by apparatus">
+    <figcaption>Field work (bars), publication (ticks) and base-line measurements (dots, coloured by apparatus). The US 39th parallel reuses the 1844 Kent Island base from the Eastern Oblique Arc.</figcaption>
+  </figure>
+
+  <h3>3.2 · Base lines: the only measured lengths</h3>
+  <p>Every survey measured one or more base lines directly on level ground. Every other length was computed from angles, chaining triangle to triangle from a base. Bases further along the chain served as checks. Lengths below are the span between the base-end stations in the KML. Where a printed length exists, it is shown and agrees with the span.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Survey</th><th>Base</th><th class="n">Year</th><th>Apparatus</th><th class="n">Length</th></tr></thead>
+    <tbody>
+      <tr><td rowspan="6">Eastern Oblique</td><td>Fire Island NY</td><td class="n">1834</td><td>Hassler's four 2 m iron bars</td><td class="n">14.06 km</td></tr>
+      <tr><td>Massachusetts</td><td class="n">1844</td><td>Hassler apparatus</td><td class="n">17.33 km</td></tr>
+      <tr><td>Kent Island MD</td><td class="n">1843–44</td><td>Hassler apparatus (J. Ferguson)</td><td class="n">8.69 km</td></tr>
+      <tr><td>Dauphin Island AL</td><td class="n">1847</td><td>Bache–Würdemann compensating bars (first use)</td><td class="n">10.66 km</td></tr>
+      <tr><td>Epping ME</td><td class="n">1857</td><td>Bache–Würdemann: two 6 m bars, brass and iron, contact-level</td><td class="n">8,715.942 m printed</td></tr>
+      <tr><td>Atlanta GA</td><td class="n">1872–73</td><td>Bache–Würdemann, measured three times</td><td class="n">9.34 km</td></tr>
+      <tr><td rowspan="10">39th parallel</td><td>Kent Island MD</td><td class="n">1843–44</td><td>shared with the Eastern Oblique Arc</td><td class="n">8.69 km</td></tr>
+      <tr><td>St Albans WV</td><td class="n">1892</td><td>steel tapes</td><td class="n">3.87 km</td></tr>
+      <tr><td>Holton IN</td><td class="n">1891</td><td>steel tapes</td><td class="n">5.50 km</td></tr>
+      <tr><td>Olney IL</td><td class="n">unconfirmed</td><td>unconfirmed</td><td class="n">6.78 km</td></tr>
+      <tr><td>American Bottom IL</td><td class="n">unconfirmed</td><td>unconfirmed</td><td class="n">7.27 km</td></tr>
+      <tr><td>Versailles MO</td><td class="n">unconfirmed</td><td>unconfirmed</td><td class="n">7.64 km</td></tr>
+      <tr><td>Salina KS</td><td class="n">unconfirmed</td><td>unconfirmed</td><td class="n">6.55 km</td></tr>
+      <tr><td>El Paso CO</td><td class="n">unconfirmed</td><td>unconfirmed</td><td class="n">11.29 km</td></tr>
+      <tr><td>Salt Lake UT</td><td class="n">1897</td><td>Eimbeck's duplex bars</td><td class="n">11.20 km</td></tr>
+      <tr><td>Yolo CA</td><td class="n">1881</td><td>Schott's contact-compensating apparatus</td><td class="n">17.49 km</td></tr>
+      <tr><td>Maclear</td><td>Zwartland (Malmesbury)</td><td class="n">30 Oct 1840 – 5 Apr 1841</td><td>Colby compensation bars; standard: Cape 10 ft bar A; checked by splitting into six sections tied by triangulation</td><td class="n">42,819.065 ft = 13.051 km printed</td></tr>
+      <tr><td>Lambton</td><td>Bangalore; St Thomas Mount (Madras)</td><td class="n">1800; 1802</td><td>Ramsden blistered-steel 100 ft chain, laid in wooden coffers on pickets, thermometers, 28 lb tension weight</td><td class="n">7.43 mi; 40,006.4 ft</td></tr>
+      <tr><td>Roy</td><td>Hounslow Heath (Hampton Poor-house – King's Arbour)</td><td class="n">1784</td><td>wooden rods, then glass rods; later Ramsden steel chain</td><td class="n">27,404.7 ft printed</td></tr>
+      <tr><td>Roy (check)</td><td>Romney Marsh (High Nook – Ruckinge)</td><td class="n">1787</td><td>steel chain</td><td class="n">28,532.92 ft printed</td></tr>
+      <tr><td>Cassini–Lacaille</td><td>La Crau (Tour de Salon – Signal de la Crau)</td><td class="n">1739</td><td>rods, in toises</td><td class="n">9,353 toises 4 pieds ≈ 18.23 km</td></tr>
+    </tbody>
+  </table></div>
+  <div class="plates">
+    <figure><img src="images/sp7_36.jpg" alt="Photograph of a long straight graded strip running through scrub towards distant hills"><figcaption>Epping base, Maine, 1857: the line graded for measurement.<span>Schott 1902, Plate 2</span></figcaption></figure>
+    <figure><img src="images/sp7_38.jpg" alt="Photograph of a survey crew standing along a long bar apparatus on trestles in open country"><figcaption>Epping base: placing the apparatus over a mark. The bar apparatus sits in its case on trestles, with the crew in line.<span>Schott 1902, Plate 3</span></figcaption></figure>
+  </div>
+  <p style="margin-top:12px">Cross-check: the ten 39th-parallel bases sum to 86.3 km from the KML coordinates, the longest being Yolo at 17.49 km. The 1911 <i>Britannica</i> gives "ten base lines total 86 km; the longest exceeds 17 km". The Epping span in the KML, 8.72 km, matches Schott's printed 8,715.942 m.</p>
+
+  <h3>3.3 · Angle measurement: instruments and method</h3>
+  <ul>
+    <li><b>US Coast &amp; Geodetic Survey</b> (both US arcs, from the Eastern Oblique report and NOAA's history):
+      <ul>
+        <li><b>Theodolites:</b> a 30-inch Troughton &amp; Simms "great theodolite" (in use 1836 until destroyed by a tornado at Sawnee, Georgia, in November 1873); 20-inch Würdemann instruments from 1873, with three improved Dresden-built copies in 1876–77; a 12-inch theodolite built by the Survey's own Instrument Division (Schott 1902, Plate 20); 10–12-inch repeating theodolites for some early segments.</li>
+        <li><b>Method:</b> directions reduced by Bessel's method at direction-theodolite stations; at repeating-theodolite stations, three direct and three reversed repetitions per set. A pointing more than 4″ from the station mean was rejected.</li>
+        <li><b>Signals:</b> heliotropes with 2–4-inch mirrors from the 1840s to 1902, seen up to 192 miles (Mount Shasta to Mount Helena, 1879). Appendix D draws this line to scale, with the mountain heights and the Earth bulge between them; telescopes sometimes on towers about 14 m high.</li>
+        <li>Which theodolite occupied which 39th-parallel station is in Schott 1900 but not yet extracted.</li>
+      </ul></li>
+    <li><b>Maclear:</b> the "Fuller" theodolite by Thomas Jones and the Beaufort theodolite by Reichenbach &amp; Ertel (lent by Sir Francis Beaufort) for angles. A Bradley zenith sector with a 12½ ft telescope and a repeating instrument by Dollond were used for latitudes and zenith distances, which are not used here.</li>
+    <li><b>Appendix surveys:</b> Roy used Ramsden's great 36-inch theodolite, the first instrument able to resolve spherical excess. The Ordnance Survey later added an 18-inch Ramsden and a 24-inch Troughton &amp; Simms. Lambton used a 36-inch Cary theodolite and an 18-inch Cary repeating theodolite.</li>
+  </ul>
+  <div class="plates">
+    <figure><img src="images/sp7_160.jpg" alt="Engraving of a large theodolite with a broad horizontal circle on a wooden stand"><figcaption>The 75 cm (30-inch) direction theodolite.<span>Schott 1902, Plate 19</span></figcaption></figure>
+    <figure><img src="images/sp7_158.jpg" alt="Engraving of a compact theodolite with telescope and reading microscopes"><figcaption>The 30 cm (12-inch) theodolite.<span>Schott 1902, Plate 20</span></figcaption></figure>
+    <figure><img src="images/sp4_570.jpg" alt="Photograph of a 20-inch theodolite with long telescope on a tripod base"><figcaption>The 50 cm (20-inch) theodolite used at the primary stations in the Rocky Mountains.<span>Schott 1900, No. 38</span></figcaption></figure>
+    <figure><img src="images/sp4_569.jpg" alt="Photograph of three heliotropes, each with a mirror, sighting ring and adjustable mount"><figcaption>Heliotropes of the latest pattern: small mirrors that keep sunlight aimed at a distant station.<span>Schott 1900, No. 37</span></figcaption></figure>
+  </div>
+  <div class="plates">
+    <figure><img src="images/sp4_571.jpg" alt="Photograph of two men beside a theodolite mounted on a tall post inside a tent"><figcaption>Interior station on Ogden Peak, Utah (2,924 m): the instrument on its position stand, isolated from the observer's platform.<span>Schott 1900, No. 39</span></figcaption></figure>
+    <figure><img src="images/sp4_573.jpg" alt="Photograph of a stone ring wall and conical tent on a rocky summit with an instrument outside"><figcaption>High summit station on Tushar Mountain, Utah (3,702 m): ring wall and double shelter tent against storms and the sun's heat.<span>Schott 1900, No. 41</span></figcaption></figure>
+    <figure><img src="images/sp4_435.jpg" alt="Photograph of a tall open lattice tower rising above trees"><figcaption>Scaffolding at station Greene, Indiana: the instrument stands 46.3 m above the ground to see over flat, wooded country.<span>Schott 1900, No. 29</span></figcaption></figure>
+    <figure><img src="images/sp4_630.jpg" alt="Drawing of a tall braced tower with guy wires and a separate observer frame"><figcaption>The Great Caspar signal, California: instrument at 41.1 m, with the observer on a separate frame so his movement does not shake it.<span>Schott 1900, No. 50</span></figcaption></figure>
+  </div>
+  <p>All angles are optical: a telescope pointing at a heliotrope, lamp or pole, read on a graduated horizontal circle levelled to the local plumb line. No long distance in any survey was measured directly.</p>
+
+  <h3>3.4 · How the error bars here were determined</h3>
+  <ol>
+    <li><b>Closure miss per triangle.</b> r = (α₁ + α₂ + α₃ − 180°) − A·K<sub>ell</sub>, using the observed angles from before any adjustment, and the area from the printed sides. The A·K<sub>ell</sub> term is under 1% of a typical r, so the choice of reference curvature does not affect the noise estimate.</li>
+    <li><b>Robust spread.</b> σ<sub>closure</sub> = 1.4826 × median absolute deviation of r within each survey. This resists the occasional blunder or transcription slip.</li>
+    <li><b>Per-angle error.</b> σ<sub>angle</sub> = σ<sub>closure</sub> / √3, assuming the three angles are independent and equally good.</li>
+    <li><b>Independent check.</b> Helmert prints the correction <i>v</i> he applied to each of 186 angles. Their rms is ±0.65″, against ±0.59″ from his closures.</li>
+    <li><b>Propagation to K.</b> Weighted least squares through the origin (ε = K·A), with sandwich variance for the provenance weights and inflation by √(χ²/dof). The survey-to-survey version, which inflates by 1.48, is reported alongside.</li>
+  </ol>
+  <div class="tbl"><table>
+    <thead><tr><th>Survey</th><th class="n">triangles</th><th class="n">σ closure</th><th class="n">σ one angle</th></tr></thead>
+    <tbody>
+      <tr><td>US 39th parallel</td><td class="n">449</td><td class="n">±1.26″</td><td class="n">±0.72″</td></tr>
+      <tr><td>US Eastern Oblique</td><td class="n">267</td><td class="n">±1.40″</td><td class="n">±0.81″</td></tr>
+      <tr><td>Maclear, Cape</td><td class="n">64</td><td class="n">±1.80″</td><td class="n">±1.04″</td></tr>
+      <tr><td>Helmert 52° N</td><td class="n">61</td><td class="n">±1.03″</td><td class="n">±0.59″</td></tr>
+      <tr><td>Transvaal–Rhodesia</td><td class="n">17</td><td class="n">±1.35″</td><td class="n">±0.78″</td></tr>
+      <tr><td>India GTS</td><td class="n">10</td><td class="n">±1.13″</td><td class="n">±0.65″</td></tr>
+      <tr><td>England OS</td><td class="n">42</td><td class="n">±1.44″</td><td class="n">±0.83″</td></tr>
+      <tr><td>Anglo-French</td><td class="n">19</td><td class="n">±0.85″</td><td class="n">±0.49″</td></tr>
+      <tr><td>Cassini–Lacaille</td><td class="n">6</td><td class="n">±15.2″</td><td class="n">±8.8″</td></tr>
+    </tbody>
+  </table></div>
+  <figure style="margin-top:14px">
+    <img src="figures/angle_sigma.png" alt="Dot chart of the one-sigma error of a single observed angle per survey, mostly between 0.5 and 1 arc-second, Cassini near 9">
+    <figcaption>One-sigma error of a single observed angle. 1″ is 0.24 m sideways at 50 km and 1.4 m at 294 km.</figcaption>
+  </figure>
+  <figure style="margin-top:14px">
+    <img src="figures/angle_error.png" alt="Eight histograms of triangle closure misses, roughly bell-shaped and centred on zero">
+    <figcaption>Closure misses by survey, with a normal curve at the robust σ. The large surveys look like random pointing error centred on zero. India's 10 triangles all miss to the positive side, and Maclear has a few ±4–5″ misses.</figcaption>
+  </figure>
+
+  <h3>3.5 · Signal against noise, triangle by triangle</h3>
+  <p>The measuring noise is about the same for every triangle: ±1.3″ on the closure, set by how well a theodolite can point. The curvature signal grows with area. Small triangles therefore cannot see curvature one at a time, and large ones see it clearly. Of the 780 triangles in the three core surveys, 336 show an expected excess more than twice the noise.</p>
+  <figure style="margin-top:14px">
+    <img src="figures/signal_vs_noise.png" alt="777 triangles sorted by size: measured excess with error bars follows the expected-excess curve, buried in the noise band for the smaller half and well above it for the largest">
+    <figcaption>Each dot is one triangle's measured excess, ±1σ. The black line is the excess expected from its area and the ellipsoid's curvature. The grey band is the noise around zero (±1σ dark, ±2σ light). To the left of the dashed line the signal is under twice the noise.</figcaption>
+  </figure>
+  <figure style="margin-top:14px">
+    <img src="figures/error_budget.png" alt="Log-scale bar charts comparing the curvature signal with six error sources for a small, a typical and the largest triangle">
+    <figcaption>Error budget against signal for three triangles, log scale. Pointing noise (blue, measured from the data) is the only error near the signal. Length and area errors (green, stated by the surveyors; and the assumed-radius term) are 10³–10⁵ times smaller. Orange bars are rough physics estimates, to be replaced by the surveyors' own corrections once the reports are opened.</figcaption>
+  </figure>
+  <div class="tbl"><table>
+    <thead><tr><th></th><th class="n">Small</th><th class="n">Typical</th><th class="n">Largest</th></tr></thead>
+    <tbody>
+      <tr><td>Triangle</td><td class="n">Leonard – Beard – Calvary</td><td class="n">Beech – Briery – Keeney</td><td class="n">Mount Nebo – Tushar – Wheeler Peak</td></tr>
+      <tr><td>Area</td><td class="n">140 km²</td><td class="n">414 km²</td><td class="n">14,527 km²</td></tr>
+      <tr><td><b>Signal: curvature excess</b></td><td class="n"><b>0.71″</b></td><td class="n"><b>2.1″</b></td><td class="n"><b>73.8″</b></td></tr>
+      <tr><td>Angle pointing, measured</td><td class="n">1.26″</td><td class="n">1.26″</td><td class="n">1.26″</td></tr>
+      <tr><td>Plumb-line deflection, estimate</td><td class="n">~0.1″</td><td class="n">~0.1″</td><td class="n">~0.3″</td></tr>
+      <tr><td>Signal height above ground, estimate</td><td class="n">~0.02″</td><td class="n">~0.02″</td><td class="n">~0.3″</td></tr>
+      <tr><td>Station height effect on K</td><td class="n">0.0007″</td><td class="n">0.002″</td><td class="n">0.07″</td></tr>
+      <tr><td>Base-line scale, stated ~3 ppm</td><td class="n">4×10⁻⁶″</td><td class="n">1×10⁻⁵″</td><td class="n">4×10⁻⁴″</td></tr>
+      <tr><td>Assumed radius in printed sides</td><td class="n">7×10⁻⁶″</td><td class="n">2×10⁻⁵″</td><td class="n">7×10⁻⁴″</td></tr>
+      <tr class="pooled"><td>Signal ÷ pointing noise</td><td class="n">0.6</td><td class="n">1.7</td><td class="n">59</td></tr>
+    </tbody>
+  </table></div>
+  <p style="margin-top:12px">The weak link is the angles, not the lengths. That is why the analysis weights triangles by area squared, and why the main result keeps only triangles whose signal exceeds twice their noise. The smaller triangles stay on the page, greyed in the fit plot, and are fitted in full in Appendix A.</p>
+
+  <h3>3.6 · Stated equipment and error values from the sources</h3>
+  <p>Nineteenth-century reports quote <i>probable error</i> (p.e.), the 50% bound. A one-sigma error is p.e. ÷ 0.6745.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Item</th><th>Stated value</th><th class="n">≈ 1σ</th><th>Source</th></tr></thead>
+    <tbody>
+      <tr><td>Epping base, 1857, 8,715.942 m</td><td>p.e. ±0.0158 m (1 in 552,000)</td><td class="n">±23 mm</td><td>Schott 1902</td></tr>
+      <tr><td>Hassler bar apparatus, 1830s–40s</td><td>average 1 : 200,000</td><td class="n">5 ppm</td><td>NOAA SP NOS NGS 5</td></tr>
+      <tr><td>Bache–Würdemann compensating bars</td><td>average 1 : 310,000</td><td class="n">3.2 ppm</td><td>NOAA SP NOS NGS 5</td></tr>
+      <tr><td>Invar tapes, after 1906, for comparison</td><td>1 : 675,000 or better</td><td class="n">≤ 1.5 ppm</td><td>NOAA SP NOS NGS 5</td></tr>
+      <tr><td>Epping net, single direction, per station</td><td>p.e. ±0.86″ to ±1.37″</td><td class="n">±1.3″ to ±2.0″</td><td>Schott 1902, p. 29</td></tr>
+      <tr><td>Epping net, mean observed direction (116 directions)</td><td>p.e. ±0.24″</td><td class="n">±0.36″</td><td>Schott 1902, p. 29</td></tr>
+      <tr><td>Epping net, mean triangle closure (46 triangles)</td><td>1.09″</td><td class="n">—</td><td>Schott 1902, p. 29</td></tr>
+      <tr><td>C&amp;GS rejection limit</td><td>4″ from the station mean</td><td class="n">—</td><td>NOAA SP NOS NGS 5</td></tr>
+      <tr><td>Lambton, Bangalore check base, 1804</td><td>computed and measured lengths agree to 3.7 in after about 160 miles of triangulation</td><td class="n">—</td><td>secondary (IISc summary)</td></tr>
+      <tr><td>Ordnance Survey absolute azimuths</td><td>p.e. under 0.4″ at 6 stations, 0.5″ at 12, 0.7″ at 34</td><td class="n">—</td><td>1911 <i>Britannica</i></td></tr>
+      <tr><td>39th-parallel arc, equatorial radius a</td><td>6,377,897 m, p.e. ±65 m</td><td class="n">±96 m</td><td>1911 <i>Britannica</i>, from Schott 1900</td></tr>
+      <tr><td>Eastern Oblique Arc, a</td><td>6,378,041 m, p.e. ±80 m</td><td class="n">±119 m</td><td>1911 <i>Britannica</i>, from Schott 1902</td></tr>
+    </tbody>
+  </table></div>
+  <p style="margin-top:12px">These agree with what the closures show here. A mean absolute closure of 1.09″ corresponds to σ ≈ 1.37″, because the mean absolute value of a normal error is 0.80σ. That matches the ±1.40″ found here for the Eastern Oblique Arc as a whole. Schott's ±0.36″ (1σ) for a mean direction implies about ±0.5″ for an angle, which is two directions, against ±0.81″ here across the whole arc. The difference is plausible: Epping is one well-observed base net, while the whole arc spans 65 years of instruments. Maclear's and Lambton's own stated angle errors are not yet extracted.</p>
+
+  <h3>3.7 · Figures in the original reports</h3>
+  <p>The plates above and in Appendix D are reproduced from the scanned reports in the project folder. Others worth pulling later:</p>
+  <ul>
+    <li>Schott 1902, Plates 4, 7, 9–10, 12, 14: base nets at Epping, Fire Island, Kent Island, Atlanta and Dauphin Island.</li>
+    <li>Schott 1902, Plates 26–27: Mount Mitchell, North Carolina, and its adjustment.</li>
+    <li>Schott 1902, Plate 35: map of arc measures and osculating-spheroid areas.</li>
+    <li>Schott 1900, Nos. 23, 35–36, 40, 42–43, 47–48: Round Top, Cimarron Canyon, breaking camp on Uncompahgre, Treasury Peak, Rocky Mountain ridges, Ibepah station.</li>
+    <li>Maclear 1866: not yet in the project folder.</li>
+  </ul>
+</section>
+
+
+<section class="card">
+  <div class="eyebrow">4 · The declared rule</div>
+  <h2>Selection by signal-to-noise, weight by provenance, area from the ground</h2>
+  <p>This rule was written to a file (<code>RULE.md</code>) before the fit ran, and the result is that one run. Nothing below was tuned after seeing the answer.</p>
+  <ul>
+    <li><b>Area from printed sides, not coordinates.</b> Three sides use Heron's formula. One or two sides use A = s² sin α₁ sin α₂ / (2 sin α₃) with the observed angles. Feet are 0.3048 m and toises 1.949036 m. US and Helmert sides are printed as log metres, Gordon's as log English feet. With this, K is built only from angles and lengths measured on the ground.</li>
+    <li><b>Provenance tiers.</b> A (weight 1.0): observed angles and all three printed sides, so the triangle can be rebuilt from scratch and over-checked. B (0.5): observed angles and one or two sides. C (0.25): observed angles, area from coordinates only. Computed or adjusted angles are excluded.</li>
+    <li><b>Noise per survey.</b> σ = 1.4826 × MAD of each survey's residuals from its own one-parameter fit. The ellipsoid is not used here.</li>
+    <li><b>Signal-to-noise.</b> SNR = A / (R₀² σ) with R₀ = 6371 km fixed. Keep SNR ≥ 2.</li>
+    <li><b>Fit.</b> Weighted least squares ε = K A through the origin, weight = tier / σ². Errors use the sandwich variance, inflated by √(χ²/dof).</li>
+  </ul>
+  <p><b>Checks before fitting.</b> In every triangle with three printed sides, the law of sines holds against the observed angles to about 10⁻⁵. Side-based areas match coordinate areas with a median ratio of 0.9985–1.0046 per survey. Only 7 of 935 triangles disagree by more than 2%, and those fall to tier C. The unit conversions are therefore right, and the coordinates carry no hidden scale error.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Survey</th><th class="n">kept</th><th class="n">tiers</th><th class="n">σ ″</th><th class="n">median SNR</th><th class="n">weight share</th><th class="n">q = K/K_ell</th><th class="n">z vs 1</th></tr></thead>
+    <tbody>
+      <tr><td>US 39th parallel</td><td class="n">118</td><td class="n">118 A</td><td class="n">1.26</td><td class="n">7.2</td><td class="n">84.0%</td><td class="n">1.000 ± 0.005</td><td class="n">−0.1</td></tr>
+      <tr><td>US Eastern Oblique</td><td class="n">157</td><td class="n">156 A, 1 C</td><td class="n">1.40</td><td class="n">4.0</td><td class="n">9.4%</td><td class="n">0.970 ± 0.015</td><td class="n flag">−2.0</td></tr>
+      <tr><td>Maclear, Cape 1837–48</td><td class="n">52</td><td class="n">52 A</td><td class="n">1.80</td><td class="n">4.3</td><td class="n">3.2%</td><td class="n">1.002 ± 0.026</td><td class="n">+0.1</td></tr>
+      <tr><td>Europe 52° N (Helmert)</td><td class="n">45</td><td class="n">45 A</td><td class="n">1.08</td><td class="n">4.6</td><td class="n">3.1%</td><td class="n">0.958 ± 0.025</td><td class="n">−1.7</td></tr>
+      <tr><td>Transvaal–Rhodesia</td><td class="n">9</td><td class="n">9 A</td><td class="n">1.16</td><td class="n">2.9</td><td class="n">0.2%</td><td class="n">0.80 ± 0.15</td><td class="n">−1.3</td></tr>
+      <tr><td>India GTS meridional</td><td class="n">4</td><td class="n">4 A</td><td class="n">1.30</td><td class="n">3.0</td><td class="n">0.1%</td><td class="n">1.24 ± 0.13</td><td class="n">+1.9</td></tr>
+      <tr><td>England OS 1787–96</td><td class="n">6</td><td class="n">4 B, 2 C</td><td class="n">1.49</td><td class="n">3.7</td><td class="n">0.1%</td><td class="n">0.75 ± 0.12</td><td class="n flag">−2.2</td></tr>
+      <tr><td>Anglo-French 1787, Cassini–Lacaille</td><td class="n">0</td><td class="n"></td><td class="n">1.34, 15.2</td><td class="n">&lt; 2</td><td class="n">0</td><td class="n">dropped by the cut</td><td class="n"></td></tr>
+      <tr class="pooled"><td>Result</td><td class="n">391</td><td class="n">384 A, 4 B, 3 C</td><td class="n"></td><td class="n"></td><td class="n">100%</td><td class="n">0.995 ± 0.005</td><td class="n">−1.0</td></tr>
+    </tbody>
+  </table></div>
+  <p style="margin-top:12px">Triangle-level χ²/dof is 1.20, and that is the inflation the rule applies. The seven surveys scatter about the result more than that (χ² = 15.7 for 6 dof). Scaling by that survey-level factor of 1.62 widens the error to ±0.008 and z to −0.6. Both are shown because the rule's wording did not say which level to use.</p>
+  <p><b>The provenance weighting turns out not to matter.</b> 384 of the 391 triangles that pass the SNR cut are tier A. Every survey large enough to count prints full side lengths, so tier weights of 1/0.5/0.25, equal weights, or tier A alone give the same answer to 0.001.</p>
+</section>
+
+<figure>
+  <img src="figures/snr_fit.png" alt="Scatter of observed angle excess against triangle area from printed sides, coloured by survey, with the fitted slope and the ellipsoid slope nearly overlapping">
+  <figcaption>Observed excess against area from printed sides. Coloured points are the 391 that pass SNR ≥ 2; grey points are below the cut or excluded. The solid line is the fit and the dashed line is the ellipsoid. The largest triangles, 6,000–14,500 km² between peaks in California, Nevada, Utah and Colorado, carry most of the leverage. The 39th parallel holds 84% of the weight, and its biggest triangle (Mount Nebo – Tushar – Wheeler Peak) has 75″ of excess.</figcaption>
+</figure>
+
+<figure>
+  <img src="figures/sensitivity.png" alt="Dot and error bar chart: the result and six alternative choices all sit between 0.994 and 0.996; per-survey ratios spread more widely">
+  <figcaption>Every alternative choice in the rule (SNR cut 0–3, tier weighting, area source) moves the ratio between 0.994 and 0.996, well inside one error bar. The spread between surveys is the larger uncertainty.</figcaption>
+</figure>
+
+<figure>
+  <img src="figures/rhodesia_rebuilt.png" alt="The Transvaal–Rhodesia network rebuilt in a plane from printed side lengths, overlaid on the KML coordinates, with per-station misfits of 0 to 7 metres">
+  <figcaption>Built from scratch: the Transvaal–Rhodesia network placed triangle by triangle from Gordon's printed side lengths alone, then rotated, but not scaled, onto the KML coordinates. The RMS station misfit is 4 m over 220 km (maximum 7 m). That is about the size of the distortion from laying a curved patch this big flat, so the printed lengths and the coordinates describe the same ground.</figcaption>
+</figure>
+
+<section class="card">
+  <div class="eyebrow">5 · Does it satisfy the Theorema Egregium?</div>
+  <h2>Yes, to the precision the data allow</h2>
+  <p>The theorem says K depends only on measurements made within the surface, and that this intrinsic value equals κ₁κ₂ for any embedding. A data set cannot break a theorem. What it can test is the empirical claim behind using one: that a curvature measured only from angles and distances on the ground matches the curvature of the ellipsoid that the same ground sits on in space.</p>
+  <ul>
+    <li><b>Intrinsic K is positive.</b> A flat surface (K = 0) is rejected at over 100σ.</li>
+    <li><b>Intrinsic and extrinsic K agree.</b> Under the declared rule, q = 0.995 ± 0.005 (−1.0σ), or ± 0.008 (−0.6σ) allowing for survey-to-survey scatter. The best single survey, the 39th parallel, gives 1.000 ± 0.005. It is an inductive finding with the error bar shown, not a proof.</li>
+    <li><b>Latitude dependence is not resolved.</b> 1/(MN) changes only 0.7% between India (13°) and the 52° arc, smaller than any single survey's error. The data confirm a mean curvature, not the shape of K(φ).</li>
+  </ul>
+  <p><b>Limits of the test.</b> In the main result, areas come from printed side lengths, so K uses only ground measurements: angles, and baselines carried through the chain of triangles. The coordinate-based area gives the identical result, so neither source biases it. The printed spherical excesses are not evidence at all. Their ratio to A·K<sub>ell</sub> has a median of 1.000 (IQR 0.999–1.001, n = 979): the surveyors computed them from area and an assumed radius, so they only confirm the coordinates. The test uses observed angle sums throughout. The overall deficit is now 0.5% and not significant. Appendix A suggests it may be a constant offset of about −0.15″ per triangle, from how angles were reduced, rather than a curvature difference. Two surveys still read low on their own: the Eastern Oblique Arc (0.970 ± 0.015) and Helmert (0.958 ± 0.025), about 0.6–0.8″ on a 20″ triangle. Station height (about 0.1%) does not explain it. The 2–3σ outliers (England, Anglo-French, India, Eastern Oblique) more likely reflect angles reduced or station-adjusted differently than the US tables, which needs checking page by page against the sources.</p>
+</section>
+
+<section class="card" id="appendix-a">
+  <div class="eyebrow">Appendix A · All triangles, and a constant-offset check</div>
+  <h2>The noise-dominated triangles do not change the answer</h2>
+  <p>The result uses only triangles whose expected excess is at least twice their noise. Here every usable triangle is fitted. The fit weights each triangle by area squared, so the small ones carry almost no weight and the result barely moves.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Fit</th><th class="n">triangles</th><th class="n">ratio K / K_ell</th></tr></thead>
+    <tbody>
+      <tr><td>All triangles, declared weighting (SNR ≥ 0)</td><td class="n">935</td><td class="n">0.994 ± 0.005</td></tr>
+      <tr class="pooled"><td>Result (SNR ≥ 2)</td><td class="n">391</td><td class="n">0.995 ± 0.005</td></tr>
+    </tbody>
+  </table></div>
+  <p style="margin-top:12px"><b>Constant-offset check (added after seeing the data).</b> If the way angles were reduced added the same small error to every triangle, whatever its size, a straight line through the origin would read it as a change in curvature. Adding a constant term, ε = q·A·K<sub>ell</sub> + b, tests for that. Only the small triangles can pin down b.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Fit with constant term</th><th class="n">triangles</th><th class="n">ratio q</th><th class="n">constant b per triangle</th></tr></thead>
+    <tbody>
+      <tr><td>All</td><td class="n">929</td><td class="n">1.001 ± 0.005</td><td class="n">−0.15″ ± 0.05″</td></tr>
+      <tr><td>Signal under 2× noise only</td><td class="n">536</td><td class="n">0.87 ± 0.09</td><td class="n">+0.07″ ± 0.14″</td></tr>
+      <tr><td>Signal at least 2× noise only</td><td class="n">393</td><td class="n">1.006 ± 0.006</td><td class="n">−0.25″ ± 0.10″</td></tr>
+    </tbody>
+  </table></div>
+  <p style="margin-top:12px">With the constant allowed, the ratio is 1.001, and the remaining 0.5% shortfall moves into an offset of about −0.15″ per triangle (2.7σ). That pattern fits a small systematic in how angles were reduced, such as corrections for instruments set up off-centre, better than a real difference in curvature. Because this test was chosen after the main result was seen, it is a lead to check against the station records in Schott 1900 and 1902, not a finding. Cassini–Lacaille (±15″ noise) is left out of this check.</p>
+</section>
+
+<section class="card" id="appendix-b">
+  <div class="eyebrow">Appendix B · Whole-chain measurement</div>
+  <h2>Summing non-overlapping triangles along each chain</h2>
+  <p>Gauss–Bonnet holds for any closed region, not only single triangles. The excess of a whole chain is the sum of the excesses of triangles that tile it without overlap. Overlap has to be avoided: braced quadrilaterals give four triangles over the same ground, and summing them all would count that area twice.</p>
+  <p><b>Method.</b> In each core survey, triangles were taken largest first and kept if less than 1% of their area overlapped those already kept. The choice used area only, never the observed angles. K = Σε<sub>obs</sub> / ΣA, with areas from printed sides. The noise is σ<sub>closure</sub>·√n. That is an upper bound: angles round a shared interior station partly cancel in the sum.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Chain</th><th class="n">triangles used</th><th class="n">area</th><th class="n">Σ excess observed</th><th class="n">Σ expected</th><th class="n">noise</th><th class="n">K / K_ell</th><th class="n">per-triangle shortfall</th></tr></thead>
+    <tbody>
+      <tr><td>US 39th parallel</td><td class="n">241 of 449</td><td class="n">322,644 km²</td><td class="n">1,604.3″</td><td class="n">1,638.3″</td><td class="n">±19.5″</td><td class="n">0.979 ± 0.012</td><td class="n">−0.14″</td></tr>
+      <tr><td>US Eastern Oblique</td><td class="n">114 of 267</td><td class="n">112,582 km²</td><td class="n">539.5″</td><td class="n">571.8″</td><td class="n">±14.9″</td><td class="n">0.944 ± 0.026</td><td class="n">−0.28″</td></tr>
+      <tr><td>Maclear, Cape</td><td class="n">18 of 64</td><td class="n">43,540 km²</td><td class="n">230.5″</td><td class="n">221.4″</td><td class="n">±7.7″</td><td class="n">1.041 ± 0.035</td><td class="n">+0.51″</td></tr>
+      <tr class="pooled"><td>Core three combined</td><td class="n">373</td><td class="n">478,766 km²</td><td class="n">2,374.4″</td><td class="n">2,431.5″</td><td class="n">±25.7″</td><td class="n">0.977 ± 0.011</td><td class="n">−0.15″</td></tr>
+    </tbody>
+  </table></div>
+  <figure style="margin-top:14px">
+    <img src="figures/chain.png" alt="Maps of the three core chains with the non-overlapping triangles filled in red-blue by how far each triangle's excess sits from expectation">
+    <figcaption>Triangles used in each chain, filled by (observed − expected excess) ÷ noise. Red is more excess than expected, blue less. Unfilled outlines are overlapping triangles left out. No region stands out; the misses look scattered.</figcaption>
+  </figure>
+  <figure style="margin-top:14px">
+    <img src="figures/chain_section.png" alt="Side views of the curved surface under each core chain, drawn from the measured curvature, against a straight flat-Earth line; insets show the measured arc within kilometres of the ellipsoid arc">
+    <figcaption><b>The curve under each chain.</b> The surface along each chain is drawn as a single arc whose radius comes from the curvature its triangles measured (section 4, per survey; band ±1σ). It sits against the WGS84 ellipsoid (dashed) and a flat Earth (grey). Across the 39th parallel's 4,142 km, the surface drops 346 km below the straight line joining the ends. The measured arc and the ellipsoid arc are indistinguishable at this scale, so the right-hand panels show the gap between them: within ±1 km for the 39th parallel, and about 2 km low at mid-chain for the Eastern Oblique Arc. The arc is computed from the measured K: it shows what the angles imply about the shape, and the angles do not trace the profile point by point. The chain is treated as one straight arc, which simplifies the real zig-zag route.</figcaption>
+  </figure>
+  <figure style="margin-top:14px">
+    <img src="figures/chain_section_true.png" alt="The same three chain arcs drawn at true scale with a common 1,000 km scale bar: the 39th parallel visibly curved, the Eastern Oblique a shallow arc, Maclear nearly flat">
+    <figcaption><b>The same curves at true scale.</b> No vertical exaggeration, and one scale for all three chains. The drop below the straight line grows with the square of the length: 346 km over the 39th parallel's 4,142 km, 118 km over the Eastern Oblique Arc's 2,464 km, and only 4.5 km over Maclear's 478 km, which looks flat at this scale. The measured and ellipsoid arcs differ by under a pixel here, so the comparison stays in the exaggerated chart above.</figcaption>
+  </figure>
+  <figure style="margin-top:14px">
+    <img src="figures/chain_area.png" alt="Three panels of cumulative excess against cumulative area, observed tracking the straight expected line">
+    <figcaption><b>Straight-line test.</b> The same sums plotted against cumulative area instead of distance. Constant curvature gives a straight line with slope K, so the terrain steps disappear. The 39th parallel and Maclear stay on or inside the band. The Eastern Oblique Arc bends below it past about 75,000 km², the same southern section noted below.</figcaption>
+  </figure>
+  <figure style="margin-top:14px">
+    <img src="figures/chain_curve.png" alt="Three step charts of cumulative observed and expected angle excess along each chain, rising together far above the flat-Earth zero line">
+    <figcaption><b>Where does it drift?</b> Excess accumulated along each chain, triangle by triangle, from Cape May, Calais and Maclear's North End. The steps follow triangle size, which follows terrain: big mountain-top triangles make big jumps, and the small triangles of flat country barely move the line. Black is the expected curve (Σ area × K of the ellipsoid), colour is observed, and the shaded band is ±2σ of angle noise (an upper bound). A flat surface would stay on the dashed zero line. In the Eastern Oblique Arc the observed curve first leaves the band at about 1,950 km, in northwest Georgia (Gulf Point – Pine Log – Indian). The shortfall is concentrated in the southern section, west of the Atlanta base towards the Gulf.</figcaption>
+  </figure>
+  <p style="margin-top:12px"><b>Reading it.</b> Over 479,000 km² the chains show 2,374″ (about 40 arc-minutes) of excess, against 2,432″ expected, a ratio of 0.977 ± 0.011. That is lower than the per-triangle result (0.995), and the reason is instructive. A chain sum counts every triangle equally, while the fit weights them by area squared. So a constant error per triangle hurts the sum far more. The shortfall works out to −0.15″ per triangle, the same as the −0.15″ ± 0.05″ constant offset found independently in Appendix A. With that offset removed, the chain sum also returns K ≈ K<sub>ell</sub>. Both checks point to one thing to confirm in the original reports: a small, uniform reduction in the printed angle sums of the order of 0.1–0.3″.</p>
+</section>
+
+<section class="card" id="appendix-c">
+  <div class="eyebrow">Appendix C · First pass (coordinate areas, all surveys)</div>
+  <h2>All 935 triangles, coordinate areas: seven of nine networks detect positive curvature at more than 5σ</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Survey</th><th class="n">n</th><th class="n">mean φ</th><th class="n">σ closure ″</th><th class="n">q = K_obs/K_ell</th><th class="n">K_obs ×10⁻¹⁴</th><th class="n">1/√K km</th><th class="n">√(MN) km</th><th class="n">z vs 1</th></tr></thead>
+    <tbody>
+      <tr><td>US 39th parallel</td><td class="n">449</td><td class="n">38.8</td><td class="n">1.38</td><td class="n">0.998 ± 0.005</td><td class="n">2.458 ± 0.013</td><td class="n">6378</td><td class="n">6373.5</td><td class="n">−0.3</td></tr>
+      <tr><td>US Eastern Oblique</td><td class="n">267</td><td class="n">36.8</td><td class="n">1.43</td><td class="n">0.967 ± 0.014</td><td class="n">2.382 ± 0.036</td><td class="n">6480</td><td class="n">6372.1</td><td class="n flag">−2.3</td></tr>
+      <tr><td>Maclear, Cape 1837–48</td><td class="n">64</td><td class="n">−32.6</td><td class="n">1.97</td><td class="n">1.007 ± 0.027</td><td class="n">2.483 ± 0.066</td><td class="n">6346</td><td class="n">6369.1</td><td class="n">+0.3</td></tr>
+      <tr><td>Europe 52° N (Helmert)</td><td class="n">61</td><td class="n">51.0</td><td class="n">1.13</td><td class="n">0.956 ± 0.026</td><td class="n">2.346 ± 0.063</td><td class="n">6529</td><td class="n">6382.5</td><td class="n">−1.7</td></tr>
+      <tr><td>England OS 1787–96</td><td class="n">42</td><td class="n">50.6</td><td class="n">1.46</td><td class="n">0.756 ± 0.098</td><td class="n">1.86 ± 0.24</td><td class="n">7343</td><td class="n">6382.3</td><td class="n flag">−2.5</td></tr>
+      <tr><td>Anglo-French 1787</td><td class="n">19</td><td class="n">51.2</td><td class="n">1.12</td><td class="n">0.39 ± 0.29</td><td class="n">0.95 ± 0.72</td><td class="n">10250</td><td class="n">6382.7</td><td class="n flag">−2.1</td></tr>
+      <tr><td>Transvaal–Rhodesia</td><td class="n">17</td><td class="n">−21.3</td><td class="n">1.36</td><td class="n">0.82 ± 0.12</td><td class="n">2.02 ± 0.29</td><td class="n">7039</td><td class="n">6362.4</td><td class="n">−1.6</td></tr>
+      <tr><td>India GTS meridional</td><td class="n">10</td><td class="n">13.0</td><td class="n">1.25</td><td class="n">1.32 ± 0.11</td><td class="n">3.25 ± 0.28</td><td class="n">5545</td><td class="n">6359.1</td><td class="n flag">+2.8</td></tr>
+      <tr><td>Cassini–Lacaille 1739</td><td class="n">6</td><td class="n">43.6</td><td class="n">12.1</td><td class="n">1.2 ± 1.3</td><td class="n">2.9 ± 3.1</td><td class="n">5841</td><td class="n">6377.0</td><td class="n">+0.2</td></tr>
+      <tr class="pooled"><td>Pooled (inverse-variance)</td><td class="n">935</td><td class="n"></td><td class="n"></td><td class="n">0.993 ± 0.009</td><td class="n">2.446 ± 0.022</td><td class="n">6395</td><td class="n">6373.6</td><td class="n">−0.8</td></tr>
+    </tbody>
+  </table></div>
+  <p style="margin-top:12px">The pooled error bar is inflated by the Birge factor √(χ²/dof) = √(27.3/8) = 1.85, because the surveys scatter about each other more than their internal closures predict. A single-parameter fit of K to all 935 triangles, with no ellipsoid in the model at all, gives K = 2.448 ± 0.026 ×10⁻¹⁴ m⁻², or R = 6392 ± 34 km.</p>
+</section>
+
+<figure>
+  <img src="figures/curvature_ratio.png" alt="Dot and error bar chart of the curvature ratio per survey, with the pooled value 0.993 near the ellipsoid line at 1 and far from the flat-plane line at 0">
+  <figcaption>K<sub>intrinsic</sub>/K<sub>ellipsoid</sub> per survey, ±1σ, sorted by precision. The two American arcs carry most of the weight. Flagged surveys sit 2–3σ off.</figcaption>
+</figure>
+
+<figure>
+  <img src="figures/rhodesia_3d.png" alt="Three-dimensional view of the Transvaal–Rhodesia triangle network on an exaggerated curved surface, with vertical stems for observed excess and diamonds for predicted excess">
+  <figcaption>Appendix survey: the Transvaal–Rhodesia connection, Pont to Wedza, about 220 km long. Each blue stem is one triangle's observed angle excess and each orange diamond is what the ellipsoid predicts (area × 1/MN). Single triangles are noisy because closures run near ±1.4″ against excesses of 1–5″. The curvature only shows in aggregate, which is why this network alone gives q = 0.82 ± 0.12.</figcaption>
+</figure>
+
+<section class="card" id="appendix-d">
+  <div class="eyebrow">Appendix D · Seeing over the bulge</div>
+  <h2>The Mount Shasta – Mount Helena heliotrope line</h2>
+  <p>The longest line in these networks was observed by heliotrope between Mount Shasta and Mount Helena (now Mount Saint Helena), California, in 1879. Some sources give 1878. The Survey quoted it as 192 miles. From the summit coordinates it is 306 km (190 miles). Mount Helena is a station in the 39th-parallel net; Mount Shasta is not in this KML.</p>
+  <figure style="margin-top:14px">
+    <img src="figures/shasta_line.png" alt="Profile from Mount Shasta (4,322 m) to Mount Helena (1,323 m), 306 km apart, with sea level bulging 1,842 m above the straight chord at the midpoint and the light path passing at least 675 to 869 m above it">
+    <figcaption>The sea-level surface bulges 1,842 m above the straight chord joining the two ends at mid-line (L² ⁄ 8R, with R = 6,374 km). The straight line between the summits still clears sea level by at least 675 m, about 216 km from Shasta. With normal refraction (k = 0.13) the light bends with the Earth, and the minimum rises to about 869 m. Vertical exaggeration is about ×20. Mountain outlines are schematic, but the summit heights are true. The terrain in between (Sacramento Valley and the northern Coast Ranges) is not drawn, so a ridge near the Helena end could reduce the real clearance.</figcaption>
+  </figure>
+  <figure style="margin-top:14px">
+    <img src="figures/shasta_true.png" alt="The same Shasta–Helena profile with no vertical exaggeration: the whole 306 km line is a thin sliver, and three 30 km true-scale windows show the light path 3,877 m, 1,222 m and 869 m above sea level">
+    <figcaption>The same line with no exaggeration. At true scale the 306 km line is about 70 times longer than Shasta is tall, so the mountains and the 1.8 km bulge are a thin sliver. The three 30 km windows keep equal scale both ways: near Shasta the light runs almost level as the mountain drops away; at mid-line it clears the bulge by about 1.2 km; at its lowest, about 225 km out, it clears sea level by about 870 m.</figcaption>
+  </figure>
+  <div class="tbl"><table>
+    <thead><tr><th></th><th class="n">Value</th></tr></thead>
+    <tbody>
+      <tr><td>Mount Shasta summit</td><td class="n">4,322 m (41.4089° N, 122.1950° W)</td></tr>
+      <tr><td>Mount Saint Helena summit</td><td class="n">1,323 m (38.6693° N, 122.6335° W)</td></tr>
+      <tr><td>Line length (WGS84 geodesic)</td><td class="n">306.5 km (190 mi)</td></tr>
+      <tr><td>Earth bulge at mid-line</td><td class="n">1,842 m</td></tr>
+      <tr><td>Lowest clearance, straight line</td><td class="n">675 m, at 216 km</td></tr>
+      <tr><td>Lowest clearance, refracted (k = 0.13)</td><td class="n">869 m, at 225 km</td></tr>
+    </tbody>
+  </table></div>
+  <p style="margin-top:12px"><b>The longest line in the KML.</b> Uncompahgre Peak (4,355 m) to Mount Ellen, 294.1 km, appears as a printed side in Schott 1900. It is the photographed example below, and the KML's coordinates give the same 294.1 km.</p>
+  <div class="plates">
+    <figure><img src="images/sp4_580.jpg" alt="Photograph of a rocky summit crag with a small station structure on top"><figcaption>Summit station on Uncompahgre Peak, Colorado, 4,355 m.<span>Schott 1900, No. 44</span></figcaption></figure>
+    <figure><img src="images/sp4_591.jpg" alt="Photograph of two observers in a stone-walled tent station with a theodolite on a central pillar"><figcaption>Inside the Uncompahgre Peak station, observing the heliotrope on Mount Ellen: "distance 294.1 kilometers or 182⅝ statute miles".<span>Schott 1900, No. 45</span></figcaption></figure>
+  </div>
+  <p style="margin-top:12px">This is why the long western lines needed high peaks at both ends: from sea level, a 306 km sight would be hidden behind nearly 2 km of curved Earth. The angle measured along this line is part of the evidence for curvature, and the line could only be observed because of that same curvature's geometry.</p>
+</section>
+
+<button class="src-btn" id="srcbtn" aria-expanded="false" aria-controls="sources">Sources for this page (pages and quotes)</button>
+<section class="card" id="sources" hidden>
+  <div class="eyebrow">Sources · as cited inside the KML</div>
+  <ul>
+    <li>Roy 1790, triangles from p. 172 ff. and the Table of General Results facing p. 232 (<code>roy1790</code>, <code>legendre1789</code>). Quote, triangle I: <blockquote>angles printed: "42 2 32", "67 55 39", "70 1 48"; angle sum printed: "179 59 59"; spherical excess printed: "0.29"</blockquote></li>
+    <li>Roy 1790; Williams &amp; Mudge 1795–1801 (<code>dalby1790</code>, <code>williams1795</code>, <code>mudge1801</code>): England arcs near 50° 44′ N, observed column used.</li>
+    <li>Maclear 1866, triangle tables near p. 534 (<code>maclear1866</code>). Quote: <blockquote>angles printed: "33 37 47.12", "44 53 24.99", "101 28 48.55"; angle sum printed: "180 0 0.66"; spherical excess printed: "0.541"</blockquote></li>
+    <li>Helmert 1893, p. 150 ff. (<code>helmert1893</code>, <code>boersch_krueger1896</code>). Quote, Dreieck Nr. 1: <blockquote>"43° 41′ 34,37″ (final; observed 34,35″, v +0,02″)" … ε = 1,99″</blockquote></li>
+    <li>Cassini de Thury 1744, pp. 102, 262 (<code>cassini1744</code>): angles reduced to centre and horizon.</li>
+    <li>Brousseaud 1839, p. 161 (<code>brousseaud1839</code>): angles in grades, excluded.</li>
+    <li>Lambton 1816a/b, 1820, 1811 (<code>lambton1816a</code>, <code>lambton1811</code>). Quote, p. 48: <blockquote>Suddragherry – Nagamalli – Sekundermalli: "25 48 40.85", "91 36 14.5", "62 35 8.63"; sum "180 0 3.98"; excess "2.06"</blockquote></li>
+    <li>Morris &amp; Gill 1908, Geodetic Survey of South Africa Vol. V, pp. xxx–xxxiii (<code>morris_gill1908</code>). Quote: <blockquote>Pont – Dogola – M'Kwe Kwe: "43 24 45.77", "57 21 36.46", "79 13 40.18"; spherical excess "4.41"</blockquote></li>
+    <li>Schott 1900, US Transcontinental Triangulation (39th parallel), e.g. p. 364 (<code>schott1900</code>). Quote: <blockquote>Osbornes Ruin – Pooles Island – Finlay: "77 29 15.76", "54 27 12.11", "48 03 34.63"; angle sum "02.50"; excess "1.09"</blockquote></li>
+    <li>Schott 1902, Eastern Oblique Arc, e.g. p. 110 (<code>schott1902</code>). Quote: <blockquote>Trescott Rock – Howard – Cooper: "74 05 21.565", "65 42 24.018", "40 12 17.540"; excess "0.832", "0.833", "0.833"</blockquote></li>
+    <li>NOAA Special Publication NOS NGS 5, <i>Geodetic Surveys in the United States</i>: base years and apparatus, theodolites, heliotropes, apparatus accuracies.</li>
+    <li>Smith, FIG 2006, "LaCaille, Maclear, Gill: Meridian Arcs": Zwartland base dates and length, Colby bars, Maclear's instruments.</li>
+    <li>1911 <i>Encyclopædia Britannica</i>, "Earth, Figure of the": 39th-parallel base totals, arc results with probable errors, Ordnance Survey instruments.</li>
+    <li>IISc summary of the Trigonometrical Survey: Lambton's bases, chain and theodolites.</li>
+    <li>Schott 1902, pp. 19–29 (archive.org OCR): observing period, Epping base, direction probable errors, plate list.</li>
+    <li>Summit elevations: Mount Saint Helena 1,323 m (Wikipedia, NAVD 88); Mount Shasta 4,322 m (PeakVisor). Shasta–Helena line, 1879: <i>The American Surveyor</i>, "The Longest Line" (2012); NOAA SP NOS NGS 5.</li>
+    <li><b>In this repository:</b> the annotated source pages in <a href="https://github.com/rooster-ninja/TheoremaEgregium_CurvatureMeasuredFromSurveyorsTriangles/tree/main/sources/Source_Schott1900_triangle_tables_pp414-591_annotated.pdf">sources/Source_Schott1900_triangle_tables_pp414-591_annotated.pdf</a> and <a href="https://github.com/rooster-ninja/TheoremaEgregium_CurvatureMeasuredFromSurveyorsTriangles/tree/main/sources/Source_Schott1902_triangle_table_p131_annotated.pdf">Source_Schott1902_triangle_table_p131_annotated.pdf</a> (green = verified, red = misprint); the plates in <a href="https://github.com/rooster-ninja/TheoremaEgregium_CurvatureMeasuredFromSurveyorsTriangles/tree/main/sources/Source_Schott1900_plates.pdf">Source_Schott1900_plates.pdf</a> and <a href="https://github.com/rooster-ninja/TheoremaEgregium_CurvatureMeasuredFromSurveyorsTriangles/tree/main/sources/Source_Schott1902_plates.pdf">Source_Schott1902_plates.pdf</a>; the workbook <a href="https://github.com/rooster-ninja/TheoremaEgregium_CurvatureMeasuredFromSurveyorsTriangles/tree/main/supplemental/Curvature_from_triangles.xlsx">supplemental/Curvature_from_triangles.xlsx</a>, where the main result recalculates from formulas; per-triangle data in <a href="https://github.com/rooster-ninja/TheoremaEgregium_CurvatureMeasuredFromSurveyorsTriangles/tree/main/data/triangles_rule.csv">data/triangles_rule.csv</a>; the input <a href="https://github.com/rooster-ninja/TheoremaEgregium_CurvatureMeasuredFromSurveyorsTriangles/tree/main/data/arcs_parallel_master.kml">KML</a>; the rule in <a href="RULE.md">RULE.md</a>; and the <a href="https://github.com/rooster-ninja/TheoremaEgregium_CurvatureMeasuredFromSurveyorsTriangles/tree/main/scripts/">scripts</a>.</li>
+    <li>Analysis rule: <code>RULE.md</code>, written before the main run. Side units: English foot 0.3048 m; toise 1.949036 m.</li>
+    <li>Ellipsoid: WGS84, a = 6 378 137 m, 1/f = 298.257223563. Coastlines: GSHHG low resolution via Basemap.</li>
+  </ul>
+</section>
+</main>
+<script>
+const b=document.getElementById('srcbtn'),s=document.getElementById('sources');
+b.addEventListener('click',()=>{s.hidden=!s.hidden;b.setAttribute('aria-expanded',String(!s.hidden));});
+</script>
+</body>
+</html>

@@ -86,7 +86,7 @@ Translation (English):
 
 ## Sources
 
-The three volumes are the ETH-Bibliothek Zürich copy on e-rara: https://doi.org/10.3931/e-rara-11803
+The full source list, with every cited page, is in [`SOURCES.md`](SOURCES.md). The three volumes are the ETH-Bibliothek Zürich copy on e-rara: https://doi.org/10.3931/e-rara-11803
 
 - Delambre, J.-B. J., & Méchain, P. F. A. (1806). *Base du système métrique décimal, ou mesure de l'arc du méridien compris entre les parallèles de Dunkerque et Barcelone, exécutée en 1792 et années suivantes* (Vol. 1). Paris: Baudouin.
 - Delambre, J.-B. J., & Méchain, P. F. A. (1807). *Base du système métrique décimal* (Vol. 2). Paris: Baudouin.

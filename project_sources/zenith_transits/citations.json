@@ -1,0 +1,292 @@
+{
+ "zt_ust_comstock1872": {
+  "apa": "Comstock, C. B. (1873). Annual report of Major C. B. Comstock, Corps of Engineers, for the fiscal year ending June 30, 1872: Survey of the northern and northwestern lakes (Appendix Z). In Executive documents printed by order of the House of Representatives, 1872-'73 (42nd Congress, 3rd session; Report of the Chief of Engineers, pp. 1031-1064 cited). Government Printing Office.",
+  "url": "https://archive.org/details/housedocumentso24housgoog",
+  "file": "pdf/zt_ust_comstock1872_excerpt.pdf",
+  "license": "public domain (US government work, 1873; Google Books scan via Internet Archive)",
+  "shots": [
+   {
+    "img": "shots/zt_ust_comstock1872_execdocs_title.png",
+    "page": "volume title page (PDF p. 7)",
+    "caption": "Title page of the Executive Documents series volume",
+    "quote": "THIRD SESSION, FORTY-SECOND CONGRESS. EXECUTIVE DOCUMENTS PRINTED BY ORDER OF THE HOUSE OF REPRESENTATIVES. 1872-'73. ... Volume 2....No. 1, part 2, War, parts 1 and 2. ... WASHINGTON: GOVERNMENT PRINTING OFFICE. 1873."
+   },
+   {
+    "img": "shots/zt_ust_comstock1872_p1057_detroit_duluth_nights.png",
+    "page": "p. 1057 (PDF p. 1133)",
+    "caption": "Detroit and Duluth 1871: difference of longitude from each station's record, each night",
+    "quote": "Detroit and Duluth-difference of longitude. ... June 15, 1871 ... 36 05.98 36 05.70 36 05.84 0.140 June 26, 1871 ... 36 05.96 36 05.70 36 05.83 0.130 July 11, 1871 ... 36 05.92 36 05.66 36 05.79 0.130"
+   },
+   {
+    "img": "shots/zt_ust_comstock1872_p1059_abbreviations.png",
+    "page": "p. 1059 (PDF p. 1135)",
+    "caption": "Time-determination tables: meaning of each correction column",
+    "quote": "C Δ i = Reduction to the middle wire; Aberr. = Diurnal aberration; C c = Collimation-correction; B b = Level-correction; t' = Observed time of transit of a star, commonly the mean of nine wires; a = Deviation from the meridian, + when the instrument points east of south; ρ = Hourly rate of clock; Δt = Clock-correction — when fast; + when slow"
+   },
+   {
+    "img": "shots/zt_ust_comstock1872_p1060_detroit_1871-07-11_stars.png",
+    "page": "p. 1060 (PDF p. 1136)",
+    "caption": "Detroit, 11 July 1871 (observer O. B. Wheeler): star names, t' (clock time of transit, corrected) and a (right ascension)",
+    "quote": "DETROIT, July 11, 1871. Latitude, 40° 20' +. Observer, Assistant O. B. Wheeler. ... ζ Ophiuchi ... 31 09.15 ... α' Herculis ... 17 09 51.59 ... α Ophiuchi ... 30 02.50 ... μ Herculis ... 42 31.33 ... κ Aquilæ ... 19 31 02.69 ... γ Aquilæ ... 41 13.13 ... α Aquilæ ... 45 34.85 ... ε Delphini ... 20 28 08.42 ... μ Aquarii ... 46 47.11 ... 61¹ Cygni ... 21 02 12.96 ... ζ Cygni ... 08 32.38 ... Δt = - 1m. 04s. 08 ± 0s. 021 at 18h. 24m."
+   },
+   {
+    "img": "shots/zt_ust_comstock1872_p1064_duluth_1871-07-11_stars.png",
+    "page": "p. 1064 (PDF p. 1140)",
+    "caption": "Duluth, 11 July 1871 (observer G. Y. Wisner): star names, t' and a",
+    "quote": "DULUTH, July 11, 1871. Latitude, 46° 45' +. Observer, G. Y. Wisner. ... ζ Ophiuchi ... 30 33.52 ... α¹ Herculis ... 17 09 16.27 ... α Ophiuchi ... 29 27.00 ... μ Herculis ... 41 54.79 ... κ Aquilæ ... 30 27.33 ... γ Aquilæ ... 40 37.77 ... α Aquilæ ... 44 43.39 ... ε Delphini ... 27 33.25 ... μ Aquarii ... 46 11.95 ... 61¹ Cygni ... 21 01 37.50 ... ζ Cygni ... 07 57.11 ... Δt = - 28s.41 ± 0s.010 at 18h. 30m."
+   }
+  ],
+  "note": "Excerpt of the cited pages, in order: PDF pp. 7, 1133, 1135, 1136, 1140 of the full scan at the URL. PDF page numbers in the shot labels refer to the full scan."
+ },
+ "zt_ust_comstock1882": {
+  "apa": "Comstock, C. B. (1882). Report upon the primary triangulation of the United States Lake Survey (Professional Papers of the Corps of Engineers of the United States Army, No. 24). Government Printing Office.",
+  "url": "https://archive.org/details/cu31924004126904",
+  "file": "pdf/1882_Comstock_Lake_Survey_Primary_Triangulation_excerpt.pdf",
+  "license": "public domain (US government work, 1882; Cornell University Library scan, no known copyright restrictions)",
+  "shots": [
+   {
+    "img": "shots/zt_ust_comstock1882_title.png",
+    "page": "title page (excerpt p. 1, archive leaf 6)",
+    "caption": "Title page",
+    "quote": "REPORT UPON THE PRIMARY TRIANGULATION OF THE UNITED STATES LAKE SURVEY. BY LIEUT.-COL. C. B. COMSTOCK, CORPS OF ENGINEERS, BREVET BRIGADIER-GENERAL, U. S. A., AIDED BY THE ASSISTANTS ON THE SURVEY. WASHINGTON: GOVERNMENT PRINTING OFFICE. 1882."
+   },
+   {
+    "img": "shots/zt_ust_comstock1882_p718_northbase_result.png",
+    "page": "p. 718 (excerpt p. 2, archive leaf 741)",
+    "caption": "Detroit and North Base (Duluth) 1871: nightly results, instrument offset from the triangulation station, and final difference of longitude (red); start of the Fort Howard section (blue)",
+    "quote": "June 15, 1871 ... 36 05.90 June 26, 1871 ... 36 05.80 July 11, 1871 ... 36 05.76 The mean of these values is 36m 05s.82. ... At Duluth the instrument was 0s.143 east of primary station North Base, being east 150.1 feet and north 110.2 feet from that station; so that we have station North Base west of east transit pier of Lake-Survey Observatory, built in 1871, 36m 05s.96±0s.05. The details of this work can be found in Assistant O. B. Wheeler's report of the reduction, published in the Lake-Survey Report for 1872."
+   },
+   {
+    "img": "shots/zt_ust_comstock1882_p766_astro_positions.png",
+    "page": "p. 766 (excerpt p. 5, archive leaf 789)",
+    "caption": "Table of astronomical latitudes and longitudes: North Base (Minnesota Point) and Fort Howard",
+    "quote": "North Base, Minnesota Point, Minn ... 46 45 28.32 ... 92 04 33.00 ... 625, 717 ... Triangulation station. ... Fort Howard, Wis ... 44 30 30.28 ... 88 02 34.05 ... 627, 718 ... Triangulation station."
+   },
+   {
+    "img": "shots/zt_ust_comstock1882_p866_detroit_cambridge_title.png",
+    "page": "p. 866 (excerpt p. 9, archive leaf 889)",
+    "caption": "Appendix III heading: Detroit and Cambridge 1881",
+    "quote": "APPENDIX III. DIFFERENCE OF LONGITUDE BETWEEN DETROIT, MICH., AND CAMBRIDGE, MASS. REPORT OF A. R. FLINT AND O. B. WHEELER, Assistant Engineers."
+   }
+  ]
+ },
+ "zt_ust_wheeler1874": {
+  "apa": "Wheeler, G. M., Kampf, F., & Clark, J. H. (1874). Report upon the determination of the astronomical co-ordinates of the primary stations at Cheyenne, Wyoming Territory, and Colorado Springs, Colorado Territory, made during the years 1872 and 1873 (Geographical and Geological Explorations and Surveys West of the One Hundredth Meridian). Government Printing Office.",
+  "url": "https://archive.org/details/reportupondeter00usgoog",
+  "file": "pdf/reportupondeter00usgoog.pdf",
+  "license": "public domain (US government work, 1874; Google Books scan via Internet Archive)",
+  "shots": [
+   {
+    "img": "shots/zt_ust_wheeler1874_title.png",
+    "page": "title page (PDF p. 12)",
+    "caption": "Title page",
+    "quote": "REPORT UPON THE DETERMINATION OF THE ASTRONOMICAL CO-ORDINATES OF THE PRIMARY STATIONS AT CHEYENNE, WYOMING TERRITORY, AND COLORADO SPRINGS, COLORADO TERRITORY, MADE DURING The Years 1872 and 1873, GEOGRAPHICAL AND GEOLOGICAL EXPLORATIONS AND SURVEYS WEST OF THE ONE HUNDREDTH MERIDIAN. FIRST LIEUTENANT GEORGE M. WHEELER, CORPS OF ENGINEERS, IN CHARGE. Dr. F. KAMPF and J. H. CLARK, CIVILIAN ASTRONOMICAL ASSISTANTS. WASHINGTON: GOVERNMENT PRINTING OFFICE. 1874."
+   },
+   {
+    "img": "shots/zt_ust_wheeler1874_p18_saltlake_1872-10-16_stars.png",
+    "page": "p. 18 (PDF p. 29)",
+    "caption": "Salt Lake Observatory, 16 October 1872: star names, chronometer times T, corrected T', right ascension",
+    "quote": "SALT LAKE OBSERVATORY, October 16, 1872. ... α Cygni ... 39 31.84 ... 39 31.57 37 5.29 26.28 μ Aquarii. ... 48 13.16 ... 48 13.17 45 46.74 26.43 ... 61 Cygni ... 21 3 37.78 ... 21 3 37.70 21 1 11.41 26.29 ... Mean at 21h local sidereal time ... - 2 26.37"
+   },
+   {
+    "img": "shots/zt_ust_wheeler1874_p24_cheyenne_1872-10-16_stars.png",
+    "page": "p. 24 (PDF p. 35)",
+    "caption": "Cheyenne, 16 October 1872: star names, chronometer times T, corrected T', right ascension",
+    "quote": "CHEYENNE, WYOMING TERRITORY, October 16, 1872. ... α Cygni ... 29 45.57 ... 29 46.05 37 5.29 40.76 μ Aquarii ... 38 28.07 ... 38 27.58 45 46.74 40.84 ... 61 Cygni ... 53 51.81 ... 53 52.17 21 1 11.41 40.76 ... Mean at 21h local sidereal time ... -1 52 40.88"
+   },
+   {
+    "img": "shots/zt_ust_wheeler1874_p29_cheyenne_saltlake_result.png",
+    "page": "p. 29 (PDF p. 42)",
+    "caption": "Exchange of signals each night (16 October boxed blue) and final difference of longitude (red)",
+    "quote": "October 16. Salt Lake.. Cheyenne chron. 1 37 10.90 - 1 52 40.68 23 44 30.22 Salt Lake chron. 23 18 37.35 - 0 2 26.51 23 16 10.84 19.38 Cheyenne.. Cheyenne chron. 1 43 40.42 - 1 52 40.67 23 50 59.75 Salt Lake chron. 23 25 6.95 - 0 2 26.52 23 22 40.43 19.32 19.350 ... Cheyenne east of Salt Lake City ... 0h 28m 19s.437±0s.017"
+   },
+   {
+    "img": "shots/zt_ust_wheeler1874_p45_cheyenne_coordinates.png",
+    "page": "p. 45 (PDF p. 58)",
+    "caption": "Resulting coordinates of Cheyenne, and the adopted longitude of the Salt Lake observatory",
+    "quote": "Taking the longitude of the Salt Lake observatory to be 2h 19m 22s.74 west of Washington by determination of the United States Coast Survey, and Washington to be 5h 8m 12s.12 west of Greenwich according to the report of Rear-Admiral B. F. Sands, Superintendent of the United States Naval Observatory, October 6, 1871, Cheyenne is in longitude west from Washington, in time, 1h 51m 3s.30; in arc, 27° 45' 49\".50; in longitude west from Greenwich, in time, 6h 59m 15s.42; in arc, 104° 48' 51\".30; in latitude, north, 41° 7' 46\".62±0\".08."
+   }
+  ]
+ },
+ "zt_wt_greenwich1906": {
+  "apa": "Christie, W. H. M. (Dir.). (1906). Telegraphic determinations of longitude made in the years 1888 to 1902. Royal Observatory, Greenwich; His Majesty's Stationery Office (Neill & Co.).",
+  "url": "https://archive.org/details/telegraphicdeter00royarich",
+  "file": "pdf/zt_wt_greenwich1906_excerpt.pdf",
+  "license": "public domain (published 1906)",
+  "shots": [
+   {
+    "img": "shots/zt_wt_greenwich1906_title.png",
+    "page": "title page (PDF p. 5)",
+    "caption": "Title page",
+    "quote": "ROYAL OBSERVATORY, GREENWICH. TELEGRAPHIC DETERMINATIONS OF LONGITUDE MADE IN THE YEARS 1888 TO 1902. UNDER THE DIRECTION OF SIR W. H. M. CHRISTIE, K.C.B., M.A., F.R.S., ASTRONOMER-ROYAL. ... EDINBURGH: PRINTED FOR HIS MAJESTY'S STATIONERY OFFICE BY NEILL & CO., LIMITED, BELLEVUE. ... 1906."
+   },
+   {
+    "img": "shots/zt_wt_greenwich1906_p66_columns_1888.png",
+    "page": "p. 66 (PDF p. 78)",
+    "caption": "Paris-Greenwich 1888, Clock Error: meaning of each column in the transit tables",
+    "quote": "Column 5 gives, in all cases, the time of transit over the middle wire, set at the reading of the R.A. micrometer adopted for the day, corrected for parallax of pens. Column 6 gives the transit corrected for Collimation, Level, and Azimuth Error (p. 62). Column 7 contains the Tabular Apparent R.A. of the stars ... Column 8 shows the difference of columns 6 and 7, which is the Clock Error indicated by the individual stars."
+   },
+   {
+    "img": "shots/zt_wt_greenwich1906_p67_paris_1888-09-30.png",
+    "page": "p. 67 (PDF p. 79)",
+    "caption": "Star transits observed at Paris, 1888 September 30, observer H.T., Transit B",
+    "quote": "1888 September 30. Observer H T. Transit B. ... 3 Aquarii E 9 ,, 20. 41. 42·66 ... 15 Delphini E 6 ,, 20. 44. 10·42 ... μ Aquarii E 9 ,, 20. 46. 29·87 ... 32 Vulpeculæ E 9 ,, 20. 49. 39·70 ... α Equulei E 9 ,, 21. 10. 6·54 ... 34 Piscium E 9 ,, 0. 4. 10·61 ... γ Pegasi E 9 ,, 0. 7. 21·86 ... 35 Piscium E 9 ,, 0. 9. 6·45 ... υ Piscium W 9 ,, 1. 13. 12·82 ... Polaris W 10 10·863 1. 18. 39·91 ... Polaris E 10 11·113 1. 18. 35·58"
+   },
+   {
+    "img": "shots/zt_wt_greenwich1906_p74_greenwich_1888-09-30.png",
+    "page": "p. 74 (PDF p. 86)",
+    "caption": "Transits observed at Greenwich, 1888 September 30, observer L., Transit C",
+    "quote": "1888 September 30. Observer L. Transit C. 3 Aquarii E 9 9·900 20. 41. 45·67 ... 15 Delphini E 9 ,, 20. 44. 13·41 ... μ Aquarii E 9 ,, 20. 46. 32·82 ... 32 Vulpeculæ E 5 ,, 20. 49. 43·10 ... α Equulei E 9 ,, 21. 10. 9·57 ... 34 Piscium W 7 ,, 0. 4. 13·59 ... γ Pegasi W 9 ,, 0. 7. 25·05 ... 35 Piscium W 9 9·900 0. 9. 9·31 ... υ Piscium E 9 ,, 1. 13. 17·58 ... Polaris (E. & E.) E 4 ,, 1. 18. 31·78"
+   },
+   {
+    "img": "shots/zt_wt_greenwich1906_p103_means_1888.png",
+    "page": "p. 103 (PDF p. 115)",
+    "caption": "Resulting difference of longitude and means for each day: 30 September 1888, four exchanges of signals, mean for the day and mean time of transmission (red)",
+    "quote": "Sept. 30 21. 54 FF′ 9. 20·648 + 0·028 / 23. 12 FE′ ·625 + 0·045 / 23. 23 EE′ ·593 + 0·043 / 23. 45 EF′ ·608 9. 20·619 + 0·028 + 0·036"
+   },
+   {
+    "img": "shots/zt_wt_greenwich1906_p112_result_1888.png",
+    "page": "p. 112 (PDF p. 124)",
+    "caption": "Final 1888 result",
+    "quote": "Longitude of the Paris instrument East of the Greenwich instrument:- 9m20s·602 ± 0s·018 This longitude refers to the following meridians:- At Paris, the pier of the English instrument which is 0s·27 west of Cassini's meridian. At Greenwich the old meridian of Bradley, 19 ft. or 0s·02 west of the Transit-Circle. Thus the meridian of Cassini is, 9m 20s·60 - 0s·02 + 0s·27 or 9m 20s·85 E. of the Greenwich Transit Circle."
+   },
+   {
+    "img": "shots/zt_wt_greenwich1906_p151_latitudes_montsouris.png",
+    "page": "p. 151 (PDF p. 163)",
+    "caption": "Adopted latitudes, Paris-Greenwich 1892 reductions",
+    "quote": "The adopted values for λ are:- Latitude of Greenwich, 51° 28′ 38″. \" \" Montsouris, 48° 49′ 18″."
+   }
+  ],
+  "note": "Excerpt of the cited pages, in order: PDF pp. 5, 78, 79, 86, 115, 124, 163 of the full scan at the URL. PDF page numbers in the shot labels refer to the full scan."
+ },
+ "sa_green1880": {
+  "apa": "Green, F. M., Davis, C. H., & Norris, J. A. (1880). Telegraphic determination of longitudes on the east coast of South America, embracing the meridians of Lisbon, Madeira, St. Vincent, Pernambuco, Bahia, Rio de Janeiro, Montevideo, Buenos Ayres, and Para, with the latitude of the several stations. U.S. Hydrographic Office, Bureau of Navigation.",
+  "url": "https://archive.org/details/telegraphicdete00norrgoog",
+  "file": "pdf/green1880.pdf",
+  "shots": [
+   {
+    "img": "shots/sa_green1880_title.png",
+    "page": "title page (archive leaf n5)",
+    "caption": "Title page",
+    "quote": "TELEGRAPHIC DETERMINATION OF LONGITUDES ON EAST COAST OF SOUTH AMERICA EMBRACING THE MERIDIANS OF LISBON, MADEIRA, ST. VINCENT, PERNAMBUCO, BAHIA, RIO DE JANEIRO, MONTEVIDEO, BUENOS AYRES, AND PARA, WITH THE LATITUDE OF THE SEVERAL STATIONS"
+   },
+   {
+    "img": "shots/sa_green1880_p55_rio_1878-07-01_05.png",
+    "page": "p. 55",
+    "caption": "Rio de Janeiro, F. M. Green, chronometer Negus 1295, 1 and 5 July 1878",
+    "quote": "July 1 ... κ Octantis 11 7 62.49 ... η Apodis 11 49 34.44 ... α Apodis 12 19 21.96 ... α² Librae 12 30 34.66 ... ξ² Librae 12 36 35.85 ... 20 Librae 12 43 22.88 ... Chronometer No. 1295, at 12h 0m chron. time, 2h 13m 36s.338 ± 0s.018 slow. July 5 ... B. A. C. 554, S. P. 11 27 41.61 ... θ Apodis 11 40 2.56 ... λ Virginis 11 58 59.43 ... φ Virginis 12 8 23.80 ... α Apodis 12 19 22.13 ... α² Librae 12 30 36.90 ... ξ² Librae 12 36 38.13"
+   },
+   {
+    "img": "shots/sa_green1880_p56_montevideo_1878-07-01_05.png",
+    "page": "p. 56",
+    "caption": "Montevideo, C. H. Davis, chronometer Negus 1254, 1 and 5 July 1878",
+    "quote": "July 1 ... κ Octantis 12 1 17.13 ... η Apodis 12 42 22.51 ... α Apodis 13 12 14.57 ... α² Librae 13 23 55.81 ... ξ² Librae 13 29 57.31 ... 20 Librae 13 36 43.29 ... Chronometer No. 1254, at 12h 30m chron. time, 1h 20m 14s.20 ± 0s.019 slow. July 5 B. A. C. 554, S. P. 12 21 10.19 ... θ Apodis 12 33 27.36 ... λ Virginis 12 52 27.45 ... φ Virginis 13 1 52.22 ... α Apodis 13 12 47.31 ... α² Librae 13 24 4.82 ... ξ² Librae 13 30 6.11"
+   },
+   {
+    "img": "shots/sa_green1880_p53_rio_1879-08-15_18.png",
+    "page": "p. 53",
+    "caption": "Rio de Janeiro, C. H. Davis, chronometer Negus 1254, 15 and 18 August 1879",
+    "quote": "Aug. 18 ... δ Ophiuchi 14 3 34.61 ... ε Ophiuchi 14 7 29.60 ... γ Apodis 14 10 42.43 ... β Apodis 14 21 34.93 ... ζ Ophiuchi 14 26 4.61 ... 44 Ophiuchi 15 14 35.30 ... Chronometer No. 1254, at 14h 52m chron. time, 2h 4m 28s.01 ± 0s.012 slow"
+   },
+   {
+    "img": "shots/sa_green1880_p54_bahia_1879-08-15_18.png",
+    "page": "p. 54",
+    "caption": "Bahia, J. A. Norris, chronometer Negus 1295, 15 and 18 August 1879",
+    "quote": "Aug. 18 δ Ophiuchi 13 33 24.38 ... ε Ophiuchi 13 37 19.29 ... γ Apodis 13 40 25.85 ... β Apodis 13 51 17.72 ... ζ Ophiuchi 13 55 54.13 ... 44 Ophiuchi 14 44 23.66 ... Chronometer No. 1295, at 15h 0m chron. time, 2h 34m 39s.61 ± 0s.019 slow"
+   },
+   {
+    "img": "shots/sa_green1880_p65_exchanges.png",
+    "page": "p. 65",
+    "caption": "Exchange-of-signals table: Bahia-Rio 1879, Rio-Montevideo 1878, Montevideo-Buenos Ayres 1878, Pernambuco-Para 1879",
+    "quote": "Bahia Aug. 18, 1879 N. E. 10 +2 34 39.64 / Rio de Janeiro Aug. 18, 1879 D. W. 10 +2 4 27.98 ... 18 33.11 ... Rio de Janeiro July 1, 1878 G. E. 12 +2 13 36.28 / Montevideo July 1, 1878 D. W. 10 +1 20 14.06 ... 52 7.47 ... Montevideo July 26, 1878 G. E. 10 +1 21 24.25 / Buenos Ayres July 26, 1878 D. W. 10 +1 10 58.04 ... 8 40.23"
+   },
+   {
+    "img": "shots/sa_green1880_p85_recap_bahia_rio.png",
+    "page": "p. 85",
+    "caption": "Recapitulation: Bahia and Rio de Janeiro",
+    "quote": "BAHIA. The latitude of the Bahia station, as determined from 76 observations of pairs of stars, is S. 13° 0' 37\".11. ... RIO DE JANEIRO. The latitude of the station at Rio de Janeiro, as determined from 29 observations of pairs of stars, is S. 22° 54' 24\".48. ... Longitude of the Rio de Janeiro station 2h 52m 41s.41 ... Center of dome of Imperial Observatory Lat. S. 22° 54' 23\".75, Lon. W. 2h 52m 41s.41"
+   },
+   {
+    "img": "shots/sa_green1880_p86_recap_montevideo_buenosaires.png",
+    "page": "p. 86",
+    "caption": "Recapitulation: Montevideo and Buenos Ayres",
+    "quote": "The latitude of the Montevideo station, as determined from 11 observations of pairs of stars, is S. 34° 54' 43\".71. ... Longitude of the Montevideo station 3h 44m 48s.94 ... The latitude of the station at Buenos Ayres, as determined from 41 observations of pairs of stars, is S. 34° 36' 29\".64. ... Telegraphic difference of longitude between the Montevideo and Buenos Ayres stations 8m 40s.25. Longitude of the Buenos Ayres station 3h 53m 29s.19"
+   }
+  ],
+  "license": "public domain (US government work, 1880)"
+ },
+ "zt_au_klotz1907": {
+  "apa": "Klotz, O. J. (1907). Transpacific longitudes between Canada and Australia and New Zealand, executed during the years 1903 and 1904. In Report of the Chief Astronomer, Department of the Interior, for the year ending 30th June 1905 (Appendix 3; Sessional Paper No. 25b). King's Printer.",
+  "url": "https://archive.org/details/transpacificlon00klotgoog",
+  "file": "pdf/klotz1907.pdf",
+  "license": "public domain (published 1906/1907)",
+  "shots": [
+   {
+    "img": "shots/zt_au_klotz1907_title.png",
+    "page": "title page (PDF p. 3)",
+    "caption": "Title page",
+    "quote": "APPENDIX 3. REPORT OF THE CHIEF ASTRONOMER, 1905. TRANSPACIFIC LONGITUDES BETWEEN CANADA AND AUSTRALIA AND NEW ZEALAND, EXECUTED DURING THE YEARS 1903 AND 1904 BY OTTO J. KLOTZ, LL.D."
+   },
+   {
+    "img": "shots/zt_au_klotz1907_p072_latitudes.png",
+    "page": "p. 72 (PDF p. 44)",
+    "caption": "Station latitudes",
+    "quote": "Norfolk Island ... φ = -29° 00' 28\".91 ± \".014. Southport, Queensland ... φ = -27° 58' 53\". Brisbane ... φ = -27° 28' 00\".0. Sydney ... φ = -33° 51' 41\".1. Wellington ... φ = -41° 16' 47\".1. Doubtless Bay ... Observatory ... - 34° 59' 22\".04"
+   },
+   {
+    "img": "shots/zt_au_klotz1907_p134_southport_1903-10-07.png",
+    "page": "p. 134 (PDF p. 110)",
+    "caption": "Southport, 7 Oct. 1903, observer Otto Klotz: star, transit over mean of threads, corrections, R.A., chronometer correction",
+    "quote": "Station: SOUTHPORT. Date, October 7th, 1903. Observer: OTTO KLOTZ. ... ξ Aquarii 21 34 09·63 ... ε Pegasi 40 59·74 ... δ Capricorni 43 15·61 ... α Aquarii 22 02 22 71 ... ι Pegasi 04 04·52 ... Chronometer correction at 22h 18m = -1m 31s·215 ± s·010 ... δ Sculptoris 23 45 27·83 ... φ Pegasi 49 09·09 ... 2 Ceti 24 00 21·82 ... α Andromedæ 04 58·68 ... ζ Toucani 16 36·79 ... Chronometer correction at 24h 19m = -1m 32s·005 ± s·012"
+   },
+   {
+    "img": "shots/zt_au_klotz1907_p152_brisbane_1903-10-07.png",
+    "page": "p. 152 (PDF p. 127)",
+    "caption": "Brisbane, 7 Oct. 1903, observer Thos. D. Fraser",
+    "quote": "Station: BRISBANE. Date, October 7th, 1903. Observer: THOS. D. FRASER. ... ξ Aquarii 31 46·61 ... δ Capricorni 40 52·62 ... Chronometer correction at 21h 05m = +51s·479 ± s·010 ... δ Sculptoris 43 04·80 ... φ Pegasi 46 45·88 ... 2 Ceti 57 58·63 ... α Andromedæ 24 02 35·37 ... ζ Toucani 14 14·84 ... Chronometer correction at 23h 31m = +51s·522 ± s·016"
+   },
+   {
+    "img": "shots/zt_au_klotz1907_p155_norfolk_1903-12-05.png",
+    "page": "p. 155 (PDF p. 130)",
+    "caption": "Norfolk Island, 5 Dec. 1903, observer F. W. O. Werry",
+    "quote": "Station: NORFOLK ISLAND. Date, December 5th, 1903. Observer, F. W. O. WERRY. ... β Phœnicis 1 02 06·26 ... γ Phœnicis 24 30·57 ... α Eridani 34 26·98 ... Chronometer correction at 1h 40m = -17s·905 ± s·023"
+   },
+   {
+    "img": "shots/zt_au_klotz1907_p161_doubtless_1903-12-05_06.png",
+    "page": "p. 161 (PDF p. 136)",
+    "caption": "Doubtless Bay, 5 and 6 Dec. 1903, observer Otto Klotz",
+    "quote": "Station: DOUBTLESS BAY. Date, December 5th, 1903. Observer: OTTO KLOTZ. ... β Phœnicis 25 02 04·41 ... γ Phœnicis 24 28·65 ... α Eridani 34 25·20 ... Chronometer correction at 24h 45m = -16s·371 ± s·009 ... Date, December 6th, 1903. ... δ Piscium 44 13·65 ... β Phœnicis 25 02 18·21 ... ζ1 Piscium 09 13·98 ... α Eridani 34 38·81 ... ζ Ceti 47 14·66 ... Chronometer correction at 24h 53m = -30s·486 ± s·011"
+   },
+   {
+    "img": "shots/zt_au_klotz1907_p169_wellington_1903-12-06.png",
+    "page": "p. 169 (PDF p. 144)",
+    "caption": "Wellington, 6 Dec. 1903, observer Thos. King",
+    "quote": "Station: WELLINGTON. Date, December 6th, 1903. Observer: THOS. KING. ... δ Piscium 0 43 47·32 ... β Phœnicis 1 01 52·80 ... ζ1 Piscium 08 48·20 ... α Eridani 34 13·44 ... ζ Ceti 46 49·16 ... Chronometer correction at 1h 37m = -5s·496 ± s·031"
+   },
+   {
+    "img": "shots/zt_au_klotz1907_p189_southport_brisbane.png",
+    "page": "p. 189 (PDF p. 164)",
+    "caption": "Southport-Brisbane signal exchanges and difference of longitude per night",
+    "quote": "Oct. 7 ... Mean ... 22 35·23 22 31·31 3 56·414 ... -1 31·328 +51·504 33·582 ... September 29.. Difference of longitude ... 0 01 33·688 ± ·018"
+   },
+   {
+    "img": "shots/zt_au_klotz1907_p190_norfolk_doubtless.png",
+    "page": "p. 190 (PDF p. 165)",
+    "caption": "Norfolk-Doubtless Bay signal exchanges",
+    "quote": "Dec. 5 ... Mean .... 2 24·55 2 02·35 22 14·321 ... - 17·342 - 18·073 22 15·052"
+   },
+   {
+    "img": "shots/zt_au_klotz1907_p191_doubtless_wellington.png",
+    "page": "p. 191 (PDF p. 166)",
+    "caption": "Doubtless Bay-Wellington signal exchanges",
+    "quote": "Dec. 6 ... Mean .... 3 02·57 2 57·85 4 42·847 ... -5·189 -31·573 5 09·231"
+   },
+   {
+    "img": "shots/zt_au_klotz1907_p197_final_longitudes.png",
+    "page": "p. 197 (PDF p. 172)",
+    "caption": "Final longitude values",
+    "quote": "Norfolk ... 11 11 41·146 ... Southport ... 10 13 39·782 ... Sydney ... 10 04 49·287 ... Brisbane ... 10 12 06·044 ... Doubtless Bay ... 11 33 56·146 ... Wellington ... 11 39 05·087"
+   }
+  ]
+ }
+}

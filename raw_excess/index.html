@@ -94,7 +94,7 @@ function render(id){
 <li><b>Angles.</b> ${co?'Each angle is the difference of two station-adjusted directions, with the printed sea-level reduction removed. Each computed angle was checked against the degrees printed in the triangle table.':'The least-processed angles the book prints, as described in section 1. Triangles whose printed angles were closed for calculation, or where an angle was not observed, are left out and listed under the table.'}</li>
 <li><b>Raw closure.</b> Angle sum − 180°. No model of the surface goes into this number.</li>
 <li><b>Area.</b> Plane triangle. ${Object.entries(ab).map(([k,v])=>`${k==='printed sides'?'From the three printed sides (Heron\'s formula)':k==='one printed side and the angles'?'From one printed side and the observed angles (sine rule)':'From the printed station positions, with a degree length of 111.32 km setting the scale'}: ${v} triangle${v>1?'s':''}`).join('. ')}. The area sets only the scale of the fit.</li>
-<li><b>Planar correction.</b> −(raw closure), the change that would make the three angles sum to exactly 180°; per angle = one third of that.</li>
+<li><b>Planar correction.</b> −(raw closure), the change that would make the three angles sum to exactly 180°.</li>
 <li><b>Fit.</b> Closure = k × area, least squares through the origin, no weights. K = k in radians per m², R = 1/√K. Gauss (1827) gives the excess of a geodesic triangle as the curvature integrated over its area.</li></ol>`;
   // 3. one triangle
   h+=`<h2>3. One triangle, step by step</h2>`;
@@ -114,15 +114,15 @@ function render(id){
 <div class="tw"><table><tr><th>Corner</th><th>Printed angle</th></tr>${ex.v.map((v,i)=>`<tr><td>${esc(v)}</td><td>${esc(ex.ang[i])}</td></tr>`).join('')}
 <tr><td><b>Sum − 180°</b></td><td><b>${f3(ex.raw)}</b></td></tr>
 ${ex.se!=null?`<tr><td>Printed spherical excess</td><td>${f3(ex.se)}</td></tr><tr><td>Raw − printed excess</td><td>${sg(ex.raw-ex.se)}</td></tr>`:''}
-<tr><td class="g">Planar correction (total, per angle)</td><td class="g">${pc(ex.raw)}, ${pc(ex.raw/3)}</td></tr></table></div>
+<tr><td class="g">Planar correction</td><td class="g">${pc(ex.raw)}</td></tr></table></div>
 <p class="calc">The angles and the printed excess are as printed. The sum and the corrections are worked out here. How the sum was formed: ${esc(ex.basis)}</p>`;
     } else h+=`<p class="sub">No used triangle with three printed angles.</p>`;
   }
   // 4. all triangles
   const OFF=s.rows.filter(r=>!r.use);
   h+=`<h2>4. All triangles</h2><p>Each row's pages link opens the printed page${co?'s (the triangle page and the direction pages of its three stations)':' with the triangle\'s rows marked where they could be found'}.${OFF.length?` ${OFF.length} triangle${OFF.length>1?'s are':' is'} left out; they are listed under the table with the reason.`:''}</p>
-<div class="tw all"><table><tr><th>No</th><th>Triangle</th><th class="n">Area km²</th><th class="n">Raw closure</th>${co?'<th class="n">After sea level</th>':''}<th class="n">Printed SE</th><th class="n">Raw − SE</th><th class="n g">Planar corr.</th><th class="n g">Per angle</th><th class="n">Time</th><th>Pages</th></tr>`;
-  h+=st.U.map(r=>`<tr><td class="n">${esc(r.id)}</td><td>${esc(r.v.join(' - '))}</td><td class="n">${km(r.area/1e6)}</td><td class="n"><b>${f3(r.raw)}</b></td>${co?`<td class="n">${f3(r.obs)}</td>`:''}<td class="n">${f3(r.se)}</td><td class="n">${r.se!=null?sg(r.raw-r.se):''}</td><td class="n g">${pc(r.raw)}</td><td class="n g">${pc(r.raw/3)}</td><td class="n">${(r.raw/15).toFixed(2)} s</td><td>${cite(rowPage(s,r),'Triangle '+r.id+': '+r.v.join(' - '),'pages','ct chip')}</td></tr>`).join('');
+<div class="tw all"><table><tr><th>No</th><th>Triangle</th><th class="n">Area km²</th><th class="n">Raw closure</th>${co?'<th class="n">After sea level</th>':''}<th class="n">Printed SE</th><th class="n">Raw − SE</th><th class="n g">Planar corr.</th><th class="n">Time</th><th>Pages</th></tr>`;
+  h+=st.U.map(r=>`<tr><td class="n">${esc(r.id)}</td><td>${esc(r.v.join(' - '))}</td><td class="n">${km(r.area/1e6)}</td><td class="n"><b>${f3(r.raw)}</b></td>${co?`<td class="n">${f3(r.obs)}</td>`:''}<td class="n">${f3(r.se)}</td><td class="n">${r.se!=null?sg(r.raw-r.se):''}</td><td class="n g">${pc(r.raw)}</td><td class="n">${(r.raw/15).toFixed(2)} s</td><td>${cite(rowPage(s,r),'Triangle '+r.id+': '+r.v.join(' - '),'pages','ct chip')}</td></tr>`).join('');
   h+=`</table></div><p class="calc">Worked out here: raw closure (from the printed angles), area, Raw − SE, the planar columns and time (15″ of arc = 1 s of time). ${co?'"After sea level" and ':''}"Printed SE" ${co?'are':'is'} as printed.</p>`;
   if(OFF.length) h+=`<details><summary>Left out (${OFF.length})</summary><div class="tw all"><table><tr><th>No</th><th>Triangle</th><th>Reason</th><th class="n">Printed sum − 180°</th><th>Pages</th></tr>${OFF.map(r=>`<tr class="off"><td class="n">${esc(r.id)}</td><td>${esc(r.v.join(' - '))}</td><td>${esc(r.why)}</td><td class="n">${f3(r.raw)}</td><td>${cite(rowPage(s,r),'Triangle '+r.id,'pages','ct chip')}</td></tr>`).join('')}</table></div></details>`;
   // 5. fit

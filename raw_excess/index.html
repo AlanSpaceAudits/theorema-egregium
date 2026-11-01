@@ -61,6 +61,13 @@ const pc=x=>(x>0?'−':'+')+Math.abs(x).toFixed(3)+'″';
 const pgOf=(img,apa,label,why,box,focus)=>({img,apa,label,why,box,focus});
 const rowPage=(s,r)=>r.pages||[pgOf(r.img,r.apa,r.page||'page',(r.box?'Marked: the rows of this triangle. ':'Rows not marked on this page: look for '+r.v.join(', ')+'. ')+(r.ang?'Printed angles: '+r.ang.join('; ')+'. ':'')+(r.basis?'Sum: '+r.basis:''),r.box)];
 const itemPage=(x,lab)=>x&&x.img?[pgOf(x.img,x.apa,x.source||lab,x.quote?'“'+x.quote+'”':'',null)]:[];
+const stepPages=(s,names)=>(s.steps||[]).filter(x=>names.includes(x.step)&&x.img).map(x=>pgOf(x.img,x.apa,x.source,(x.step?x.step+'. ':'')+x.text,null));
+function fill(t,s){const d=s.dirs_done, has=d&&d[0];const secs=has?d[2].join(', '):'';
+  const map={SL39:has?`On this page, ${d[0]} triangles of sections ${secs} are computed from the station-adjustment directions instead, so the reduction (and any base-net correction) is removed from them. The other triangles keep the printed angles.`:'',
+    ROW39:has?`; sections ${secs} from station-adjustment directions`:'',SEA39:has?`; removed here for sections ${secs}`:'',IN39:has?`; removed here for sections ${secs}`:'',
+    SLEO:has?`On this page, ${d[0]} triangles of sections ${secs} are computed from the station-adjustment directions instead, so the reduction and the earlier corrections are removed from them. The other triangles keep the printed angles.`:'',
+    ROWEO:has?`; sections ${secs} from station-adjustment directions`:'',SEAEO:has?`; removed here for sections ${secs}`:'',INEO:has?`; removed here for sections ${secs}`:''};
+  return t.replace(/\{(\w+)\}/g,(m,k)=>map[k]??'');}
 function stats(s){
   const U=s.rows.filter(r=>r.use), d=U.filter(r=>r.se!=null).map(r=>r.raw-r.se);
   const m=d.length?d.reduce((a,b)=>a+b,0)/d.length:null, sd=d.length>1?Math.sqrt(d.reduce((a,b)=>a+(b-m)**2,0)/(d.length-1)):null;
@@ -120,16 +127,19 @@ ${ex.se!=null?`<tr><td>Printed spherical excess</td><td>${f3(ex.se)}</td></tr><t
   }
   // 4. all triangles
   const OFF=s.rows.filter(r=>!r.use);
-  h+=`<h2>4. All triangles</h2><p>Each row's pages link opens the printed page${co?'s (the triangle page and the direction pages of its three stations)':' with the triangle\'s rows marked where they could be found'}.${OFF.length?` ${OFF.length} triangle${OFF.length>1?'s are':' is'} left out; they are listed under the table with the reason.`:''}</p>
-<div class="tw all"><table><tr><th>No</th><th>Triangle</th><th class="n">Area km²</th><th class="n">Raw closure</th>${co?'<th class="n">After sea level</th>':''}<th class="n">Printed SE</th><th class="n">Raw − SE</th><th class="n g">Planar corr.</th><th class="n">Time</th><th>Pages</th></tr>`;
-  h+=st.U.map(r=>`<tr><td class="n">${esc(r.id)}</td><td>${esc(r.v.join(' - '))}</td><td class="n">${km(r.area/1e6)}</td><td class="n"><b>${f3(r.raw)}</b></td>${co?`<td class="n">${f3(r.obs)}</td>`:''}<td class="n">${f3(r.se)}</td><td class="n">${r.se!=null?sg(r.raw-r.se):''}</td><td class="n g">${pc(r.raw)}</td><td class="n">${(r.raw/15).toFixed(2)} s</td><td>${cite(rowPage(s,r),'Triangle '+r.id+': '+r.v.join(' - '),'pages','ct chip')}</td></tr>`).join('');
-  h+=`</table></div><p class="calc">Worked out here: raw closure (from the printed angles), area, Raw − SE, the planar columns and time (15″ of arc = 1 s of time). ${co?'"After sea level" and ':''}"Printed SE" ${co?'are':'is'} as printed.</p>`;
+  if(s.note){const sp=stepPages(s,s.note.steps);
+    h+=`<h2>4. All triangles</h2><div class="box warn"><b>Sea level.</b> ${esc(fill(s.note.sl,s))}${sp.length?' Source: '+cite(sp,'Sea level: '+s.title,sp.map(p=>p.label).join('; '),'ct chip'):''}</div>`;
+    h+=`<p>`;} else h+=`<h2>4. All triangles</h2><p>`;
+  h+=`Each row's pages link opens the printed page${co?'s (the triangle page and the direction pages of its three stations)':' with the triangle\'s rows marked where they could be found'}.${OFF.length?` ${OFF.length} triangle${OFF.length>1?'s are':' is'} left out; they are listed under the table with the reason.`:''}</p>
+<div class="tw all"><table><tr><th>No</th><th>Triangle</th><th class="n">Area km²</th><th class="n">Raw closure</th>${co?'<th class="n">After sea level</th>':s.slcol?'<th class="n">Printed angles</th>':''}<th class="n">Printed SE</th><th class="n">Raw − SE</th><th class="n g">Planar corr.</th><th class="n">Time</th><th>Pages</th></tr>`;
+  h+=st.U.map(r=>`<tr><td class="n">${esc(r.id)}</td><td>${esc(r.v.join(' - '))}</td><td class="n">${km(r.area/1e6)}</td><td class="n"><b>${f3(r.raw)}</b>${r.dirs?'<sup>d</sup>':''}</td>${co?`<td class="n">${f3(r.obs)}</td>`:s.slcol?`<td class="n">${r.dirs?f3(r.obs):''}</td>`:''}<td class="n">${f3(r.se)}</td><td class="n">${r.se!=null?sg(r.raw-r.se):''}</td><td class="n g">${pc(r.raw)}</td><td class="n">${(r.raw/15).toFixed(2)} s</td><td>${cite(rowPage(s,r),'Triangle '+r.id+': '+r.v.join(' - '),'pages','ct chip')}</td></tr>`).join('');
+  h+=`</table></div><p class="calc">Worked out here: raw closure (from the printed angles), area, Raw − SE, the planar columns and time (15″ of arc = 1 s of time). ${s.slcol?'<sup>d</sup> computed from the transcribed station-adjustment directions; "Printed angles" is the printed sum for those triangles. ':''}${co?'"After sea level" and ':''}"Printed SE" ${co?'are':'is'} as printed.</p>`;
   if(OFF.length) h+=`<details><summary>Left out (${OFF.length})</summary><div class="tw all"><table><tr><th>No</th><th>Triangle</th><th>Reason</th><th class="n">Printed sum − 180°</th><th>Pages</th></tr>${OFF.map(r=>`<tr class="off"><td class="n">${esc(r.id)}</td><td>${esc(r.v.join(' - '))}</td><td>${esc(r.why)}</td><td class="n">${f3(r.raw)}</td><td>${cite(rowPage(s,r),'Triangle '+r.id,'pages','ct chip')}</td></tr>`).join('')}</table></div></details>`;
   // 5. fit
   h+=`<h2>5. Curvature from the closures</h2>`;
   if(F){
     const fr=(lab,f)=>f?`<tr><td>${lab}</td><td class="n">${f.k.toFixed(2)} ± ${f.sk.toFixed(2)}</td><td class="n">${f.R?km(f.R)+' ± '+km(f.sR)+' km':'none'}</td><td class="n">${f.rms.toFixed(3)}″</td><td class="n">${(f.c<0?'−':'+')+Math.abs(f.c).toFixed(2)} ± ${f.sc.toFixed(2)}″</td></tr>`:'';
-    h+=`<div class="tw"><table><tr><th>Input</th><th class="n">k (″ per 10,000 km²)</th><th class="n">R = 1/√K</th><th class="n">Scatter (rms)</th><th class="n">Intercept, if fitted</th></tr>${fr(co?'Raw (station adjustment only)':'Raw closures',F)}${co?fr('After sea-level reduction',s.fit_obs):''}${fr('Printed spherical excess',s.fit_se)}</table></div><p class="calc">Worked out here.</p><ul>
+    h+=`<div class="tw"><table><tr><th>Input</th><th class="n">k (″ per 10,000 km²)</th><th class="n">R = 1/√K</th><th class="n">Scatter (rms)</th><th class="n">Intercept, if fitted</th></tr>${fr(co?'Raw (station adjustment only)':'Raw closures',F)}${co?fr('After sea-level reduction',s.fit_obs):s.slcol?fr('Printed angles throughout',s.fit_obs):''}${fr('Printed spherical excess',s.fit_se)}</table></div><p class="calc">Worked out here.</p><ul>
 <li>The smallest raw closure is ${m1(st.lo)} and the largest is ${m1(st.hi)}. ${st.pos} of ${n} are positive.</li>
 ${st.m!=null?`<li>Raw − printed SE averages ${(st.m<0?'−':'+')+Math.abs(st.m).toFixed(2)}″ with a spread of ${st.sd.toFixed(2)}″.</li>`:''}
 <li>Fitted with an intercept, the closure at zero area is ${(F.c<0?'−':'+')+Math.abs(F.c).toFixed(2)} ± ${F.sc.toFixed(2)}″.</li></ul>`;
@@ -142,6 +152,8 @@ ${st.m!=null?`<li>Raw − printed SE averages ${(st.m<0?'−':'+')+Math.abs(st.m
     if(s.errors&&s.errors.length) h+=`<p><b>Error figures printed by the survey.</b></p><ul>${s.errors.map(e=>`<li>${esc(e.what)}: ${esc(e.value)}${e.img?' '+cite(itemPage(e,'source'),e.what||'Error figure',e.source||'source','ct chip'):''}</li>`).join('')}</ul>`;
     h+=`<ul><li>Some triangles share angles, so the ± values on R are smaller than an independent set would give.</li></ul>`;
   }
+  h+=`<h2>7. How each survey handled corrections and reductions</h2><p>One row per survey, from each survey's printed account (the sources link opens the pages). "Already in the angles used" is what the angles on this page still carry. Figure adjustments are listed for reference; no figure-adjusted angle is used in a fit.</p>
+<div class="tw all"><table><tr><th>Survey</th><th>Angles used here</th><th>Centre and horizon</th><th>Station adjustment</th><th>Sea level (angles)</th><th>Already in the angles used</th><th>Figure adjustment (not used)</th><th>Excess computed from</th><th>Sources</th></tr>${D.filter(x=>x.note).map(x=>{const R=x.note.row.map(c=>esc(fill(c,x)));const sp=x.pages?Object.values(x.pages):[...itemPage(x.angle_status,'angles'),...stepPages(x,(x.steps||[]).map(y=>y.step))];return `<tr${x.id===s.id?' style="background:var(--gold)"':''}><td><a href="#${x.id}">${esc(x.title)}</a></td>${R.map(c=>`<td>${c}</td>`).join('')}<td>${sp.length?cite(sp,'Sources: '+x.title,'pages','ct chip'):''}</td></tr>`}).join('')}</table></div>`;
   h+=`<h2>References</h2><ol class="refs"><li>Gauss, C. F. (1902). <i>General investigations of curved surfaces of 1827 and 1825</i> (J. C. Morehead &amp; A. M. Hiltebeitel, Trans.). Princeton University Library. (Original work published 1827)</li>${s.refs.map(r=>`<li>${esc(r)}</li>`).join('')}</ol>`;
   if(co) h+=`<p class="calc">Calculation: <code>raw_se.py</code> in this folder.</p>`;
   document.getElementById('view').innerHTML=h;

@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Doppler Simulator</title>
+<meta name="description" content="Simulate a Doppler recording of a passing transmitter and solve its speed and closest distance from the received frequency alone.">
+<style>
+:root{--bg:#f6f7fa;--panel:#fff;--ink:#1a2030;--ink2:#4a5468;--muted:#7a8396;--line:#dfe3ea;--acc:#1f6fd1;--acc2:#b25e00;--good:#1b8a4a;--bad:#c23a3a;--gold:#fff4cc;--mark:#8a3ffc;--grid:#eceff4}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0d1118;--panel:#151b25;--ink:#e6ebf3;--ink2:#aab4c5;--muted:#7d889b;--line:#2a3342;--acc:#5aa2ff;--acc2:#f0a040;--good:#4cd08a;--bad:#ff6b6b;--gold:#3a3218;--mark:#b48cff;--grid:#1f2733}}
+:root[data-theme=dark]{--bg:#0d1118;--panel:#151b25;--ink:#e6ebf3;--ink2:#aab4c5;--muted:#7d889b;--line:#2a3342;--acc:#5aa2ff;--acc2:#f0a040;--good:#4cd08a;--bad:#ff6b6b;--gold:#3a3218;--mark:#b48cff;--grid:#1f2733}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:1200px;margin:0 auto;padding:24px 16px 60px}
+h1{font-size:28px;margin:0 0 4px}
+h2{font-size:18px;margin:0 0 10px}
+h3{font-size:15px;margin:14px 0 6px}
+p{margin:6px 0}
+.sub{color:var(--ink2);margin-bottom:18px}
+.grid{display:grid;grid-template-columns:340px 1fr;gap:16px;align-items:start}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:16px;min-width:0}
+label{display:block;font-size:13px;color:var(--ink2);margin:8px 0 2px}
+input[type=number],select,textarea{width:100%;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);font:14px ui-monospace,Consolas,monospace}
+textarea{height:90px}
+.row{display:flex;gap:8px}.row>*{flex:1;min-width:0}
+.radio{display:flex;gap:14px;flex-wrap:wrap;font-size:14px;margin:4px 0}.radio label{display:inline;margin:0;color:var(--ink)}
+button{padding:7px 12px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);font:600 13px system-ui,sans-serif;cursor:pointer;margin:8px 6px 0 0}
+button.pri{background:var(--acc);border-color:var(--acc);color:#fff}
+.hint{font-size:12.5px;color:var(--muted)}
+svg{width:100%;height:auto;display:block;font:11px system-ui,sans-serif}
+svg .ax{stroke:var(--muted);stroke-width:1}svg .gr{stroke:var(--grid);stroke-width:1}svg text{fill:var(--ink2)}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font:13px ui-monospace,Consolas,monospace;font-variant-numeric:tabular-nums}
+th,td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left;white-space:normal}
+th{color:var(--muted);font-weight:600}
+td.hid{color:var(--muted)}
+.ok{color:var(--good)}.no{color:var(--bad)}
+.steps div{font:13.5px/1.7 ui-monospace,Consolas,monospace;padding:2px 0;border-bottom:1px dashed var(--line);overflow-wrap:anywhere}
+.steps b{color:var(--acc)}
+.warn{background:var(--gold);border-radius:6px;padding:6px 10px;font-size:13px;margin-top:8px}
+.f{font:600 13.5px/1.6 ui-monospace,Consolas,monospace;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:5px 10px;margin:6px 0;overflow-wrap:anywhere}
+.f b{color:var(--acc);margin-right:6px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media(max-width:700px){.two{grid-template-columns:1fr}}
+.out{font:14px ui-monospace,Consolas,monospace;margin-top:8px}.out div{padding:3px 0;border-bottom:1px dashed var(--line)}
+.legend{font-size:12.5px;color:var(--ink2);display:flex;gap:14px;flex-wrap:wrap;margin-top:4px}.legend i{display:inline-block;width:18px;height:3px;vertical-align:middle;margin-right:5px}
+#tip{position:fixed;pointer-events:none;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:4px 8px;font:12px ui-monospace,monospace;opacity:0;z-index:9}
+a{color:var(--acc)}
+</style>
+</head>
+<body>
+<main>
+<h1>Doppler Simulator and Calculator</h1>
+<p class="sub">A transmitter passes an observer. The observer records only the received frequency. From that one curve the page solves the speed and the closest distance four ways, and tests whether the path was straight. Set the distance yourself, or hide it and let the curve find it.</p>
+
+<div class="grid">
+<div>
+ <div class="panel">
+  <h2>1. Source</h2>
+  <label>Transmitter</label><select id="src"></select>
+  <div class="row"><div><label>Broadcast frequency f₀ (Hz)</label><input type="number" id="f0" step="any"></div>
+  <div><label>Wave speed c (m/s)</label><input type="number" id="c" step="any"></div></div>
+  <h2 style="margin-top:14px">2. Mover</h2>
+  <label>Preset</label><select id="mov"></select>
+  <label>Speed V (m/s)</label><input type="number" id="v" step="any">
+  <label>Path</label>
+  <div class="radio"><label><input type="radio" name="path" value="0" checked> straight</label><label><input type="radio" name="path" value="1"> bends away</label><label><input type="radio" name="path" value="-1"> bends toward</label></div>
+  <div id="rbox" style="display:none"><label>Bend radius (m)</label><input type="number" id="rad" step="any"><div class="hint">Bending toward the observer needs a radius larger than the closest distance. For the ISS on a globe, about 6,800,000 m.</div></div>
+  <h2 style="margin-top:14px">3. Distance</h2>
+  <div class="radio"><label><input type="radio" name="dm" value="k" checked> I set it</label><label><input type="radio" name="dm" value="u"> unknown: solve it</label></div>
+  <div id="dk"><label>Closest distance d (m)</label><input type="number" id="d" step="any"></div>
+  <div id="du" style="display:none"><button id="newd">New hidden distance</button><button id="rev">Reveal</button><div class="hint" id="dhint"></div></div>
+  <h2 style="margin-top:14px">4. Recording</h2>
+  <div class="row"><div><label>Half-length (s)</label><input type="number" id="win" step="any"></div><div><label>Sample every (s)</label><input type="number" id="dt" step="any"></div></div>
+  <div class="row"><div><label>Noise (Hz rms)</label><input type="number" id="noise" step="any" min="0"></div><div><label>&nbsp;</label><button id="auto" style="margin:0;width:100%">Auto length</button></div></div>
+  <div class="radio" style="margin-top:8px"><label><input type="checkbox" id="f0k" checked> f₀ known to the observer</label></div>
+  <button class="pri" id="run">New recording</button>
+  <h3>Or analyse your own recording</h3>
+  <textarea id="paste" placeholder="time_s  frequency_Hz&#10;0  437559800&#10;1  437559790&#10;..."></textarea>
+  <div class="hint">One sample per line. Uses c and, if ticked, f₀ from above.</div>
+  <button id="usep">Analyse pasted data</button><button id="clrp">Back to simulation</button>
+ </div>
+</div>
+
+<div>
+ <div class="panel">
+  <h2>Received frequency</h2>
+  <svg id="ch1" viewBox="0 0 760 330" role="img" aria-label="Doppler shift against time"></svg>
+  <div class="legend"><span><i style="background:var(--muted);height:6px;border-radius:3px"></i>recorded</span><span><i style="background:var(--acc)"></i>least-squares fit (D)</span><span><i style="background:var(--acc2)"></i>plateaus and half-plateau width (A)</span><span><i style="background:var(--mark)"></i>slope at the middle (B)</span></div>
+  <div id="warn"></div>
+ </div>
+ <div class="panel">
+  <h2>Solved from the curve</h2>
+  <div class="tw"><table id="res"></table></div>
+  <div class="steps" id="steps" style="margin-top:10px"></div>
+ </div>
+ <div class="panel">
+  <h2>Integrating the curve: straight or curved?</h2>
+  <p class="hint">The area under the curve is the change in distance, formula (9). A straight path puts every point on (d + Δr)² = d² + V²τ², formula (10). The lower chart is how far the integrated distance misses that straight-path line.</p>
+  <svg id="ch2" viewBox="0 0 760 240" role="img" aria-label="Distance from integrating the curve"></svg>
+  <svg id="ch3" viewBox="0 0 760 170" role="img" aria-label="Miss from a straight path"></svg>
+  <div class="out" id="straight"></div>
+ </div>
+ <div class="panel">
+  <h2>Top view</h2>
+  <svg id="ch4" viewBox="0 0 760 260" role="img" aria-label="Path seen from above"></svg>
+ </div>
+</div>
+</div>
+
+<div class="panel">
+ <h2>Calculator</h2>
+ <div class="two">
+  <div>
+   <h3>Readings to speed and distance</h3>
+   <div class="row"><div><label>Wave speed c (m/s)</label><input type="number" id="k_c" value="299792458" step="any"></div><div><label>Width Δt (s)</label><input type="number" id="k_w" value="83.68" step="any"></div></div>
+   <div class="row"><div><label>Approach plateau f₊ (Hz)</label><input type="number" id="k_fp" value="12000303777.84" step="any"></div><div><label>Recede plateau f₋ (Hz)</label><input type="number" id="k_fm" value="11999696237.54" step="any"></div></div>
+   <label>Slope at the middle (Hz/s, optional)</label><input type="number" id="k_s" step="any">
+   <div class="out" id="k_out"></div>
+  </div>
+  <div>
+   <h3>Speed and distance to the curve</h3>
+   <div class="row"><div><label>f₀ (Hz)</label><input type="number" id="p_f0" value="12000000000" step="any"></div><div><label>c (m/s)</label><input type="number" id="p_c" value="299792458" step="any"></div></div>
+   <div class="row"><div><label>V (m/s)</label><input type="number" id="p_v" value="7589" step="any"></div><div><label>d (m)</label><input type="number" id="p_d" value="550000" step="any"></div></div>
+   <div class="out" id="p_out"></div>
+  </div>
+ </div>
+</div>
+
+<div class="panel">
+ <h2>Formulas</h2>
+ <p class="hint">τ is time from closest approach, counted at the moment the wave leaves the source. r is the distance from observer to source, ṙ its rate (+ = moving away). Rows marked * are derived on this page from (1) to (3).</p>
+ <div class="two">
+ <div>
+ <div class="f"><b>(1)</b>r(τ) = √(d² + V²τ²)</div>
+ <div class="f"><b>(2)</b>ṙ = V²τ / √(d² + V²τ²)</div>
+ <div class="f"><b>(3)</b>f = f₀ / (1 + ṙ/c) &nbsp;≈&nbsp; f₀(1 − ṙ/c) when V ≪ c</div>
+ <div class="f"><b>(4)</b>plateaus f₊ = f₀c/(c − V), f₋ = f₀c/(c + V): &nbsp;V = c(f₊ − f₋)/(f₊ + f₋), f₀ = 2f₊f₋/(f₊ + f₋) *</div>
+ <div class="f"><b>(5)</b>ṙ = ±V/2 at |τ| = d/(V√3): &nbsp;d = Δt·V·√3/2 *</div>
+ </div><div>
+ <div class="f"><b>(6)</b>dṙ/dτ at τ = 0 is V²/d: &nbsp;d = V²/(dṙ/dτ); in frequency, slope = −(f₀/c)V²/d</div>
+ <div class="f"><b>(7)</b>ṙ = c(f₀/f − 1), &nbsp; dτ = (f/f₀)·dt (received time t) *</div>
+ <div class="f"><b>(9)</b>Δr(τ) = r − d = ∫₀^τ ṙ dτ′ = c·∫ (1 − f/f₀) dt *</div>
+ <div class="f"><b>(10)</b>straight path: Δr² = V²τ² − 2d·Δr, linear in V² and d *</div>
+ <div class="f"><b>(D)</b>least squares of (1) to (3) over t₀, V, d (and f₀ if not known)</div>
+ </div></div>
+ <p class="hint">Formula (3) is the classical form for a source moving through still air with the listener at rest; the page uses it for radio too. For the ISS the next term, of order V²/2c², is 3.3 × 10⁻¹⁰ of f₀ (worked out here), about 0.14 Hz at 437.55 MHz.</p>
+ <p class="hint">Doppler, C. (1842). Über das farbige Licht der Doppelsterne und einiger anderer Gestirne des Himmels. <i>Abhandlungen der Königlichen Böhmischen Gesellschaft der Wissenschaften</i>, 5. Folge, 2, 465–482.</p>
+ <p class="hint">Used in <a href="https://alanspaceaudits.github.io/theorema-egregium/shape_of_distance_v26/#doppler">The Shape of Distance, ISS Doppler tab</a>.</p>
+</div>
+<div id="tip"></div>
+</main>
+<script>
+const $ = id => document.getElementById(id), C = 299792458;
+const SOURCES = [["ISS downlink, 145.800 MHz (radio)", 145.8e6, C, 20], ["ISS SSTV, 437.550 MHz (radio)", 437.55e6, C, 30],
+  ["GPS L1, 1575.42 MHz (radio)", 1575.42e6, C, 50], ["Ku-band, 12 GHz (radio)", 12e9, C, 300],
+  ["Tone, 440 Hz (sound in air)", 440, 343, 0.2], ["Tone, 1 kHz (sound in air)", 1000, 343, 0.5]];
+const MOVERS = [["ISS, 7.66 km/s", 7660, 420e3, 400e3, 2000e3], ["Low orbit at 550 km, 7.59 km/s", 7589, 550e3, 550e3, 2500e3],
+  ["Airliner, 250 m/s", 250, 10e3, 3e3, 30e3], ["High-speed train, 300 km/h", 83.33, 60, 20, 200],
+  ["Train, 30 m/s", 30, 40, 15, 150], ["Car, 25 m/s", 25, 20, 10, 100]];
+SOURCES.forEach((s, i) => $("src").add(new Option(s[0], i))); $("src").add(new Option("Custom", -1));
+MOVERS.forEach((m, i) => $("mov").add(new Option(m[0], i))); $("mov").add(new Option("Custom", -1));
+
+let hidden = null, shown = false, pasted = null, noiseSeed = 1;
+const num = id => parseFloat($(id).value);
+const radios = n => document.querySelector(`input[name=${n}]:checked`).value;
+
+// ---------- formatting
+const nf = (x, d = 0) => Number.isFinite(x) ? x.toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d }) : "–";
+const sig = (x, s = 4) => { if (!Number.isFinite(x)) return "–"; if (x === 0) return "0"; const d = Math.max(0, s - 1 - Math.floor(Math.log10(Math.abs(x)))); return (x < 0 ? "−" : "") + nf(Math.abs(x), Math.min(d, 9)); };
+const tk = v => (v < 0 ? "−" : "") + Math.abs(v).toLocaleString("en-US", { maximumFractionDigits: 6 });
+const fm = x => (x < 0 ? "−" : "") + sig(Math.abs(x));
+const hz = x => Math.abs(x) >= 1e9 ? fm(x / 1e9) + " GHz" : Math.abs(x) >= 1e6 ? fm(x / 1e6) + " MHz" : Math.abs(x) >= 1e3 ? fm(x / 1e3) + " kHz" : fm(x) + " Hz";
+const hzx = x => nf(x, 3) + " Hz";
+const mm = x => Math.abs(x) >= 1e4 ? fm(x / 1e3) + " km" : fm(x) + " m";
+const ms = x => Math.abs(x) >= 1e3 ? fm(x / 1e3) + " km/s" : fm(x) + " m/s";
+
+// ---------- seeded noise so "New recording" is the only thing that changes it
+function rng(seed) { let s = seed >>> 0 || 1; return () => { s ^= s << 13; s ^= s >>> 17; s ^= s << 5; return (s >>> 0) / 4294967296; }; }
+function gauss(r) { let u = 0; while (!u) u = r(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * r()); }
+
+// ---------- forward model: position on the path at emission time te (closest approach at te = 0)
+function pos(te, V, d, bend, R) {
+  const s = V * te;
+  if (!bend) return [s, d, V, 0];
+  const th = s / R;
+  return [R * Math.sin(th), d + bend * R * (1 - Math.cos(th)), V * Math.cos(th), bend * V * Math.sin(th)];
+}
+function simulate(P) {
+  const n = Math.max(20, Math.round(2 * P.win / P.dt) + 1), r = rng(P.seed);
+  // emission grid, then each sample's received time; received time 0 = arrival of the closest-approach signal
+  const m = 4 * n, lo = -P.win * 1.3 - P.d / P.c, hi = P.win * 1.3 + P.d / P.c, E = [];
+  for (let i = 0; i <= m; i++) {
+    const te = lo + (hi - lo) * i / m, [x, y, vx, vy] = pos(te, P.V, P.d, P.bend, P.R), rr = Math.hypot(x, y), rd = (x * vx + y * vy) / rr;
+    E.push([te + (rr - P.d) / P.c, P.f0 / (1 + rd / P.c)]);
+  }
+  const t = [], f = [];
+  let j = 0;
+  for (let i = 0; i < n; i++) {
+    const tr = -P.win + 2 * P.win * i / (n - 1);
+    while (j < E.length - 2 && E[j + 1][0] < tr) j++;
+    const a = E[j], b = E[j + 1], k = (tr - a[0]) / (b[0] - a[0]);
+    t.push(tr); f.push(a[1] + (b[1] - a[1]) * k + P.noise * gauss(r));
+  }
+  return { t, f };
+}
+
+// ---------- analysis: everything below sees only (t, f), c and optionally f0
+function polyfit(x, y, deg) {
+  const n = deg + 1, A = Array.from({ length: n }, () => new Array(n + 1).fill(0));
+  for (let i = 0; i < x.length; i++) { const p = []; for (let k = 0; k < n; k++) p.push(x[i] ** k); for (let a = 0; a < n; a++) { for (let b = 0; b < n; b++) A[a][b] += p[a] * p[b]; A[a][n] += p[a] * y[i]; } }
+  return solve(A);
+}
+function solve(A) {
+  const n = A.length;
+  for (let i = 0; i < n; i++) { let p = i; for (let k = i + 1; k < n; k++) if (Math.abs(A[k][i]) > Math.abs(A[p][i])) p = k; [A[i], A[p]] = [A[p], A[i]];
+    for (let k = i + 1; k < n; k++) { const q = A[k][i] / A[i][i]; for (let l = i; l <= n; l++) A[k][l] -= q * A[i][l]; } }
+  const x = new Array(n); for (let i = n - 1; i >= 0; i--) { let s = A[i][n]; for (let k = i + 1; k < n; k++) s -= A[i][k] * x[k]; x[i] = s / A[i][i]; }
+  return x;
+}
+const mean = a => a.reduce((s, v) => s + v, 0) / a.length;
+function smooth(a, w) { const o = []; for (let i = 0; i < a.length; i++) { let s = 0, c = 0; for (let k = Math.max(0, i - w); k <= Math.min(a.length - 1, i + w); k++) { s += a[k]; c++; } o.push(s / c); } return o; }
+
+// exact straight-pass model of (1)-(3) at received times, light time included
+function model(t, t0, V, d, f0, c) {
+  return t.map(tt => { const tp = tt - t0; let te = tp; for (let k = 0; k < 6; k++) te = tp - (Math.sqrt(d * d + V * V * te * te) - d) / c;
+    return f0 / (1 + V * V * te / Math.sqrt(d * d + V * V * te * te) / c); });
+}
+function lmfit(t, f, p, c, f0fixed) {
+  // p = [t0, V, d, f0]; Levenberg-Marquardt on the residual f - model
+  const free = f0fixed ? [0, 1, 2] : [0, 1, 2, 3];
+  const res = q => { const m = model(t, q[0], q[1], q[2], q[3], c); return f.map((v, i) => v - m[i]); };
+  let r = res(p), S = r.reduce((s, v) => s + v * v, 0), lam = 1e-3;
+  for (let it = 0; it < 80; it++) {
+    const J = free.map(k => { const h = Math.max(Math.abs(p[k]) * 1e-7, k === 0 ? 1e-4 : 1e-6), q = p.slice(); q[k] += h; const r2 = res(q); return r.map((v, i) => (v - r2[i]) / h); });
+    const n = free.length, A = Array.from({ length: n }, () => new Array(n + 1).fill(0));
+    for (let a = 0; a < n; a++) { for (let b = 0; b < n; b++) { let s = 0; for (let i = 0; i < r.length; i++) s += J[a][i] * J[b][i]; A[a][b] = s; } let s = 0; for (let i = 0; i < r.length; i++) s += J[a][i] * r[i]; A[a][n] = s; }
+    let improved = false;
+    for (let tries = 0; tries < 10; tries++) {
+      const B = A.map((row, a) => row.map((v, b) => b === a ? v * (1 + lam) : v)), dx = solve(B), q = p.slice();
+      free.forEach((k, a) => q[k] += dx[a]); q[2] = Math.abs(q[2]); q[1] = Math.abs(q[1]);
+      const r2 = res(q), S2 = r2.reduce((s, v) => s + v * v, 0);
+      if (S2 < S) { p = q; r = r2; const dS = S - S2; S = S2; lam = Math.max(lam / 5, 1e-9); improved = dS > 1e-12 * S; break; } lam *= 8;
+    }
+    if (!improved) break;
+  }
+  return { p, rms: Math.sqrt(S / f.length) };
+}
+
+function analyse(t, f, c, f0known) {
+  const n = t.length, k = Math.max(3, Math.round(n * 0.02)), o = {};
+  // A: plateaus and half-plateau width
+  o.fp = mean(f.slice(0, k)); o.fm = mean(f.slice(n - k));
+  o.VA = c * (o.fp - o.fm) / (o.fp + o.fm); o.f0A = 2 * o.fp * o.fm / (o.fp + o.fm);
+  o.f0 = f0known ?? o.f0A;
+  const rd = f.map(v => c * (o.f0 / v - 1));
+  const te = [0]; for (let i = 1; i < n; i++) te.push(te[i - 1] + 0.5 * (f[i] / o.f0 + f[i - 1] / o.f0) * (t[i] - t[i - 1]));
+  // middle: cubic through the points with |ṙ| < V/2, root nearest the centre
+  const sm = smooth(rd, Math.max(1, Math.round(n * 0.002)));
+  let ic = 0, best = Infinity; for (let i = 1; i < n; i++) if (sm[i - 1] < 0 && sm[i] >= 0) { const dd = Math.abs(i - n / 2); if (dd < best) { best = dd; ic = i; } }
+  let i1 = ic, i2 = ic; while (i1 > 0 && sm[i1] > -o.VA / 2) i1--; while (i2 < n - 1 && sm[i2] < o.VA / 2) i2++;
+  const xs = [], ys = [], x0 = te[ic]; for (let i = Math.max(0, i1 - 1); i <= Math.min(n - 1, i2 + 1); i++) { xs.push(te[i] - x0); ys.push(rd[i]); }
+  const pc = xs.length >= 6 ? polyfit(xs, ys, 3) : [ys[0] || 0, 1, 0, 0];
+  let z = -pc[0] / pc[1]; for (let it = 0; it < 20; it++) z -= (pc[0] + pc[1] * z + pc[2] * z * z + pc[3] * z ** 3) / (pc[1] + 2 * pc[2] * z + 3 * pc[3] * z * z);
+  o.te0 = x0 + z; o.slope = pc[1] + 2 * pc[2] * z + 3 * pc[3] * z * z;   // dṙ/dτ at the middle
+  const tAt = T => { for (let i = 1; i < n; i++) if (te[i] >= T) return t[i - 1] + (t[i] - t[i - 1]) * (T - te[i - 1]) / (te[i] - te[i - 1]); return t[n - 1]; };
+  o.t0 = tAt(o.te0);
+  const cross = (lev, from, step) => { for (let i = from; i > 0 && i < n; i += step) { const a = sm[i - step], b = sm[i]; if ((a - lev) * (b - lev) <= 0 && a !== b) return te[i - step] + (te[i] - te[i - step]) * (lev - a) / (b - a); } return NaN; };
+  o.tauL = cross(-o.VA / 2, ic, -1) - o.te0; o.tauR = cross(o.VA / 2, ic, 1) - o.te0;
+  o.width = o.tauR - o.tauL; o.dA = o.width * o.VA * Math.sqrt(3) / 2;
+  // B: plateau speed with the slope at the middle
+  o.dB = o.VA * o.VA / o.slope; o.slopeHz = -o.f0 / c * o.slope;
+  // C: integrate, then the straight-path line Δr² = V²τ² − 2dΔr
+  const dr = [0]; for (let i = 1; i < n; i++) dr.push(dr[i - 1] + 0.5 * (rd[i] + rd[i - 1]) * (te[i] - te[i - 1]));
+  let j = 1; while (j < n - 1 && te[j] < o.te0) j++;
+  const dr0 = dr[j - 1] + (dr[j] - dr[j - 1]) * (o.te0 - te[j - 1]) / (te[j] - te[j - 1]);
+  o.tau = te.map(v => v - o.te0); o.dr = dr.map(v => v - dr0);
+  let a11 = 0, a12 = 0, a22 = 0, b1 = 0, b2 = 0;
+  for (let i = 0; i < n; i++) { const x1 = o.tau[i] ** 2, x2 = -2 * o.dr[i], y = o.dr[i] ** 2; a11 += x1 * x1; a12 += x1 * x2; a22 += x2 * x2; b1 += x1 * y; b2 += x2 * y; }
+  const det = a11 * a22 - a12 * a12, V2 = (b1 * a22 - b2 * a12) / det; o.dC = (a11 * b2 - a12 * b1) / det; o.VC = Math.sqrt(Math.max(V2, 0));
+  o.miss = o.tau.map((tt, i) => o.dC + o.dr[i] - Math.sqrt(o.dC ** 2 + V2 * tt * tt));
+  o.missRms = Math.sqrt(mean(o.miss.map(v => v * v)));
+  // D: least squares of the full model
+  const d0 = Number.isFinite(o.dC) && o.dC > 0 ? o.dC : Math.abs(o.dA) || 1;
+  const L = lmfit(t, f, [o.t0, o.VC || o.VA, d0, o.f0], c, f0known != null);
+  [o.t0D, o.VD, o.dD, o.f0D] = L.p; o.rmsD = L.rms;
+  o.edge = Math.abs(o.VD) > 0 ? o.VA / o.VD : 1;
+  o.rd = rd;
+  return o;
+}
+
+// ---------- charts
+function frame(svg, W, H, xr, yr, o = {}) {
+  svg.innerHTML = ""; const m = { l: 70, r: 14, t: 12, b: 36 };
+  const X = v => m.l + (v - xr[0]) / (xr[1] - xr[0]) * (W - m.l - m.r), Y = v => H - m.b - (v - yr[0]) / (yr[1] - yr[0]) * (H - m.t - m.b);
+  const el = (tag, at, txt) => { const e = document.createElementNS("http://www.w3.org/2000/svg", tag); for (const k in at) e.setAttribute(k, at[k]); if (txt != null) e.textContent = txt; svg.appendChild(e); return e; };
+  ticks(xr).forEach(v => { el("line", { x1: X(v), x2: X(v), y1: m.t, y2: H - m.b, class: "gr" }); el("text", { x: X(v), y: H - m.b + 14, "text-anchor": "middle" }, o.xf ? o.xf(v) : tk(v)); });
+  ticks(yr).forEach(v => { el("line", { x1: m.l, x2: W - m.r, y1: Y(v), y2: Y(v), class: "gr" }); el("text", { x: m.l - 6, y: Y(v) + 4, "text-anchor": "end" }, o.yf ? o.yf(v) : tk(v)); });
+  el("line", { x1: m.l, x2: m.l, y1: m.t, y2: H - m.b, class: "ax" }); el("line", { x1: m.l, x2: W - m.r, y1: H - m.b, y2: H - m.b, class: "ax" });
+  if (o.xl) el("text", { x: (m.l + W - m.r) / 2, y: H - 4, "text-anchor": "middle" }, o.xl);
+  if (o.yl) el("text", { x: 12, y: (m.t + H - m.b) / 2, "text-anchor": "middle", transform: `rotate(-90 12 ${(m.t + H - m.b) / 2})` }, o.yl);
+  const line = (pts, st) => el("path", Object.assign({ d: "M" + pts.filter(p => Number.isFinite(p[1])).map(p => X(p[0]).toFixed(1) + "," + Y(Math.max(yr[0] - (yr[1] - yr[0]), Math.min(yr[1] + (yr[1] - yr[0]), p[1]))).toFixed(1)).join("L"), fill: "none" }, st));
+  return { X, Y, el, line, m, W, H };
+}
+function ticks([a, b], n = 6) { const s0 = (b - a) / n, g = 10 ** Math.floor(Math.log10(s0)), r = s0 / g, st = (r >= 5 ? 10 : r >= 2 ? 5 : r >= 1 ? 2 : 1) * g, o = []; for (let v = Math.ceil(a / st) * st; v <= b + st * 1e-9; v += st) o.push(+v.toPrecision(12)); return o; }
+function range(a, pad = 0.06) { let lo = Math.min(...a.filter(Number.isFinite)), hi = Math.max(...a.filter(Number.isFinite)); if (lo === hi) { lo -= 1; hi += 1; } const p = (hi - lo) * pad; return [lo - p, hi + p]; }
+
+function shiftScale(x) { const a = Math.abs(x); return a >= 1e6 ? [1e6, "MHz"] : a >= 1e3 ? [1e3, "kHz"] : [1, "Hz"]; }
+
+function drawMain(t, f, o, c) {
+  const svg = $("ch1"), [s, u] = shiftScale(Math.max(...f.map(v => Math.abs(v - o.f0)))), y = f.map(v => (v - o.f0) / s);
+  const F = frame(svg, 760, 330, range(t, 0.02), range(y, 0.1), { xl: "time (s), 0 = signal from closest approach arrives", yl: `f − f₀ (${u})` });
+  const W = Math.max(1, Math.round(t.length / 400));
+  for (let i = 0; i < t.length; i += W) F.el("circle", { cx: F.X(t[i]), cy: F.Y(y[i]), r: 1.8, fill: "var(--muted)", opacity: .7 });
+  const yp = (o.fp - o.f0) / s, ym = (o.fm - o.f0) / s, x0 = F.X(t[0]), x1 = F.X(t[t.length - 1]);
+  [yp, ym].forEach(v => F.el("line", { x1: x0, x2: x1, y1: F.Y(v), y2: F.Y(v), stroke: "var(--acc2)", "stroke-dasharray": "5 4", "stroke-width": 1.2 }));
+  const tl = o.t0 + o.tauL, tr = o.t0 + o.tauR, hy = F.Y(0) - 0;
+  [[tl, yp / 2], [tr, ym / 2]].forEach(([tt, v]) => F.el("circle", { cx: F.X(tt), cy: F.Y(v), r: 4.5, fill: "var(--acc2)" }));
+  F.el("line", { x1: F.X(tl), x2: F.X(tr), y1: F.Y(yp * 0.75), y2: F.Y(yp * 0.75), stroke: "var(--acc2)", "stroke-width": 2 });
+  F.el("text", { x: F.X(tr) + 6, y: F.Y(yp * 0.75) + 4, fill: "var(--acc2)" }, `width Δt = ${sig(o.width)} s`);
+  F.el("text", { x: x1 - 4, y: F.Y(yp) - 6, "text-anchor": "end", fill: "var(--acc2)" }, `plateau ${hz(o.fp - o.f0)}`);
+  const fit = model(t, o.t0D, o.VD, o.dD, o.f0D, c);
+  F.line(t.map((tt, i) => [tt, (fit[i] - o.f0) / s]), { stroke: "var(--acc)", "stroke-width": 2.2 });
+  const sl = o.slopeHz / s, hw = (o.tauR - o.tauL) * 0.35;
+  F.line([[o.t0 - hw, -sl * hw], [o.t0 + hw, sl * hw]].map(p => [p[0], p[1]]), { stroke: "var(--mark)", "stroke-width": 1.6, "stroke-dasharray": "4 3" });
+  F.el("circle", { cx: F.X(o.t0), cy: F.Y(0), r: 4, fill: "var(--mark)" });
+  F.el("text", { x: F.X(o.t0) + 8, y: F.Y(0) + 16, fill: "var(--mark)" }, `middle t₀ = ${sig(o.t0)} s, slope ${hz(o.slopeHz)}/s`);
+  const ov = F.el("rect", { x: F.m.l, y: F.m.t, width: 760 - F.m.l - F.m.r, height: 330 - F.m.t - F.m.b, fill: "transparent" });
+  const cr = F.el("line", { y1: F.m.t, y2: 330 - F.m.b, stroke: "var(--muted)", opacity: 0 });
+  ov.onmousemove = e => { const b = svg.getBoundingClientRect(), xv = (e.clientX - b.left) / b.width * 760; let i = 0, bd = Infinity; t.forEach((tt, k) => { const d = Math.abs(F.X(tt) - xv); if (d < bd) { bd = d; i = k; } });
+    cr.setAttribute("x1", F.X(t[i])); cr.setAttribute("x2", F.X(t[i])); cr.setAttribute("opacity", .6);
+    tipShow(e, `t = ${sig(t[i])} s<br>f − f₀ = ${hz(f[i] - o.f0)}<br>fit: ${hz(fit[i] - o.f0)}<br>ṙ = ${ms(o.rd[i])}`); };
+  ov.onmouseleave = () => { cr.setAttribute("opacity", 0); $("tip").style.opacity = 0; };
+}
+function tipShow(e, h) { const T = $("tip"); T.innerHTML = h; T.style.opacity = 1; T.style.left = Math.min(e.clientX + 14, innerWidth - T.offsetWidth - 8) + "px"; T.style.top = (e.clientY + 14) + "px"; }
+
+function drawInt(o) {
+  const sc = Math.max(...o.dr.map(Math.abs)) >= 1e4 ? 1e3 : 1, un = sc === 1e3 ? "km" : "m";
+  const r = o.dr.map(v => (o.dC + v) / sc), sl = o.tau.map(tt => Math.sqrt(o.dC ** 2 + o.VC ** 2 * tt * tt) / sc);
+  const F = frame($("ch2"), 760, 240, range(o.tau, 0.02), range(r.concat(sl).concat([0]), 0.06), { xl: "τ (s from closest approach, emission time)", yl: `distance r (${un})` });
+  const W = Math.max(1, Math.round(o.tau.length / 400));
+  for (let i = 0; i < r.length; i += W) F.el("circle", { cx: F.X(o.tau[i]), cy: F.Y(r[i]), r: 1.8, fill: "var(--muted)", opacity: .7 });
+  F.line(o.tau.map((tt, i) => [tt, sl[i]]), { stroke: "var(--acc)", "stroke-width": 2 });
+  F.el("text", { x: F.X(0) + 8, y: F.Y(o.dC / sc) - 8, fill: "var(--acc)" }, `straight-path line: d = ${mm(o.dC)}, V = ${ms(o.VC)}`);
+  const mv = o.miss, mr = range(mv.concat([0]), 0.15), u2 = Math.max(...mr.map(Math.abs)) >= 1e4 ? 1e3 : 1;
+  const G = frame($("ch3"), 760, 170, range(o.tau, 0.02), mr.map(v => v / u2), { xl: "τ (s)", yl: `miss (${u2 === 1 ? "m" : "km"})` });
+  G.el("line", { x1: G.X(o.tau[0]), x2: G.X(o.tau[o.tau.length - 1]), y1: G.Y(0), y2: G.Y(0), stroke: "var(--muted)" });
+  G.line(o.tau.map((tt, i) => [tt, mv[i] / u2]), { stroke: "var(--acc2)", "stroke-width": 1.6 });
+}
+
+function drawTop(P) {
+  const svg = $("ch4");
+  if (!P) { svg.innerHTML = `<text x="380" y="130" text-anchor="middle">${pasted ? "Pasted recording: the path is not known." : "Hidden until you press Reveal."}</text>`; return; }
+  const pts = []; for (let i = 0; i <= 200; i++) { const te = -P.win + 2 * P.win * i / 200; const [x, y] = pos(te, P.V, P.d, P.bend, P.R); pts.push([x, y]); }
+  const xs = pts.map(p => p[0]).concat([0]), ys = pts.map(p => p[1]).concat([0]);
+  let xr = range(xs, 0.05), yr = range(ys, 0.15); const span = Math.max(xr[1] - xr[0], (yr[1] - yr[0]) * 760 / 260);
+  const cx = (xr[0] + xr[1]) / 2, cy = (yr[0] + yr[1]) / 2; xr = [cx - span / 2, cx + span / 2]; yr = [cy - span * 260 / 760 / 2, cy + span * 260 / 760 / 2];
+  const u = span > 2e4 ? 1e3 : 1, F = frame(svg, 760, 260, xr.map(v => v / u), yr.map(v => v / u), { xl: `along the path (${u === 1 ? "m" : "km"})`, yl: u === 1 ? "m" : "km" });
+  F.line(pts.map(p => [p[0] / u, p[1] / u]), { stroke: "var(--acc)", "stroke-width": 2 });
+  F.el("circle", { cx: F.X(0), cy: F.Y(0), r: 5, fill: "var(--acc2)" }); F.el("text", { x: F.X(0) + 8, y: F.Y(0) - 6, fill: "var(--acc2)" }, "observer");
+  F.el("line", { x1: F.X(0), x2: F.X(0), y1: F.Y(0), y2: F.Y(P.d / u), stroke: "var(--mark)", "stroke-dasharray": "4 3" });
+  F.el("text", { x: F.X(0) + 8, y: (F.Y(0) + F.Y(P.d / u)) / 2, fill: "var(--mark)" }, `d = ${mm(P.d)}`);
+}
+
+// ---------- tables
+function results(o, P, c) {
+  const T = P && (!hidden || shown) ? P : null, hd = v => T ? v : "hidden";
+  const err = (a, b) => T ? `${tk(+(100 * (a / b - 1)).toFixed(2))}%` : "";
+  const rows = [
+    ["A · plateaus (4) and width (5)", o.VA, o.dA, o.f0A], ["B · plateaus (4) and slope (6)", o.VA, o.dB, o.f0A],
+    ["C · integrated curve (9), (10)", o.VC, o.dC, null], ["D · least squares (1) to (3)", o.VD, o.dD, o.f0D]];
+  $("res").innerHTML = `<tr><th>Method</th><th>V</th><th>vs true</th><th>d</th><th>vs true</th><th>f₀</th></tr>` +
+    rows.map(r => `<tr><td>${r[0]}</td><td>${ms(r[1])}</td><td>${err(r[1], P && P.V)}</td><td>${mm(r[2])}</td><td>${err(r[2], P && P.d)}</td><td>${r[3] == null ? "–" : hzx(r[3])}</td></tr>`).join("") +
+    `<tr><td><b>True values</b></td><td class="${T ? "" : "hid"}">${T ? ms(T.V) : "hidden"}</td><td></td><td class="${T ? "" : "hid"}">${T ? mm(T.d) : pasted ? "unknown" : "hidden"}</td><td></td><td class="${T ? "" : "hid"}">${T ? hzx(T.f0) : "–"}</td></tr>`;
+  const s3 = Math.sqrt(3);
+  $("steps").innerHTML = [
+    `<b>(4)</b> f₊ = ${hzx(o.fp)}, f₋ = ${hzx(o.fm)} → V = c(f₊ − f₋)/(f₊ + f₋) = ${sig(c)} × ${sig(o.fp - o.fm)} / ${sig(o.fp + o.fm)} = <b>${ms(o.VA)}</b>`,
+    `<b>(4)</b> f₀ = 2f₊f₋/(f₊ + f₋) = <b>${hzx(o.f0A)}</b>${$("f0k").checked ? ` (observer's f₀ ${hzx(o.f0)} used below)` : ""}`,
+    `<b>(5)</b> half-plateau points at τ = ${sig(o.tauL)} s and ${sig(o.tauR)} s → Δt = ${sig(o.width)} s → d = Δt·V·√3/2 = ${sig(o.width)} × ${sig(o.VA)} × ${(s3 / 2).toFixed(4)} = <b>${mm(o.dA)}</b>`,
+    `<b>(6)</b> slope at the middle: ${hz(o.slopeHz)}/s, so dṙ/dτ = ${sig(o.slope)} m/s² → d = V²/(dṙ/dτ) = ${sig(o.VA)}² / ${sig(o.slope)} = <b>${mm(o.dB)}</b>`,
+    `<b>(9), (10)</b> least-squares line through all ${o.tau.length} integrated points: V² = ${sig(o.VC ** 2)} m²/s² → V = <b>${ms(o.VC)}</b>, d = <b>${mm(o.dC)}</b>`,
+    `<b>(D)</b> full fit: t₀ = ${sig(o.t0D)} s, V = <b>${ms(o.VD)}</b>, d = <b>${mm(o.dD)}</b>, f₀ = ${hzx(o.f0D)}, residual ${hz(o.rmsD)} rms`].map(s => `<div>${s}</div>`).join("");
+  const noise = P ? P.noise : NaN, lim = noise * (1 + 4 / Math.sqrt(2 * o.tau.length)) + 1e-9 * o.f0, straight = !P || o.rmsD < lim;
+  $("straight").innerHTML = `<div>miss from the straight-path line: <b>${mm(o.missRms)} rms</b> over ${sig(o.tau[o.tau.length - 1] - o.tau[0])} s, ${(100 * o.missRms / Math.max(...o.dr.map(Math.abs))).toFixed(3)}% of the distance change</div>` +
+    `<div>least-squares fit residual: ${hz(o.rmsD)} rms${P ? `, against ${hz(noise)} of added noise: ${straight ? '<span class="ok">fits a straight pass</span>' : '<span class="no">does not fit a straight pass</span>'} (limit ${hz(lim)}: noise × (1 + 4/√(2n)))` : ""}</div>`;
+  $("warn").innerHTML = !straight ? `<div class="warn">The recording does not fit a straight pass. Methods A to D all assume a straight path, so their V and d are off. The integrated distance misses the straight-path line by ${mm(o.missRms)} rms: that miss is the bend.</div>` : o.edge < 0.995 ? `<div class="warn">The recording ends before the plateaus: the edges reach ${(100 * o.edge).toFixed(1)}% of the fitted speed. Methods A and B read V too low. Methods C and D do not need the plateaus. Press Auto length for a longer recording.</div>` : "";
+}
+
+// ---------- calculator
+function calc() {
+  const c = num("k_c"), fp = num("k_fp"), fmv = num("k_fm"), w = num("k_w"), s = num("k_s");
+  const V = c * (fp - fmv) / (fp + fmv), f0 = 2 * fp * fmv / (fp + fmv), d = w * V * Math.sqrt(3) / 2;
+  $("k_out").innerHTML = `<div>V = c(f₊ − f₋)/(f₊ + f₋) = <b>${ms(V)}</b></div><div>f₀ = 2f₊f₋/(f₊ + f₋) = <b>${hzx(f0)}</b></div><div>plateau height Δf = (f₊ − f₋)/2 = ${hz((fp - fmv) / 2)}</div><div>d = Δt·V·√3/2 = <b>${mm(d)}</b></div>` +
+    (Number.isFinite(s) && s ? `<div>d from slope = f₀V²/(c·|slope|) = <b>${mm(f0 * V * V / (c * Math.abs(s)))}</b></div>` : "");
+  const f0p = num("p_f0"), cp = num("p_c"), Vp = num("p_v"), dp = num("p_d");
+  $("p_out").innerHTML = `<div>approach plateau f₊ = f₀c/(c − V) = ${hzx(f0p * cp / (cp - Vp))}</div><div>recede plateau f₋ = f₀c/(c + V) = ${hzx(f0p * cp / (cp + Vp))}</div><div>plateau height ≈ f₀V/c = <b>${hz(f0p * Vp / cp)}</b></div><div>width Δt = 2d/(V√3) = <b>${sig(2 * dp / (Vp * Math.sqrt(3)))} s</b></div><div>slope at the middle = (f₀/c)·V²/d = <b>${hz(f0p / cp * Vp * Vp / dp)}/s</b></div><div>time scale d/V = ${sig(dp / Vp)} s</div>`;
+}
+
+// ---------- wiring
+function params() {
+  const bend = +radios("path"), d = radios("dm") === "u" ? hidden : num("d");
+  let R = num("rad"); if (bend === -1 && !(R > d)) R = 1.5 * d;
+  return { f0: num("f0"), c: num("c"), V: num("v"), d, bend, R, win: num("win"), dt: num("dt"), noise: Math.max(0, num("noise") || 0), seed: noiseSeed };
+}
+function update() {
+  calc();
+  const f0k = $("f0k").checked ? num("f0") : null, c = num("c");
+  let P = null, data;
+  if (pasted) data = pasted;
+  else {
+    P = params();
+    if (!(P.f0 > 0 && P.c > 0 && P.V > 0 && P.V < P.c && P.d > 0 && P.win > 0 && P.dt > 0)) return;
+    if (2 * P.win / P.dt > 20000) { $("dt").value = +(2 * P.win / 20000).toPrecision(2); P.dt = num("dt"); }
+    data = simulate(P);
+  }
+  const o = analyse(data.t, data.f, c, f0k);
+  drawMain(data.t, data.f, o, c); drawInt(o); results(o, P, c);
+  drawTop(P && (!hidden || shown) ? P : null);
+}
+function setSrc() { const s = SOURCES[+$("src").value]; if (!s) return; $("f0").value = s[1]; $("c").value = s[2]; $("noise").value = s[3]; }
+function setMov() { const m = MOVERS[+$("mov").value]; if (!m) return; $("v").value = m[1]; $("d").value = m[2]; }
+function autoLen() { const d = radios("dm") === "u" ? MOVERS[Math.max(0, +$("mov").value)][4] : num("d"), V = num("v"); const m = MOVERS[Math.max(0, +$("mov").value)], dmin = radios("dm") === "u" ? m[3] : d; $("win").value = +(20 * d / V).toPrecision(3); $("rad").value = +(20 * d).toPrecision(2); $("dt").value = +Math.min(dmin / V / 10, 40 * d / V / 800).toPrecision(2); }
+function newHidden() { const m = MOVERS[Math.max(0, +$("mov").value)]; hidden = Math.round(Math.exp(Math.log(m[3]) + Math.random() * Math.log(m[4] / m[3]))); shown = false; $("dhint").textContent = `Somewhere between ${mm(m[3])} and ${mm(m[4])}.`; }
+$("src").onchange = () => { setSrc(); update(); };
+$("mov").onchange = () => { setMov(); if (radios("dm") === "u") newHidden(); autoLen(); update(); };
+document.querySelectorAll("input[name=path]").forEach(r => r.onchange = () => { $("rbox").style.display = radios("path") === "0" ? "none" : ""; update(); });
+document.querySelectorAll("input[name=dm]").forEach(r => r.onchange = () => { const u = radios("dm") === "u"; $("dk").style.display = u ? "none" : ""; $("du").style.display = u ? "" : "none"; if (u) { newHidden(); autoLen(); } else hidden = null; update(); });
+["f0", "c", "v", "d", "rad", "win", "dt", "noise", "f0k"].forEach(id => $(id).addEventListener("input", () => { if (["f0", "c"].includes(id)) $("src").value = -1; if (id === "v") $("mov").value = -1; update(); }));
+["k_c", "k_fp", "k_fm", "k_w", "k_s", "p_f0", "p_c", "p_v", "p_d"].forEach(id => $(id).addEventListener("input", calc));
+$("run").onclick = () => { noiseSeed = (Math.random() * 4294967295) >>> 0; pasted = null; update(); };
+$("auto").onclick = () => { autoLen(); update(); };
+$("newd").onclick = () => { newHidden(); update(); };
+$("rev").onclick = () => { shown = true; update(); };
+$("usep").onclick = () => { const t = [], f = []; $("paste").value.split(/\n/).forEach(l => { const p = l.trim().split(/[\s,;]+/).map(Number); if (p.length >= 2 && p.every(Number.isFinite)) { t.push(p[0]); f.push(p[1]); } });
+  if (t.length < 20) { alert("Need at least 20 rows of: time_s frequency_Hz"); return; } pasted = { t, f }; update(); };
+$("clrp").onclick = () => { pasted = null; update(); };
+$("src").value = 1; $("mov").value = 0; setSrc(); setMov(); autoLen(); update();
+</script>
+</body>
+</html>

@@ -47,7 +47,15 @@ td.hid{color:var(--muted)}
 .legend{font-size:12.5px;color:var(--ink2);display:flex;gap:14px;flex-wrap:wrap;margin-top:4px}.legend i{display:inline-block;width:18px;height:3px;vertical-align:middle;margin-right:5px}
 #tip{position:fixed;pointer-events:none;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:4px 8px;font:12px ui-monospace,monospace;opacity:0;z-index:9}
 a{color:var(--acc)}
+.doc{font-size:15.5px;line-height:1.7}.doc h3{font-size:17px;margin:22px 0 6px}.doc p{max-width:820px}
+.terms{display:grid;grid-template-columns:150px 1fr;gap:6px 14px;margin:0}.terms dt{font-weight:700}.terms dd{margin:0;color:var(--ink2)}
+@media(max-width:600px){.terms{grid-template-columns:1fr}.terms dd{margin-bottom:6px}}
+table.vars{font:14px system-ui,sans-serif}table.vars td{white-space:normal;text-align:left}table.vars th{text-align:left}
+.doc .katex-display{overflow-x:auto;overflow-y:hidden;padding:4px 0}.fig{max-width:520px;margin:8px 0}
 </style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.getElementById('howto'),{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}]})"></script>
 </head>
 <body>
 <main>
@@ -128,24 +136,119 @@ a{color:var(--acc)}
  </div>
 </div>
 
-<div class="panel">
- <h2>Formulas</h2>
- <p class="hint">τ is time from closest approach, counted at the moment the wave leaves the source. r is the distance from observer to source, ṙ its rate (+ = moving away). Rows marked * are derived on this page from (1) to (3).</p>
- <div class="two">
- <div>
- <div class="f"><b>(1)</b>r(τ) = √(d² + V²τ²)</div>
- <div class="f"><b>(2)</b>ṙ = V²τ / √(d² + V²τ²)</div>
- <div class="f"><b>(3)</b>f = f₀ / (1 + ṙ/c) &nbsp;≈&nbsp; f₀(1 − ṙ/c) when V ≪ c</div>
- <div class="f"><b>(4)</b>plateaus f₊ = f₀c/(c − V), f₋ = f₀c/(c + V): &nbsp;V = c(f₊ − f₋)/(f₊ + f₋), f₀ = 2f₊f₋/(f₊ + f₋) *</div>
- <div class="f"><b>(5)</b>ṙ = ±V/2 at |τ| = d/(V√3): &nbsp;d = Δt·V·√3/2 *</div>
- </div><div>
- <div class="f"><b>(6)</b>dṙ/dτ at τ = 0 is V²/d: &nbsp;d = V²/(dṙ/dτ); in frequency, slope = −(f₀/c)V²/d</div>
- <div class="f"><b>(7)</b>ṙ = c(f₀/f − 1), &nbsp; dτ = (f/f₀)·dt (received time t) *</div>
- <div class="f"><b>(9)</b>Δr(τ) = r − d = ∫₀^τ ṙ dτ′ = c·∫ (1 − f/f₀) dt *</div>
- <div class="f"><b>(10)</b>straight path: Δr² = V²τ² − 2d·Δr, linear in V² and d *</div>
- <div class="f"><b>(D)</b>least squares of (1) to (3) over t₀, V, d (and f₀ if not known)</div>
- </div></div>
- <p class="hint">Formula (3) is the classical form for a source moving through still air with the listener at rest; the page uses it for radio too. For the ISS the next term, of order V²/2c², is 3.3 × 10⁻¹⁰ of f₀ (worked out here), about 0.14 Hz at 437.55 MHz.</p>
+<div class="panel doc" id="howto">
+ <h2>How the sim works: the equations, step by step</h2>
+ <p>This section explains every equation the sim uses, from the beginning. You only need algebra and Pythagoras. The equation numbers match the labels in the results table above.</p>
+
+ <h3>1. Words you need</h3>
+ <dl class="terms">
+  <dt>Wave</dt><dd>A repeating disturbance that travels: sound in air, or a radio signal.</dd>
+  <dt>Frequency</dt><dd>How many waves pass a point each second. The unit is the hertz (Hz): 1 Hz is one wave per second. 1 kHz = 1,000 Hz, 1 MHz = 1,000,000 Hz, 1 GHz = 1,000,000,000 Hz.</dd>
+  <dt>Source</dt><dd>The thing that sends the waves: a train horn, a radio on a satellite.</dd>
+  <dt>Observer</dt><dd>The person or receiver that records the waves. In this sim the observer does not move.</dd>
+  <dt>Doppler effect</dt><dd>When the source comes closer, each new wave has a shorter trip than the one before, so the waves arrive closer together: the observer measures a higher frequency. When the source moves away, the waves arrive further apart: a lower frequency. The change is the <b>Doppler shift</b>.</dd>
+  <dt>Closest approach</dt><dd>The moment the source is nearest to the observer. The source is then moving neither toward nor away from the observer, so there is no shift.</dd>
+  <dt>S-curve</dt><dd>The graph of received frequency against time for a passing source: high and flat at first, a drop through the middle, low and flat at the end.</dd>
+  <dt>Plateau</dt><dd>A flat part of the S-curve, far before or far after closest approach.</dd>
+ </dl>
+
+ <h3>2. Variables</h3>
+ <div class="tw"><table class="vars">
+  <tr><th>Symbol</th><th>Meaning</th><th>Unit</th></tr>
+  <tr><td>\(f_0\)</td><td>frequency the source sends</td><td>Hz</td></tr>
+  <tr><td>\(f\)</td><td>frequency the observer receives</td><td>Hz</td></tr>
+  <tr><td>\(f - f_0\)</td><td>Doppler shift</td><td>Hz</td></tr>
+  <tr><td>\(c\)</td><td>speed of the wave: 299,792,458 m/s for radio, about 343 m/s for sound in air</td><td>m/s</td></tr>
+  <tr><td>\(V\)</td><td>speed of the source along its path</td><td>m/s</td></tr>
+  <tr><td>\(d\)</td><td>closest distance between source and observer</td><td>m</td></tr>
+  <tr><td>\(\tau\)</td><td>time since closest approach (negative before it), counted when the wave leaves the source</td><td>s</td></tr>
+  <tr><td>\(t\)</td><td>time on the observer's clock, when the wave arrives</td><td>s</td></tr>
+  <tr><td>\(r\)</td><td>distance from observer to source</td><td>m</td></tr>
+  <tr><td>\(\dot r\)</td><td>range rate: how fast \(r\) changes. Negative when the source comes closer, positive when it moves away</td><td>m/s</td></tr>
+  <tr><td>\(\theta\)</td><td>angle between the source's path and the line from observer to source</td><td>degrees</td></tr>
+  <tr><td>\(f_+,\ f_-\)</td><td>the high plateau (coming closer) and the low plateau (moving away)</td><td>Hz</td></tr>
+  <tr><td>\(\Delta t\)</td><td>width of the S: the time between the two half-plateau points</td><td>s</td></tr>
+  <tr><td>\(\Delta r\)</td><td>change in distance since closest approach, \(r - d\)</td><td>m</td></tr>
+ </table></div>
+
+ <h3>3. The distance during a straight pass</h3>
+ <svg viewBox="0 0 520 190" class="fig" role="img" aria-label="Right triangle: observer, closest point, source">
+  <line x1="20" y1="40" x2="500" y2="40" stroke="var(--acc)" stroke-width="2.5"/>
+  <text x="20" y="30">path of the source</text>
+  <circle cx="200" cy="170" r="6" fill="var(--acc2)"/><text x="130" y="186">observer</text>
+  <line x1="200" y1="170" x2="200" y2="40" stroke="var(--mark)" stroke-dasharray="5 4" stroke-width="1.6"/><text x="208" y="110" fill="var(--mark)">d</text>
+  <rect x="200" y="40" width="10" height="10" fill="none" stroke="var(--muted)"/>
+  <circle cx="400" cy="40" r="7" fill="var(--acc)"/><text x="395" y="65">source</text>
+  <text x="290" y="32">V τ</text>
+  <line x1="200" y1="170" x2="400" y2="40" stroke="var(--ink2)" stroke-width="1.6"/><text x="285" y="122">r</text>
+  <path d="M 371 40 A 29 29 0 0 0 376 56" fill="none" stroke="var(--ink2)"/><text x="345" y="66">θ</text>
+ </svg>
+ <p>The source moves in a straight line at steady speed \(V\). At closest approach it is a distance \(d\) from the observer. After a time \(\tau\) it has moved \(V\tau\) along the path. The observer, the closest point and the source make a right triangle, so Pythagoras gives the distance:</p>
+ $$ r = \sqrt{d^2 + (V\tau)^2} \tag{1} $$
+
+ <h3>4. How fast the distance changes</h3>
+ <p>Only the part of the source's speed that points along the line to the observer changes the distance. That part is \(V\cos\theta\), with a minus sign while the source comes closer. In the triangle, \(\cos\theta = V\tau / r\), so</p>
+ $$ \dot r = V \cdot \frac{V\tau}{r} = \frac{V^2\,\tau}{\sqrt{d^2 + V^2\tau^2}} \tag{2} $$
+ <p>Check it: before closest approach \(\tau\) is negative, so \(\dot r\) is negative (coming closer). At \(\tau = 0\), \(\dot r = 0\). Long after, \(V\tau\) is much bigger than \(d\), so \(r \approx V\tau\) and \(\dot r \approx V\).</p>
+
+ <h3>5. The Doppler formula</h3>
+ <p>For a source moving through still air, with the observer at rest, the received frequency is</p>
+ $$ f = \frac{f_0}{1 + \dot r / c} \tag{3} $$
+ <p>If the source comes closer (\(\dot r\) negative), the bottom is less than 1 and \(f\) is higher than \(f_0\). If it moves away, \(f\) is lower. When \(V\) is very small compared with \(c\), as for every satellite and aircraft, this is almost exactly</p>
+ $$ f - f_0 \approx -\frac{f_0}{c}\,\dot r = -\frac{f_0}{c}\cdot\frac{V^2\,\tau}{\sqrt{d^2 + V^2\tau^2}} $$
+ <p>This is the S-curve. It has four unknowns: \(f_0\), \(V\), \(d\), and the time of closest approach. The sim uses (3) itself, not the short form, for radio and sound alike. For the ISS the difference from the full radio formula of relativity is about \(V^2/2c^2 = 3.3\times10^{-10}\) of \(f_0\) (worked out here), which is 0.14 Hz at 437.55 MHz.</p>
+
+ <h3>6. Reading the speed from the plateaus</h3>
+ <p>Far before closest approach the source comes almost straight at the observer: \(\dot r = -V\). Far after, it goes almost straight away: \(\dot r = +V\). Put these into (3):</p>
+ $$ f_+ = \frac{f_0}{1 - V/c}, \qquad f_- = \frac{f_0}{1 + V/c} $$
+ <p>Turn both upside down: \(\dfrac{1}{f_+} = \dfrac{1 - V/c}{f_0}\) and \(\dfrac{1}{f_-} = \dfrac{1 + V/c}{f_0}\). Adding the two lines removes \(V\) and gives \(f_0\). Subtracting them gives \(V\). The result (worked out here):</p>
+ $$ V = c\,\frac{f_+ - f_-}{f_+ + f_-}, \qquad f_0 = \frac{2 f_+ f_-}{f_+ + f_-} \tag{4} $$
+ <p>The distance \(d\) is not in (4). The height of the S gives the speed and nothing else.</p>
+
+ <h3>7. Reading the distance from the width</h3>
+ <p>Halfway between the middle and a plateau, \(\dot r = V/2\). Put that into (2) and solve for \(\tau\):</p>
+ $$ \frac{V^2\tau}{\sqrt{d^2 + V^2\tau^2}} = \frac{V}{2} \;\Rightarrow\; 2V\tau = \sqrt{d^2 + V^2\tau^2} \;\Rightarrow\; 4V^2\tau^2 = d^2 + V^2\tau^2 \;\Rightarrow\; \tau = \frac{d}{\sqrt3\,V} $$
+ <p>The two half-plateau points are this far before and after the middle, so the width is \(\Delta t = 2d/(\sqrt3\,V)\). Solve for \(d\) (worked out here):</p>
+ $$ d = \Delta t \cdot V \cdot \frac{\sqrt3}{2} \tag{5} $$
+ <p>A close pass makes a sharp S. A far pass makes a wide S.</p>
+
+ <h3>8. Reading the distance from the slope</h3>
+ <p>Near the middle, \(V\tau\) is small compared with \(d\), so \(r \approx d\) and (2) becomes a straight line through zero:</p>
+ $$ \dot r \approx \frac{V^2}{d}\,\tau \qquad\text{slope } = \frac{V^2}{d} \;\Rightarrow\; d = \frac{V^2}{\text{slope}} \tag{6} $$
+ <p>On the frequency graph the slope is \(-\dfrac{f_0}{c}\cdot\dfrac{V^2}{d}\) hertz per second. The slope alone mixes speed and distance. With \(V\) from (4), it gives \(d\).</p>
+
+ <h3>9. Turning each recorded frequency into a range rate</h3>
+ <p>Rearrange (3) to get \(\dot r\) from each measured \(f\):</p>
+ $$ \dot r = c\left(\frac{f_0}{f} - 1\right) \tag{7} $$
+ <p>One more detail. A wave sent at time \(\tau\) arrives at \(t = \tau + r/c\). So the observer's clock and the sender's clock run at slightly different rates while the distance changes: \(\Delta t = \Delta\tau\,(1 + \dot r/c)\). With (3) this is (worked out here)</p>
+ $$ \Delta\tau = \frac{f}{f_0}\,\Delta t \tag{8} $$
+ <p>For radio this correction is tiny. For sound from a fast train it matters.</p>
+
+ <h3>10. Adding up the curve: integration</h3>
+ <p>If the distance changes at \(\dot r\) metres per second for a short time \(\Delta\tau\), it changes by \(\dot r\,\Delta\tau\) metres. Add up these small pieces from closest approach to any later moment. That sum is the area under the \(\dot r\) graph, and it is the change in distance:</p>
+ $$ \Delta r(\tau) = r(\tau) - d = \sum \dot r\,\Delta\tau \;\;\to\;\; \int_0^{\tau} \dot r\,d\tau' \tag{9} $$
+ <p>The sim adds the pieces with the trapezoid rule: the average of two neighbouring \(\dot r\) values times the time step. This gives the whole distance profile from the frequencies alone, except for one unknown starting value, \(d\).</p>
+
+ <h3>11. Straight or curved? The straight-path test</h3>
+ <p>For a straight path, (1) says \(r^2 = d^2 + V^2\tau^2\). Write \(r = d + \Delta r\) and multiply out:</p>
+ $$ (d + \Delta r)^2 = d^2 + V^2\tau^2 \;\Rightarrow\; d^2 + 2d\,\Delta r + \Delta r^2 = d^2 + V^2\tau^2 $$
+ $$ \Delta r^2 = V^2\,\tau^2 - 2d\,\Delta r \tag{10} $$
+ <p>Every recorded point gives one \(\tau\) and one \(\Delta r\). Equation (10) has only two unknowns, \(V^2\) and \(d\), and both enter in a simple linear way. A best fit (least squares, section 12) through all the points gives both at once.</p>
+ <p>If the path really is straight, every point sits on that fit, apart from noise. If the path bends, the points cannot all fit, and the "miss" chart shows a pattern. The size of the miss measures the bend. The integration gives distance only, not direction: a source circling the observer at a fixed distance keeps \(\dot r = 0\) and makes no S at all.</p>
+
+ <h3>12. The full fit: least squares</h3>
+ <p>Method D tries values of \(V\), \(d\), the time of closest approach and, if it is not known, \(f_0\). For each try it draws the curve from (1) to (3), takes the difference from every recorded point, squares it, and adds up the squares. It keeps the values that make this total smallest. The sim does the search with the Levenberg–Marquardt method, which adjusts all values together until the total stops getting smaller.</p>
+ <p>The leftover scatter (the residual) is then compared with the noise in the recording. If the path is straight, the residual is the noise. This page counts the pass as straight when the residual is below \(\text{noise} \times \left(1 + 4/\sqrt{2n}\right)\), where \(n\) is the number of samples: a margin that gets smaller as the recording gets longer.</p>
+
+ <h3>13. A worked example</h3>
+ <p>A satellite sends at \(f_0 = 12\) GHz and passes at \(V = 7{,}589\) m/s, closest distance \(d = 550{,}000\) m (the calculator's default values).</p>
+ $$ \text{plateau height } \approx \frac{f_0 V}{c} = \frac{12\times10^{9} \times 7589}{299{,}792{,}458} = 303{,}770\ \text{Hz} $$
+ $$ \Delta t = \frac{2d}{\sqrt3\,V} = \frac{2 \times 550{,}000}{1.7321 \times 7589} = 83.68\ \text{s} $$
+ <p>Now go backwards, as the observer would, using only those two readings:</p>
+ $$ V = \frac{c \times 303{,}770}{12\times10^{9}} = 7{,}589\ \text{m/s}, \qquad d = 83.68 \times 7589 \times 0.8660 = 549{,}960\ \text{m} $$
+ <p>The small difference from 550,000 m comes from rounding the width to two decimals.</p>
+
+ <h3>Reference</h3>
  <p class="hint">Doppler, C. (1842). Über das farbige Licht der Doppelsterne und einiger anderer Gestirne des Himmels. <i>Abhandlungen der Königlichen Böhmischen Gesellschaft der Wissenschaften</i>, 5. Folge, 2, 465–482.</p>
  <p class="hint">Used in <a href="https://alanspaceaudits.github.io/theorema-egregium/shape_of_distance_v26/#doppler">The Shape of Distance, ISS Doppler tab</a>.</p>
 </div>

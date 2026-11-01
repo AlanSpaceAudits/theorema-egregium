@@ -9,121 +9,163 @@
 main{max-width:1240px;margin:0 auto;padding:40px 16px 80px}
 h1{font:700 30px/1.2 system-ui,sans-serif;margin:0 0 6px}h2{font:700 20px/1.3 system-ui,sans-serif;margin:42px 0 10px;padding-top:14px;border-top:1px solid var(--rule)}
 .sub{color:var(--dim);font:15px/1.5 system-ui,sans-serif}
+.pick{position:sticky;top:0;z-index:5;background:var(--bg);padding:12px 0;border-bottom:1px solid var(--rule);margin:18px 0 0;display:flex;gap:10px;align-items:center;flex-wrap:wrap;font:14px system-ui,sans-serif}
+.pick select{font:15px system-ui,sans-serif;padding:6px 8px;border:1px solid var(--rule);border-radius:6px;background:var(--card);color:var(--ink);max-width:100%}
 .box{background:var(--card);border:1px solid var(--rule);border-left:4px solid var(--acc);border-radius:8px;padding:14px 16px;margin:16px 0}
 .box.warn{border-left-color:var(--warn)}.box.ok{border-left-color:var(--ok)}
 table{border-collapse:collapse;width:100%;font:14px/1.45 system-ui,sans-serif;margin:12px 0}td,th{border-bottom:1px solid var(--rule);padding:6px 8px;text-align:left;vertical-align:top}
 th{color:var(--dim);font-weight:600}td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
-.tw{overflow-x:auto}td.g,th.g{background:var(--gold)}th.g{color:var(--ink)}.tw.all table{font-size:13px}.tw.all td,.tw.all th{padding:6px 6px}
-figure{margin:18px 0}figure img{width:100%;border:1px solid var(--rule);border-radius:6px;background:#fff}figcaption{color:var(--dim);font:13px/1.4 system-ui,sans-serif;margin-top:4px}
+.tw{overflow-x:auto}.tw.all table{font-size:13px}.tw.all td,.tw.all th{padding:6px 6px}
+td.g,th.g{background:var(--gold)}th.g{color:var(--ink)}
+tr.off td{color:var(--dim)}
+figure{margin:18px 0}figure img{width:100%;border:1px solid var(--rule);border-radius:6px;background:#fff;cursor:zoom-in}figcaption{color:var(--dim);font:13px/1.4 system-ui,sans-serif;margin-top:4px}
+blockquote{margin:10px 0;padding:6px 14px;border-left:3px solid var(--rule);font-style:italic}
 .calc{font:12px/1.4 system-ui,sans-serif;color:var(--dim)}
 code{font:13px ui-monospace,monospace}
 ol.refs li{margin:6px 0}
+details summary{cursor:pointer;font:600 14px system-ui,sans-serif;margin:10px 0}
 a.ct{color:var(--acc);cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px}a.ct:hover{text-decoration-style:solid}
 a.chip{display:inline-block;font:12px/1.3 system-ui,sans-serif;border:1px solid var(--rule);border-radius:10px;padding:1px 8px;text-decoration:none;white-space:nowrap}
-figure a.ct img{cursor:zoom-in}
 #dlg{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;padding:16px;z-index:9}
 #dlg.on{display:flex}
 #dlg .bx{background:var(--card);color:var(--ink);border-radius:10px;width:min(1180px,100%);height:min(92vh,1000px);display:flex;overflow:hidden;position:relative}
-#dlg .pg{flex:1 1 auto;overflow:auto;background:#fff}#dlg .pg img{width:100%;display:block}
-#dlg .side{flex:0 0 280px;padding:18px 16px;border-left:1px solid var(--rule);overflow:auto;font:14px/1.5 system-ui,sans-serif}
+#dlg .pg{flex:1 1 auto;overflow:auto;background:#fff}#dlg .pw{position:relative}#dlg .pw img{width:100%;display:block}
+#dlg .hl{position:absolute;background:rgba(255,226,90,.38);mix-blend-mode:multiply;outline:2px solid rgba(214,160,0,.7);pointer-events:none}
+#dlg .side{flex:0 0 290px;padding:18px 16px;border-left:1px solid var(--rule);overflow:auto;font:14px/1.5 system-ui,sans-serif}
 #dlg h3{margin:0 0 10px;font:600 16px/1.3 system-ui,sans-serif;padding-right:24px}
 #dlg .tabs button{display:block;width:100%;text-align:left;margin:0 0 4px;padding:5px 8px;border:1px solid var(--rule);border-radius:6px;background:transparent;color:var(--ink);cursor:pointer;font:13px system-ui,sans-serif}
 #dlg .tabs button.on{border-color:var(--acc);background:color-mix(in srgb,var(--acc) 14%,transparent)}
 #dlg .why{margin:10px 0;color:var(--dim)}#dlg .apa{margin-top:10px;font-size:13px}
 #dlg .x{position:absolute;top:8px;right:10px;border:0;background:transparent;color:var(--ink);font-size:26px;cursor:pointer;line-height:1}
-@media (max-width:760px){#dlg .bx{flex-direction:column}#dlg .side{flex:0 0 auto;max-height:38%;border-left:0;border-top:1px solid var(--rule);order:2}}
+@media (max-width:760px){#dlg .bx{flex-direction:column}#dlg .side{flex:0 0 auto;max-height:40%;border-left:0;border-top:1px solid var(--rule);order:2}}
 </style></head><body><main>
 <h1>Raw Triangle Excess</h1>
-<div class="sub">Is the angle excess in the US transcontinental triangulation in the measured angles, or is it put there by the adjustment? A check from the printed record, Colorado and Utah, 1879 to 1895.</div>
-
-<div class="box warn"><b>The question.</b> In the published triangles, every angle sum is forced by the figure adjustment to equal 180° plus a spherical excess that is computed from the side lengths and an assumed figure of the Earth. Those adjusted angles cannot be used as a test of curvature. Is there any excess in the angles before that step?</div>
-<div class="box ok"><b>The result.</b> Yes. With the sea-level reduction taken out and no figure adjustment, the 23 triangles close at <b>5.3″ to 49.4″</b> over 180°, all positive. The closure grows in proportion to the area. The raw angles alone give a curvature radius of <b>6,372 ± 22 km</b>. A plane needs every closure to be 0″.</div>
-
-<h2>1. What the book prints</h2>
-<p><a class="ct" tabindex="0" data-s="schott_p555,schott_p556,schott_p557,schott_p558,schott_p559" data-t="Station directions, Colorado and Utah">Schott (1900, pp. 555 to 559)</a> prints each station's horizontal directions in steps, column by column: the result of the station adjustment, the reduction to sea level, the resulting seconds, the corrections from the figure adjustment, and the final seconds. The station adjustment combines the repeated rounds at one station only. It does not use any other station, and it does not force any triangle to close.</p>
-<figure><a class="ct" data-s="schott_p559" data-t="Directions at Divide"><img src="img/fig_p559_divide.webp" alt="Schott 1900 p. 559, directions at Divide"></a><figcaption><a class="ct" data-s="schott_p559" data-t="Directions at Divide">Schott (1900, p. 559)</a>. Directions at Divide. The marked rows are the sights to Pikes Peak and Bison. The raw value is the first column of seconds, and the sea-level reduction is the column next to the probable error.</figcaption></figure>
-<p>The <a class="ct" tabindex="0" data-s="schott_p564,schott_p565,schott_p566" data-t="Adjusted triangles, Colorado and Utah">triangle table (pp. 564 to 566)</a> then gives the "observed angles" (after the sea-level reduction), the figure corrections, the spherical angles and the computed spherical excess.</p>
-<figure><a class="ct" data-s="schott_p566" data-t="Triangle 21"><img src="img/fig_p566_t21.webp" alt="Schott 1900 p. 566, triangle 21"></a><figcaption><a class="ct" data-s="schott_p566" data-t="Triangle 21">Schott (1900, p. 566)</a>. Triangle 21, Divide - Pikes Peak - Bison. The observed angles close at 6.770″ over 180°. After the corrections they close at the computed excess, 7.721″.</figcaption></figure>
-
-<h2>2. Method</h2>
-<ol>
-<li><b>Angles.</b> Each angle is the difference of two station-adjusted directions, with the printed sea-level reduction removed. Each computed angle was checked against the degrees printed in the triangle table.</li>
+<div class="sub">Is the angle excess in the historical triangulations in the measured angles, or is it put there by the adjustment? A check from each survey's printed record, survey by survey.</div>
+<div class="pick"><label for="sel"><b>Survey</b></label><select id="sel"></select><span id="cnt" class="sub"></span></div>
+<div id="view"></div>
+<p class="sub" style="margin-top:40px">Aether Cosmology Research Group. Pre-release draft, November 2026.</p>
+</main>
+<div id="dlg" role="dialog" aria-modal="true"><div class="bx">
+<div class="pg" id="pg"><div class="pw"><img id="pim" alt=""><div id="hls"></div></div></div>
+<div class="side"><h3 id="st"></h3><div class="tabs" id="tabs"></div><div class="why" id="why"></div><div class="apa" id="apa"></div></div>
+<button class="x" id="x" aria-label="Close">×</button></div></div>
+<script src="data.js"></script>
+<script>
+const D=window.DATA, RHO=206264.806;
+const esc=s=>String(s??'').replace(/angles_observed_deg/g,'the angles used here').replace(/\bCALC\b/g,'worked out here').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const m1=x=>(x<0?'−':'')+Math.abs(x).toFixed(1)+'″';
+const f3=x=>x==null?'':(x<0?'−':'')+Math.abs(x).toFixed(3)+'″', sg=x=>(x<0?'−':'+')+Math.abs(x).toFixed(3)+'″', km=x=>Math.round(x).toLocaleString('en');
+let C=[];   // citation registry for the current view: each entry is a list of pages
+const cite=(pages,title,label,cls='ct',html)=>{pages=pages.filter(p=>p&&p.img);if(!pages.length)return html||esc(label||'');C.push({pages,title});return `<a class="${cls}" tabindex="0" data-c="${C.length-1}">${html||esc(label)}</a>`};
+const pc=x=>(x>0?'−':'+')+Math.abs(x).toFixed(3)+'″';
+const pgOf=(img,apa,label,why,box,focus)=>({img,apa,label,why,box,focus});
+const rowPage=(s,r)=>r.pages||[pgOf(r.img,r.apa,r.page||'page',(r.box?'Marked: the rows of this triangle. ':'Rows not marked on this page: look for '+r.v.join(', ')+'. ')+(r.ang?'Printed angles: '+r.ang.join('; ')+'. ':'')+(r.basis?'Sum: '+r.basis:''),r.box)];
+const itemPage=(x,lab)=>x&&x.img?[pgOf(x.img,x.apa,x.source||lab,x.quote?'“'+x.quote+'”':'',null)]:[];
+function stats(s){
+  const U=s.rows.filter(r=>r.use), d=U.filter(r=>r.se!=null).map(r=>r.raw-r.se);
+  const m=d.length?d.reduce((a,b)=>a+b,0)/d.length:null, sd=d.length>1?Math.sqrt(d.reduce((a,b)=>a+(b-m)**2,0)/(d.length-1)):null;
+  return {U,lo:Math.min(...U.map(r=>r.raw)),hi:Math.max(...U.map(r=>r.raw)),pos:U.filter(r=>r.raw>0).length,m,sd};
+}
+function render(id){
+  const s=D.find(x=>x.id===id)||D[0]; C=[];
+  const st=stats(s), F=s.fit, n=st.U.length, co=!!s.colorado;
+  document.getElementById('cnt').textContent=`${s.rows.length} triangles printed, ${n} used`;
+  let h=`<h2 style="border:0;margin-top:22px">${esc(s.title)}</h2><div class="sub">${esc(s.years||'')}${s.region?' · '+esc(s.region):''}</div>`;
+  h+=`<div class="box warn"><b>The question.</b> In the published triangles the angle sums are often forced by an adjustment to equal 180° plus a spherical excess computed from the sides and an assumed figure of the Earth. Such angles cannot be used as a test of curvature. Is there excess in the angles before that step?</div>`;
+  if(s.forced) h+=`<div class="box warn"><b>Not testable from this print.</b> ${esc(s.forced)}</div>`;
+  else if(F) h+=`<div class="box ok"><b>The result.</b> Using the least-processed angles printed, the ${n} triangles close at <b>${m1(st.lo)} to ${m1(st.hi)}</b> over 180°, with ${st.pos} of ${n} positive. ${F.R?`Fitted against area, the raw closures give a curvature radius of <b>${km(F.R)} ± ${km(F.sR)} km</b>.`:'The fit against area gives no positive curvature.'} A plane needs every closure to be 0″.</div>`;
+  else h+=`<div class="box">Too few triangles with an observed sum and an area for a fit.</div>`;
+  // 1. what the book prints
+  h+=`<h2>1. What the book prints</h2>`;
+  if(co){
+    const P=s.pages;
+    h+=`<p>${cite([555,556,557,558,559].map(p=>P[p]),'Station directions, Colorado and Utah','Schott (1900, pp. 555 to 559)')} prints each station's horizontal directions in steps, column by column: the result of the station adjustment, the reduction to sea level, the resulting seconds, the corrections from the figure adjustment, and the final seconds. The station adjustment combines the repeated rounds at one station only. It does not use any other station, and it does not force any triangle to close.</p>
+<figure>${cite([P[559]],'Directions at Divide','','ct','<img src="img/fig_p559_divide.webp" alt="Schott 1900 p. 559, directions at Divide">')}<figcaption>${cite([P[559]],'Directions at Divide','Schott (1900, p. 559)')}. Directions at Divide. The marked rows are the sights to Pikes Peak and Bison. The raw value is the first column of seconds, and the sea-level reduction is the column next to the probable error.</figcaption></figure>`;
+    h+=`<p>The ${cite([564,565,566].map(p=>P[p]),'Adjusted triangles, Colorado and Utah','triangle table (pp. 564 to 566)')} then gives the "observed angles" (after the sea-level reduction), the figure corrections, the spherical angles and the computed spherical excess.</p>
+<figure>${cite([P[566]],'Triangle 21','','ct','<img src="img/fig_p566_t21.webp" alt="Schott 1900 p. 566, triangle 21">')}<figcaption>${cite([P[566]],'Triangle 21','Schott (1900, p. 566)')}. Triangle 21, Divide - Pikes Peak - Bison. The observed angles close at 6.770″ over 180°. After the corrections they close at the computed excess, 7.721″.</figcaption></figure>`;
+  } else {
+    const a=s.angle_status, e=s.excess_formula;
+    if(a) h+=`<p><b>The angles used.</b> ${esc(a.text)}</p>${a.quote?`<blockquote>${esc(a.quote)}</blockquote>`:''}<p class="calc">Source: ${cite(itemPage(a,'source'),'What the printed angles contain',a.source||'source page')}</p>`;
+    if(e) h+=`<p><b>The printed excess.</b> ${esc(e.text)}</p>${e.quote?`<blockquote>${esc(e.quote)}</blockquote>`:''}<p class="calc">Source: ${cite(itemPage(e,'source'),'How the excess was computed',e.source||'source page')}</p>`;
+  }
+  // 2. method
+  const ab={};st.U.forEach(r=>ab[r.ab]=(ab[r.ab]||0)+1);
+  h+=`<h2>2. Method</h2><ol>
+<li><b>Angles.</b> ${co?'Each angle is the difference of two station-adjusted directions, with the printed sea-level reduction removed. Each computed angle was checked against the degrees printed in the triangle table.':'The least-processed angles the book prints, as described in section 1. Triangles whose printed angles were closed for calculation, or where an angle was not observed, are left out and listed under the table.'}</li>
 <li><b>Raw closure.</b> Angle sum − 180°. No model of the surface goes into this number.</li>
-<li><b>Area.</b> Plane triangle (Heron's formula) from the printed sides. The area sets only the scale of the fit.</li>
-<li><b>To make planar.</b> Correction = −(raw closure), per angle = one third of that.</li>
-<li><b>Fit.</b> Closure = k × area, least squares through the origin, no weights. K = k in radians per m², R = 1/√K. Gauss (1827) gives the excess of a geodesic triangle as the curvature integrated over its area.</li>
-</ol>
-
-<h2>3. One triangle, step by step</h2>
-<p>Triangle 21, Divide - Pikes Peak - Bison. Sources: <a class="ct chip" data-s="schott_p559,schott_p558,schott_p566" data-t="Triangle 21: directions and triangle">pp. 558, 559, 566</a></p>
-<div class="tw"><table>
-<tr><th>Corner</th><th class="n">Raw angle</th><th class="n">Sea level</th><th class="n">Observed (printed)</th><th class="n">Figure corr.</th><th class="n">Spherical (printed)</th></tr>
+<li><b>Area.</b> Plane triangle. ${Object.entries(ab).map(([k,v])=>`${k==='printed sides'?'From the three printed sides (Heron\'s formula)':k==='one printed side and the angles'?'From one printed side and the observed angles (sine rule)':'From the printed station positions, with a degree length of 111.32 km setting the scale'}: ${v} triangle${v>1?'s':''}`).join('. ')}. The area sets only the scale of the fit.</li>
+<li><b>Planar correction.</b> −(raw closure), the change that would make the three angles sum to exactly 180°; per angle = one third of that.</li>
+<li><b>Fit.</b> Closure = k × area, least squares through the origin, no weights. K = k in radians per m², R = 1/√K. Gauss (1827) gives the excess of a geodesic triangle as the curvature integrated over its area.</li></ol>`;
+  // 3. one triangle
+  h+=`<h2>3. One triangle, step by step</h2>`;
+  if(co){
+    const P=s.pages;
+    h+=`<p>Triangle 21, Divide - Pikes Peak - Bison. Sources: ${cite([P[559],P[558],P[566]],'Triangle 21: directions and triangle','pp. 558, 559, 566','ct chip')}</p>
+<div class="tw"><table><tr><th>Corner</th><th class="n">Raw angle</th><th class="n">Sea level</th><th class="n">Observed (printed)</th><th class="n">Figure corr.</th><th class="n">Spherical (printed)</th></tr>
 <tr><td>Divide</td><td class="n">41° 30′ 12.662″</td><td class="n">−0.347″</td><td class="n">12.315″</td><td class="n">+0.172″</td><td class="n">12.487″</td></tr>
 <tr><td>Pikes Peak</td><td class="n">102° 17′ 56.371″</td><td class="n">+0.378″</td><td class="n">56.749″</td><td class="n">+0.580″</td><td class="n">57.329″</td></tr>
 <tr><td>Bison</td><td class="n">36° 11′ 57.927″</td><td class="n">−0.221″</td><td class="n">57.706″</td><td class="n">+0.199″</td><td class="n">57.905″</td></tr>
-<tr><td><b>Sum − 180°</b></td><td class="n"><b>6.960″</b></td><td class="n">−0.190″</td><td class="n">6.770″</td><td class="n">+0.951″</td><td class="n">7.721″</td></tr>
-</table></div>
-<p class="calc">Raw angles worked out here from the station-adjusted directions. The other columns are printed. The resulting seconds for Bison at Divide are printed as 35.535″. 32.642″ − 0.107″ = 32.535″, and the observed angle at Divide (12.315″) confirms 32.535″, so 35.535″ is a misprint.</p>
-
-<h2>4. All triangles</h2>
-<p><a class="ct" data-s="schott_p564,schott_p565,schott_p566,schott_p555,schott_p556,schott_p557,schott_p558,schott_p559" data-t="Colorado and Utah: triangles and directions">Schott (1900, pp. 555 to 566)</a>, Colorado and Utah. Each row's pages link opens its triangle page and the direction pages of its three stations. Triangle 24 is left out because one of its angles was not observed.</p>
-<div class="tw all"><table>
-<tr><th class="n">No</th><th>Triangle</th><th class="n">Area km²</th><th class="n">Raw closure</th><th class="n">After sea level</th><th class="n">Schott SE</th><th class="n">Raw − SE</th><th class="n g">Planar corr.</th><th class="n g">Per angle</th><th class="n">Time</th><th>Pages</th></tr>
-<tr><td class="n">1</td><td>Wasatch - Tushar - Mount Nebo</td><td class="n">4,263</td><td class="n"><b>22.353″</b></td><td class="n">22.325″</td><td class="n">21.643″</td><td class="n">+0.710″</td><td class="n g">−22.353″</td><td class="n g">−7.451″</td><td class="n">1.49 s</td><td><a class="ct chip" tabindex="0" data-s="schott_p564,schott_p555,schott_p556" data-t="Triangle 1: Wasatch - Tushar - Mount Nebo">pages</a></td></tr><tr><td class="n">2</td><td>Mount Ellen - Tushar - Wasatch</td><td class="n">6,761</td><td class="n"><b>34.078″</b></td><td class="n">34.111″</td><td class="n">34.332″</td><td class="n">−0.254″</td><td class="n g">−34.078″</td><td class="n g">−11.359″</td><td class="n">2.27 s</td><td><a class="ct chip" tabindex="0" data-s="schott_p564,schott_p555,schott_p556" data-t="Triangle 2: Mount Ellen - Tushar - Wasatch">pages</a></td></tr><tr><td class="n">3</td><td>Patmos Head - Wasatch - Mount Nebo</td><td class="n">4,364</td><td class="n"><b>22.448″</b></td><td class="n">22.417″</td><td class="n">22.153″</td><td class="n">+0.295″</td><td class="n g">−22.448″</td><td class="n g">−7.483″</td><td class="n">1.50 s</td><td><a class="ct chip" tabindex="0" data-s="schott_p564,schott_p555,schott_p556" data-t="Triangle 3: Patmos Head - Wasatch - Mount Nebo">pages</a></td></tr><tr><td class="n">4</td><td>Patmos Head - Mount Ellen - Wasatch</td><td class="n">6,607</td><td class="n"><b>32.475″</b></td><td class="n">32.472″</td><td class="n">33.549″</td><td class="n">−1.074″</td><td class="n g">−32.475″</td><td class="n g">−10.825″</td><td class="n">2.17 s</td><td><a class="ct chip" tabindex="0" data-s="schott_p564,schott_p555,schott_p556" data-t="Triangle 4: Patmos Head - Mount Ellen - Wasatch">pages</a></td></tr><tr><td class="n">5</td><td>Mount Waas - Mount Ellen - Patmos Head</td><td class="n">9,592</td><td class="n"><b>48.504″</b></td><td class="n">48.581″</td><td class="n">48.709″</td><td class="n">−0.205″</td><td class="n g">−48.504″</td><td class="n g">−16.168″</td><td class="n">3.23 s</td><td><a class="ct chip" tabindex="0" data-s="schott_p564,schott_p555,schott_p556" data-t="Triangle 5: Mount Waas - Mount Ellen - Patmos Head">pages</a></td></tr><tr><td class="n">6</td><td>Tavaputs - Mount Waas - Patmos Head</td><td class="n">6,228</td><td class="n"><b>30.419″</b></td><td class="n">30.352″</td><td class="n">31.622″</td><td class="n">−1.203″</td><td class="n g">−30.419″</td><td class="n g">−10.140″</td><td class="n">2.03 s</td><td><a class="ct chip" tabindex="0" data-s="schott_p564,schott_p555,schott_p556,schott_p557" data-t="Triangle 6: Tavaputs - Mount Waas - Patmos Head">pages</a></td></tr><tr><td class="n">7</td><td>Treasury Mountain - Mount Waas - Tavaputs</td><td class="n">9,718</td><td class="n"><b>49.434″</b></td><td class="n">49.531″</td><td class="n">49.345″</td><td class="n">+0.089″</td><td class="n g">−49.434″</td><td class="n g">−16.478″</td><td class="n">3.30 s</td><td><a class="ct chip" tabindex="0" data-s="schott_p564,schott_p556,schott_p557" data-t="Triangle 7: Treasury Mountain - Mount Waas - Tavaputs">pages</a></td></tr><tr><td class="n">8</td><td>Uncompahgre - Mount Waas - Tavaputs</td><td class="n">9,089</td><td class="n"><b>45.382″</b></td><td class="n">45.494″</td><td class="n">46.152″</td><td class="n">−0.770″</td><td class="n g">−45.382″</td><td class="n g">−15.127″</td><td class="n">3.03 s</td><td><a class="ct chip" tabindex="0" data-s="schott_p564,schott_p556,schott_p557" data-t="Triangle 8: Uncompahgre - Mount Waas - Tavaputs">pages</a></td></tr><tr><td class="n">9</td><td>Uncompahgre - Mount Waas - Treasury Mountain</td><td class="n">8,898</td><td class="n"><b>44.997″</b></td><td class="n">44.951″</td><td class="n">45.184″</td><td class="n">−0.187″</td><td class="n g">−44.997″</td><td class="n g">−14.999″</td><td class="n">3.00 s</td><td><a class="ct chip" tabindex="0" data-s="schott_p564,schott_p556,schott_p557" data-t="Triangle 9: Uncompahgre - Mount Waas - Treasury Mountain">pages</a></td></tr><tr><td class="n">10</td><td>Treasury Mountain - Uncompahgre - Tavaputs</td><td class="n">9,527</td><td class="n"><b>49.049″</b></td><td class="n">48.988″</td><td class="n">48.378″</td><td class="n">+0.671″</td><td class="n g">−49.049″</td><td class="n g">−16.350″</td><td class="n">3.27 s</td><td><a class="ct chip" tabindex="0" data-s="schott_p565,schott_p556,schott_p557" data-t="Triangle 10: Treasury Mountain - Uncompahgre - Tavaputs">pages</a></td></tr><tr><td class="n">11</td><td>Uncompahgre - Mount Ellen - Mount Waas</td><td class="n">7,008</td><td class="n"><b>36.051″</b></td><td class="n">36.064″</td><td class="n">35.592″</td><td class="n">+0.459″</td><td class="n g">−36.051″</td><td class="n g">−12.017″</td><td class="n">2.40 s</td><td><a class="ct chip" tabindex="0" data-s="schott_p565,schott_p556,schott_p557" data-t="Triangle 11: Uncompahgre - Mount Ellen - Mount Waas">pages</a></td></tr><tr><td class="n">12</td><td>Mount Ouray - Uncompahgre - Treasury Mountain</td><td class="n">5,032</td><td class="n"><b>26.144″</b></td><td class="n">26.159″</td><td class="n">25.554″</td><td class="n">+0.590″</td><td class="n g">−26.144″</td><td class="n g">−8.715″</td><td class="n">1.74 s</td><td><a class="ct chip" tabindex="0" data-s="schott_p565,schott_p556,schott_p557,schott_p558" data-t="Triangle 12: Mount Ouray - Uncompahgre - Treasury Mountain">pages</a></td></tr><tr><td class="n">13</td><td>Mount Elbert - Uncompahgre - Treasury Mountain</td><td class="n">2,770</td><td class="n"><b>15.415″</b></td><td class="n">15.420″</td><td class="n">14.064″</td><td class="n">+1.351″</td><td class="n g">−15.415″</td><td class="n g">−5.138″</td><td class="n">1.03 s</td><td><a class="ct chip" tabindex="0" data-s="schott_p565,schott_p556,schott_p557" data-t="Triangle 13: Mount Elbert - Uncompahgre - Treasury Mountain">pages</a></td></tr><tr><td class="n">14</td><td>Mount Elbert - Mount Ouray - Treasury Mountain</td><td class="n">2,292</td><td class="n"><b>13.549″</b></td><td class="n">13.527″</td><td class="n">11.639″</td><td class="n">+1.910″</td><td class="n g">−13.549″</td><td class="n g">−4.516″</td><td class="n">0.90 s</td><td><a class="ct chip" tabindex="0" data-s="schott_p565,schott_p556,schott_p557,schott_p558" data-t="Triangle 14: Mount Elbert - Mount Ouray - Treasury Mountain">pages</a></td></tr><tr><td class="n">15</td><td>Mount Ouray - Uncompahgre - Mount Elbert</td><td class="n">4,555</td><td class="n"><b>24.278″</b></td><td class="n">24.266″</td><td class="n">23.128″</td><td class="n">+1.150″</td><td class="n g">−24.278″</td><td class="n g">−8.093″</td><td class="n">1.62 s</td><td><a class="ct chip" tabindex="0" data-s="schott_p565,schott_p557,schott_p558" data-t="Triangle 15: Mount Ouray - Uncompahgre - Mount Elbert">pages</a></td></tr><tr><td class="n">16</td><td>Bison - Mount Ouray - Mount Elbert</td><td class="n">3,288</td><td class="n"><b>15.704″</b></td><td class="n">15.692″</td><td class="n">16.695″</td><td class="n">−0.991″</td><td class="n g">−15.704″</td><td class="n g">−5.235″</td><td class="n">1.05 s</td><td><a class="ct chip" tabindex="0" data-s="schott_p565,schott_p557,schott_p558" data-t="Triangle 16: Bison - Mount Ouray - Mount Elbert">pages</a></td></tr><tr><td class="n">17</td><td>Pikes Peak - Mount Ouray - Mount Elbert</td><td class="n">4,404</td><td class="n"><b>20.930″</b></td><td class="n">20.933″</td><td class="n">22.362″</td><td class="n">−1.432″</td><td class="n g">−20.930″</td><td class="n g">−6.977″</td><td class="n">1.40 s</td><td><a class="ct chip" tabindex="0" data-s="schott_p565,schott_p557,schott_p558" data-t="Triangle 17: Pikes Peak - Mount Ouray - Mount Elbert">pages</a></td></tr><tr><td class="n">18</td><td>Pikes Peak - Mount Ouray - Bison</td><td class="n">3,177</td><td class="n"><b>16.406″</b></td><td class="n">16.471″</td><td class="n">16.130″</td><td class="n">+0.276″</td><td class="n g">−16.406″</td><td class="n g">−5.469″</td><td class="n">1.09 s</td><td><a class="ct chip" tabindex="0" data-s="schott_p565,schott_p558" data-t="Triangle 18: Pikes Peak - Mount Ouray - Bison">pages</a></td></tr><tr><td class="n">19</td><td>Bison - Pikes Peak - Mount Elbert</td><td class="n">2,061</td><td class="n"><b>11.180″</b></td><td class="n">11.230″</td><td class="n">10.463″</td><td class="n">+0.717″</td><td class="n g">−11.180″</td><td class="n g">−3.727″</td><td class="n">0.75 s</td><td><a class="ct chip" tabindex="0" data-s="schott_p566,schott_p557,schott_p558" data-t="Triangle 19: Bison - Pikes Peak - Mount Elbert">pages</a></td></tr><tr><td class="n">20</td><td>Plateau - Mount Ouray - Pikes Peak</td><td class="n">3,536</td><td class="n"><b>18.876″</b></td><td class="n">18.705″</td><td class="n">17.954″</td><td class="n">+0.922″</td><td class="n g">−18.876″</td><td class="n g">−6.292″</td><td class="n">1.26 s</td><td><a class="ct chip" tabindex="0" data-s="schott_p566,schott_p557,schott_p558" data-t="Triangle 20: Plateau - Mount Ouray - Pikes Peak">pages</a></td></tr><tr><td class="n">21</td><td>Divide - Pikes Peak - Bison</td><td class="n">1,521</td><td class="n"><b>6.960″</b></td><td class="n">6.770″</td><td class="n">7.721″</td><td class="n">−0.761″</td><td class="n g">−6.960″</td><td class="n g">−2.320″</td><td class="n">0.46 s</td><td><a class="ct chip" tabindex="0" data-s="schott_p566,schott_p558,schott_p559" data-t="Triangle 21: Divide - Pikes Peak - Bison">pages</a></td></tr><tr><td class="n">22</td><td>Big Springs - Plateau - Pikes Peak</td><td class="n">1,503</td><td class="n"><b>9.794″</b></td><td class="n">9.941″</td><td class="n">7.630″</td><td class="n">+2.164″</td><td class="n g">−9.794″</td><td class="n g">−3.265″</td><td class="n">0.65 s</td><td><a class="ct chip" tabindex="0" data-s="schott_p566,schott_p557,schott_p558,schott_p559" data-t="Triangle 22: Big Springs - Plateau - Pikes Peak">pages</a></td></tr><tr><td class="n">23</td><td>Big Springs - Pikes Peak - Divide</td><td class="n">1,103</td><td class="n"><b>5.278″</b></td><td class="n">5.415″</td><td class="n">5.602″</td><td class="n">−0.324″</td><td class="n g">−5.278″</td><td class="n g">−1.759″</td><td class="n">0.35 s</td><td><a class="ct chip" tabindex="0" data-s="schott_p566,schott_p558,schott_p559" data-t="Triangle 23: Big Springs - Pikes Peak - Divide">pages</a></td></tr>
-</table></div>
-<p class="calc">Worked out here: raw closure, area, Raw − SE, the planar columns and time (15″ of arc = 1 s of time). "After sea level" and "Schott SE" are the printed sums.</p>
-<p><b>Planar columns.</b> A plane triangle sums to exactly 180°. "Planar corr." is the change the three raw angles would need to get there (the raw closure, with the sign reversed). "Per angle" spreads it equally over the three corners.</p>
-
-<h2>5. Curvature from the closures</h2>
-<div class="tw"><table>
-<tr><th>Input</th><th class="n">k (″ per 10,000 km²)</th><th class="n">R = 1/√K</th><th class="n">Scatter (rms)</th><th class="n">Intercept, if fitted</th></tr>
-<tr><td>Raw (station adjustment only)</td><td class="n">50.80 ± 0.36</td><td class="n">6,372 ± 22 km</td><td class="n">0.969″</td><td class="n">+0.72 ± 0.41″</td></tr><tr><td>After sea-level reduction</td><td class="n">50.82 ± 0.36</td><td class="n">6,371 ± 23 km</td><td class="n">0.981″</td><td class="n">+0.71 ± 0.42″</td></tr><tr><td>Schott's computed spherical excess</td><td class="n">50.78 ± 0.00</td><td class="n">6,373 ± 0 km</td><td class="n">0.002″</td><td class="n">-0.00 ± 0.00″</td></tr>
-</table></div>
-<p class="calc">Worked out here.</p>
-<ul>
-<li>The smallest raw closure is 5.3″ and the largest is 49.4″. Every one is positive.</li>
-<li>Raw − SE averages +0.18″ with a spread of 0.97″. Schott gives the mean error of an adjusted angle as ±0.66″ (<a class="ct" data-s="schott_p566" data-t="Mean error of an angle">p. 566</a>). Three angles give about ±1.1″ for a triangle.</li>
-<li>Fitted with an intercept, the closure at zero area is within 2σ of zero.</li>
-<li>The sea-level reduction changes the result by 1 km in R.</li>
-</ul>
-
-<h2>6. What the inputs still contain</h2>
-<ul>
-<li>Station-adjusted directions are means of repeated rounds (direct and reversed) at one station. The single pointings are not printed.</li>
-<li>The sides come from the adjusted triangulation, reduced to sea level. They set only the area scale. A 0.1% error in scale changes R by 0.05%.</li>
-<li>Some triangles share angles (all the triangles of each quadrilateral are listed), so the ± values on R are smaller than an independent set would give.</li>
-<li>Deflection of the vertical and lateral refraction are in the angles as observed. For deflection in these two US chains, see the Goose report linked from the main page.</li>
-</ul>
-
-<h2>7. Files</h2>
-<p><code>raw_se.py</code> in this folder holds every input value with its page and runs the whole calculation: <code>python3 raw_se.py</code>.</p>
-
-<h2>References</h2>
-<ol class="refs">
-<li>Gauss, C. F. (1902). <i>General investigations of curved surfaces of 1827 and 1825</i> (J. C. Morehead &amp; A. M. Hiltebeitel, Trans.). Princeton University Library. (Original work published 1827)</li>
-<li><a class="ct" data-s="schott_p564,schott_p565,schott_p566,schott_p555,schott_p556,schott_p557,schott_p558,schott_p559" data-t="Schott (1900), pages used">Schott, C. A. (1900).</a> <i>The transcontinental triangulation and the American arc of the parallel</i> (Special Publication No. 4). Washington, DC: U.S. Coast and Geodetic Survey.</li>
-</ol>
-<p class="sub">Aether Cosmology Research Group. Pre-release draft, November 2026.</p>
-</main>
-<div id="dlg" role="dialog" aria-modal="true"><div class="bx">
-<div class="pg" id="pg"><img id="pim" alt=""></div>
-<div class="side"><h3 id="st"></h3><div class="tabs" id="tabs"></div><div class="why" id="why"></div><div class="apa" id="apa"></div></div>
-<button class="x" id="x" aria-label="Close">×</button></div></div>
-<script>
-const APA='Schott, C. A. (1900). <i>The transcontinental triangulation and the American arc of the parallel</i> (Special Publication No. 4). Washington, DC: U.S. Coast and Geodetic Survey.';
-const SH={"schott_p555": ["p. 555", 0.351, "Station directions. Marked rows: the directions used here. Raw = first column of seconds (station adjustment); the sea-level reduction is the column after the probable error."], "schott_p556": ["p. 556", 0.29, "Station directions. Marked rows: the directions used here. Raw = first column of seconds (station adjustment); the sea-level reduction is the column after the probable error."], "schott_p557": ["p. 557", 0.294, "Station directions. Marked rows: the directions used here. Raw = first column of seconds (station adjustment); the sea-level reduction is the column after the probable error."], "schott_p558": ["p. 558", 0.31, "Station directions. Marked rows: the directions used here. Raw = first column of seconds (station adjustment); the sea-level reduction is the column after the probable error."], "schott_p559": ["p. 559", 0.328, "Station directions. Marked rows: the directions used here. Raw = first column of seconds (station adjustment); the sea-level reduction is the column after the probable error."], "schott_p564": ["p. 564", 0.19, "Adjusted triangles. Marked: the observed angles with their sums, and the computed spherical excess with its sums."], "schott_p565": ["p. 565", 0.2, "Adjusted triangles. Marked: the observed angles with their sums, and the computed spherical excess with its sums."], "schott_p566": ["p. 566", 0.204, "Adjusted triangles. Marked: the observed angles with their sums, and the computed spherical excess with its sums. Also marked: the mean error of an angle, m = ±0.66″."]};
+<tr><td><b>Sum − 180°</b></td><td class="n"><b>6.960″</b></td><td class="n">−0.190″</td><td class="n">6.770″</td><td class="n">+0.951″</td><td class="n">7.721″</td></tr></table></div>
+<p class="calc">Raw angles worked out here from the station-adjusted directions. The other columns are printed. The resulting seconds for Bison at Divide are printed as 35.535″. 32.642″ − 0.107″ = 32.535″, and the observed angle at Divide (12.315″) confirms 32.535″, so 35.535″ is a misprint.</p>`;
+  } else {
+    const ex=st.U.filter(r=>r.ang&&r.ang.length===3).sort((a,b)=>(!!b.box-!!a.box)||b.area-a.area)[0];
+    if(ex){
+      h+=`<p>Triangle ${esc(ex.id)}, ${esc(ex.v.join(' - '))}. Source: ${cite(rowPage(s,ex),'Triangle '+ex.id,ex.page||'page','ct chip')}</p>
+<div class="tw"><table><tr><th>Corner</th><th>Printed angle</th></tr>${ex.v.map((v,i)=>`<tr><td>${esc(v)}</td><td>${esc(ex.ang[i])}</td></tr>`).join('')}
+<tr><td><b>Sum − 180°</b></td><td><b>${f3(ex.raw)}</b></td></tr>
+${ex.se!=null?`<tr><td>Printed spherical excess</td><td>${f3(ex.se)}</td></tr><tr><td>Raw − printed excess</td><td>${sg(ex.raw-ex.se)}</td></tr>`:''}
+<tr><td class="g">Planar correction (total, per angle)</td><td class="g">${pc(ex.raw)}, ${pc(ex.raw/3)}</td></tr></table></div>
+<p class="calc">The angles and the printed excess are as printed. The sum and the corrections are worked out here. How the sum was formed: ${esc(ex.basis)}</p>`;
+    } else h+=`<p class="sub">No used triangle with three printed angles.</p>`;
+  }
+  // 4. all triangles
+  const OFF=s.rows.filter(r=>!r.use);
+  h+=`<h2>4. All triangles</h2><p>Each row's pages link opens the printed page${co?'s (the triangle page and the direction pages of its three stations)':' with the triangle\'s rows marked where they could be found'}.${OFF.length?` ${OFF.length} triangle${OFF.length>1?'s are':' is'} left out; they are listed under the table with the reason.`:''}</p>
+<div class="tw all"><table><tr><th>No</th><th>Triangle</th><th class="n">Area km²</th><th class="n">Raw closure</th>${co?'<th class="n">After sea level</th>':''}<th class="n">Printed SE</th><th class="n">Raw − SE</th><th class="n g">Planar corr.</th><th class="n g">Per angle</th><th class="n">Time</th><th>Pages</th></tr>`;
+  h+=st.U.map(r=>`<tr><td class="n">${esc(r.id)}</td><td>${esc(r.v.join(' - '))}</td><td class="n">${km(r.area/1e6)}</td><td class="n"><b>${f3(r.raw)}</b></td>${co?`<td class="n">${f3(r.obs)}</td>`:''}<td class="n">${f3(r.se)}</td><td class="n">${r.se!=null?sg(r.raw-r.se):''}</td><td class="n g">${pc(r.raw)}</td><td class="n g">${pc(r.raw/3)}</td><td class="n">${(r.raw/15).toFixed(2)} s</td><td>${cite(rowPage(s,r),'Triangle '+r.id+': '+r.v.join(' - '),'pages','ct chip')}</td></tr>`).join('');
+  h+=`</table></div><p class="calc">Worked out here: raw closure (from the printed angles), area, Raw − SE, the planar columns and time (15″ of arc = 1 s of time). ${co?'"After sea level" and ':''}"Printed SE" ${co?'are':'is'} as printed.</p>`;
+  if(OFF.length) h+=`<details><summary>Left out (${OFF.length})</summary><div class="tw all"><table><tr><th>No</th><th>Triangle</th><th>Reason</th><th class="n">Printed sum − 180°</th><th>Pages</th></tr>${OFF.map(r=>`<tr class="off"><td class="n">${esc(r.id)}</td><td>${esc(r.v.join(' - '))}</td><td>${esc(r.why)}</td><td class="n">${f3(r.raw)}</td><td>${cite(rowPage(s,r),'Triangle '+r.id,'pages','ct chip')}</td></tr>`).join('')}</table></div></details>`;
+  // 5. fit
+  h+=`<h2>5. Curvature from the closures</h2>`;
+  if(F){
+    const fr=(lab,f)=>f?`<tr><td>${lab}</td><td class="n">${f.k.toFixed(2)} ± ${f.sk.toFixed(2)}</td><td class="n">${f.R?km(f.R)+' ± '+km(f.sR)+' km':'none'}</td><td class="n">${f.rms.toFixed(3)}″</td><td class="n">${(f.c<0?'−':'+')+Math.abs(f.c).toFixed(2)} ± ${f.sc.toFixed(2)}″</td></tr>`:'';
+    h+=`<div class="tw"><table><tr><th>Input</th><th class="n">k (″ per 10,000 km²)</th><th class="n">R = 1/√K</th><th class="n">Scatter (rms)</th><th class="n">Intercept, if fitted</th></tr>${fr(co?'Raw (station adjustment only)':'Raw closures',F)}${co?fr('After sea-level reduction',s.fit_obs):''}${fr('Printed spherical excess',s.fit_se)}</table></div><p class="calc">Worked out here.</p><ul>
+<li>The smallest raw closure is ${m1(st.lo)} and the largest is ${m1(st.hi)}. ${st.pos} of ${n} are positive.</li>
+${st.m!=null?`<li>Raw − printed SE averages ${(st.m<0?'−':'+')+Math.abs(st.m).toFixed(2)}″ with a spread of ${st.sd.toFixed(2)}″.</li>`:''}
+<li>Fitted with an intercept, the closure at zero area is ${(F.c<0?'−':'+')+Math.abs(F.c).toFixed(2)} ± ${F.sc.toFixed(2)}″.</li></ul>`;
+  } else h+=`<p class="sub">No fit for this survey.</p>`;
+  // 6. inputs
+  h+=`<h2>6. What the inputs still contain</h2>`;
+  if(co) h+=`<ul><li>Station-adjusted directions are means of repeated rounds (direct and reversed) at one station. The single pointings are not printed.</li><li>The sides come from the adjusted triangulation, reduced to sea level. They set only the area scale.</li><li>Some triangles share angles (all the triangles of each quadrilateral are listed), so the ± values on R are smaller than an independent set would give.</li><li>Deflection of the vertical and lateral refraction are in the angles as observed.</li></ul>`;
+  else {
+    if(s.assumptions&&s.assumptions.length) h+=`<ul>${s.assumptions.map(a=>`<li>${esc(a.text)}${a.affects?` <span class="calc">(affects: ${esc(a.affects)})</span>`:''}${a.img?' '+cite(itemPage(a,'source'),'Assumption',a.source||'source','ct chip'):''}</li>`).join('')}</ul>`;
+    if(s.errors&&s.errors.length) h+=`<p><b>Error figures printed by the survey.</b></p><ul>${s.errors.map(e=>`<li>${esc(e.what)}: ${esc(e.value)}${e.img?' '+cite(itemPage(e,'source'),e.what||'Error figure',e.source||'source','ct chip'):''}</li>`).join('')}</ul>`;
+    h+=`<ul><li>Some triangles share angles, so the ± values on R are smaller than an independent set would give.</li></ul>`;
+  }
+  h+=`<h2>References</h2><ol class="refs"><li>Gauss, C. F. (1902). <i>General investigations of curved surfaces of 1827 and 1825</i> (J. C. Morehead &amp; A. M. Hiltebeitel, Trans.). Princeton University Library. (Original work published 1827)</li>${s.refs.map(r=>`<li>${esc(r)}</li>`).join('')}</ol>`;
+  if(co) h+=`<p class="calc">Calculation: <code>raw_se.py</code> in this folder.</p>`;
+  document.getElementById('view').innerHTML=h;
+}
+const sel=document.getElementById('sel');
+sel.innerHTML=D.map(s=>`<option value="${s.id}">${esc(s.title)}${s.years?' ('+esc(s.years.split(' (')[0])+')':''}</option>`).join('');
+const go=()=>{const id=decodeURIComponent(location.hash.slice(1))||D[0].id;sel.value=D.some(s=>s.id===id)?id:D[0].id;render(sel.value)};
+sel.addEventListener('change',()=>{location.hash=sel.value});
+addEventListener('hashchange',go);go();
+// viewer
 const dlg=document.getElementById('dlg'),pg=document.getElementById('pg'),pim=document.getElementById('pim');
-function show(id){const [lab,f,why]=SH[id];
-  pim.onload=()=>{pg.scrollTop=Math.max(0,f*pim.offsetHeight-60)};
-  pim.src='img/'+id+'.webp';pim.alt='Schott (1900), '+lab;
-  document.getElementById('why').textContent=why;
-  document.getElementById('apa').innerHTML=APA+' '+lab+'.';
-  document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.id===id));}
-function openCite(el){const ids=el.dataset.s.split(',');
-  document.getElementById('st').textContent=el.dataset.t||el.textContent;
-  document.getElementById('tabs').innerHTML=ids.length>1?ids.map(i=>`<button data-id="${i}">${SH[i][0]}</button>`).join(''):'';
-  dlg.classList.add('on');show(ids[0]);}
-document.addEventListener('click',e=>{const b=e.target.closest('#tabs button');if(b)return show(b.dataset.id);
+let CUR=null;
+function show(i){const p=CUR.pages[i];
+  pim.onload=()=>{const y=p.box?p.box[1]:(p.focus||0);pg.scrollTop=Math.max(0,y*pim.offsetHeight-80)};
+  pim.src=p.img;pim.alt=p.label||'';
+  document.getElementById('hls').innerHTML=p.box?`<div class="hl" style="left:${p.box[0]*100}%;top:${p.box[1]*100}%;width:${(p.box[2]-p.box[0])*100}%;height:${(p.box[3]-p.box[1])*100}%"></div>`:'';
+  document.getElementById('why').textContent=p.why||'';
+  document.getElementById('apa').textContent=(p.apa||'')+(p.label&&p.label.startsWith('p')?' '+p.label+'.':'');
+  document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',+b.dataset.i===i));}
+function openCite(el){CUR=C[+el.dataset.c];
+  document.getElementById('st').textContent=CUR.title||el.textContent;
+  document.getElementById('tabs').innerHTML=CUR.pages.length>1?CUR.pages.map((p,i)=>`<button data-i="${i}">${esc(p.label)}</button>`).join(''):'';
+  dlg.classList.add('on');show(0);}
+document.addEventListener('click',e=>{const b=e.target.closest('#tabs button');if(b)return show(+b.dataset.i);
   const c=e.target.closest('.ct');if(c){e.preventDefault();return openCite(c);}
   if(e.target===dlg||e.target.id==='x')dlg.classList.remove('on');});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')dlg.classList.remove('on');if(e.key==='Enter'&&e.target.classList.contains('ct'))openCite(e.target);});

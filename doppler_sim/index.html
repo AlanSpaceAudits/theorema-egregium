@@ -47,6 +47,8 @@ td.hid{color:var(--muted)}
 .legend{font-size:12.5px;color:var(--ink2);display:flex;gap:14px;flex-wrap:wrap;margin-top:4px}.legend i{display:inline-block;width:18px;height:3px;vertical-align:middle;margin-right:5px}
 #tip{position:fixed;pointer-events:none;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:4px 8px;font:12px ui-monospace,monospace;opacity:0;z-index:9}
 a{color:var(--acc)}
+.mode{display:flex;gap:8px;margin:0 0 16px}.mode button{margin:0}.mode button.on{background:var(--acc);border-color:var(--acc);color:#fff}
+body.paper main>.grid,body.paper main>.panel:not(#howto){display:none}body:not(.paper) #howto{display:none}
 .doc{font-size:15.5px;line-height:1.7}.doc h3{font-size:17px;margin:22px 0 6px}.doc p{max-width:820px}
 .terms{display:grid;grid-template-columns:150px 1fr;gap:6px 14px;margin:0}.terms dt{font-weight:700}.terms dd{margin:0;color:var(--ink2)}
 @media(max-width:600px){.terms{grid-template-columns:1fr}.terms dd{margin-bottom:6px}}
@@ -57,10 +59,11 @@ table.vars{font:14px system-ui,sans-serif}table.vars td{white-space:normal;text-
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.getElementById('howto'),{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}]})"></script>
 </head>
-<body>
+<body class="paper">
 <main>
 <h1>Doppler Simulator and Calculator</h1>
 <p class="sub">A transmitter passes an observer. The observer records only the received frequency. From that one curve the page solves the speed and the closest distance four ways, and tests whether the path was straight. Set the distance yourself, or hide it and let the curve find it.</p>
+<div class="mode"><button id="mPaper" class="on">Read the paper</button><button id="mSim">Open the sim</button></div>
 
 <div class="grid">
 <div>
@@ -138,7 +141,7 @@ table.vars{font:14px system-ui,sans-serif}table.vars td{white-space:normal;text-
 
 <div class="panel doc" id="howto">
  <h2>How the sim works: the equations, step by step</h2>
- <p>This section explains every equation the sim uses, from the beginning. You only need algebra and Pythagoras. The equation numbers match the labels in the results table above.</p>
+ <p>This section explains every equation the sim uses, from the beginning. You only need algebra and Pythagoras. The equation numbers match the labels in the sim's results table.</p>
 
  <h3>1. Words you need</h3>
  <dl class="terms">
@@ -538,6 +541,8 @@ $("rev").onclick = () => { shown = true; update(); };
 $("usep").onclick = () => { const t = [], f = []; $("paste").value.split(/\n/).forEach(l => { const p = l.trim().split(/[\s,;]+/).map(Number); if (p.length >= 2 && p.every(Number.isFinite)) { t.push(p[0]); f.push(p[1]); } });
   if (t.length < 20) { alert("Need at least 20 rows of: time_s frequency_Hz"); return; } pasted = { t, f }; update(); };
 $("clrp").onclick = () => { pasted = null; update(); };
+function mode(paper) { document.body.classList.toggle("paper", paper); $("mPaper").classList.toggle("on", paper); $("mSim").classList.toggle("on", !paper); scrollTo(0, 0); }
+$("mPaper").onclick = () => mode(true); $("mSim").onclick = () => mode(false);
 $("src").value = 1; $("mov").value = 0; setSrc(); setMov(); autoLen(); update();
 </script>
 </body>

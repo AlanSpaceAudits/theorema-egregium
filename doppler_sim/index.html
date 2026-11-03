@@ -208,6 +208,13 @@ table.vars{font:14px system-ui,sans-serif}table.vars td{white-space:normal;text-
  </svg>
  <p>The source moves in a straight line at steady speed \(V\). At closest approach it is a distance \(d\) from the observer. After a time \(\tau\) it has moved \(V\tau\) along the path. The observer, the closest point and the source make a right triangle, so Pythagoras gives the distance:</p>
  $$ r = \sqrt{d^2 + (V\tau)^2} \tag{1} $$
+ <p><b>How \(d\) is found.</b> Nobody measures \(d\) with a tape. It is an unknown, and the S-curve gives it. The reason is that \(d\) sets how sharp the S is. A source that passes close swings from high to low in a few seconds. A source that passes far away swings slowly. The steps are:</p>
+ <ol>
+  <li>Read \(V\) from the plateaus (part 6). The distance is not needed for this.</li>
+  <li>Find the two moments when the frequency is halfway between the middle and a plateau. At those moments \(\dot r = \pm V/2\). Part 4 shows \(\dot r = V\cos\theta\), so \(\cos\theta = 1/2\) and \(\theta = 60^\circ\). In the triangle above, the source is then \(d/\sqrt{3}\) along the path on each side of the closest point (\(\tan 60^\circ = \sqrt{3}\)).</li>
+  <li>The time between those two moments is the width \(\Delta t\). The source covers \(2d/\sqrt{3}\) in that time, so \(V\Delta t = 2d/\sqrt{3}\) and \(d = \Delta t \cdot V \cdot \sqrt{3}/2\). This is equation (5) in part 7.</li>
+ </ol>
+ <p>The sim also gets \(d\) in three other ways and compares them: from the slope at the middle (part 8), by adding up the curve (parts 10 and 11), and from the full fit (part 12). Part 13 works one example through with numbers: a width of 83.68 s at 7,589 m/s gives \(d \approx 550\) km.</p>
 
  <h3>4. How fast the distance changes</h3>
  <p>Only the part of the source's speed that points along the line to the observer changes the distance. That part is \(V\cos\theta\), with a minus sign while the source comes closer. In the triangle, \(\cos\theta = V\tau / r\), so</p>

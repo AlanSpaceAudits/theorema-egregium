@@ -71,16 +71,16 @@ table.vars{font:14px system-ui,sans-serif}table.vars td{white-space:normal;text-
 
 <div class="panel" id="quick">
  <h2>Doppler curve fit</h2>
- <p class="hint">A hidden propeller plane passes a microphone. Its engine tone shows as the bright S in the spectrogram. Move the four sliders until the red curve sits on the bright line. The sliders then give the plane's tone, speed, closest distance and the time of closest approach. Sound travels at 343 m/s.</p>
+ <p class="hint">A hidden transmitter passes a receiver in a straight line. Its signal shows as the bright S in the spectrogram. Move the four sliders until the red curve sits on the bright line. The sliders then give the transmitter's frequency, its speed, the closest distance and the time of closest approach. The same curve holds for any moving source: sound, radio or light. Only the wave speed c changes. This example uses sound, c = 343 m/s.</p>
  <div class="qs">
-  <label>f₀ (tone the engine makes)</label><input type="range" id="q_f0" min="50" max="300" step="0.1"><b id="q_f0v"></b>
-  <label>v (plane speed)</label><input type="range" id="q_v" min="0" max="300" step="0.5"><b id="q_vv"></b>
+  <label>f₀ (transmitted frequency)</label><input type="range" id="q_f0" min="50" max="300" step="0.1"><b id="q_f0v"></b>
+  <label>v (transmitter speed)</label><input type="range" id="q_v" min="0" max="300" step="0.5"><b id="q_vv"></b>
   <label>d (closest distance)</label><input type="range" id="q_d" min="100" max="10000" step="10"><b id="q_dv"></b>
   <label>t₀ (time of closest approach)</label><input type="range" id="q_t0" min="0" max="105" step="0.1"><b id="q_t0v"></b>
  </div>
  <div class="qr" id="q_out"></div>
  <canvas id="q_cv" width="1100" height="420" aria-label="Spectrogram of the recording with the model curve"></canvas>
- <button class="pri" id="q_snap">Take snapshot</button><button id="q_clr">Clear log</button><button id="q_fit">Fit it for me</button><button id="q_new">New plane</button><button id="q_ans">Show the answer</button>
+ <button class="pri" id="q_snap">Take snapshot</button><button id="q_clr">Clear log</button><button id="q_fit">Fit it for me</button><button id="q_new">New pass</button><button id="q_ans">Show the answer</button>
  <div id="q_log"></div>
 </div>
 <div class="panel"><h2>Full simulator and calculator</h2><p class="hint">Radio and sound sources, hidden distances, curved paths, your own recordings, and all four solving methods.</p></div>
@@ -673,7 +673,7 @@ function locate() {
 }
 $("locNew").onclick = newHouse; $("locRev").onclick = () => { houseShown = true; locate(); };
 newHouse();
-// ---------- quick Doppler curve fit (sound, c = 343 m/s)
+// ---------- quick Doppler curve fit (shown with sound, c = 343 m/s)
 const QC = 343, QW = 105, QF = ["f0", "v", "d", "t0"];
 let qTrue, qStart, qImg, qSnaps = [], qShow = false;
 const qClock = s => { const x = Math.round((qStart + s) * 100) / 100, h = Math.floor(x / 3600), m = Math.floor(x / 60) % 60, ss = x % 60; return `${h}:${String(m).padStart(2, "0")}:${ss.toFixed(2).padStart(5, "0")}`; };
@@ -722,7 +722,7 @@ function qLog() {
 QF.forEach(k => $("q_" + k).addEventListener("input", qDraw));
 $("q_snap").onclick = () => { qSnaps.push(qVal()); qLog(); }; $("q_clr").onclick = () => { qSnaps = []; qLog(); };
 $("q_new").onclick = () => { qSnaps = []; qLog(); qNew(); }; $("q_ans").onclick = () => { qShow = true; qDraw(); };
-$("q_fit").onclick = () => {   // least squares (method D) on the tone's peak, read once per second
+$("q_fit").onclick = () => {   // least squares (method D) on the signal's peak, read once per second
   const r = rng(7), t = Array.from({ length: QW + 1 }, (_, i) => i), f = qCurve(qTrue, t).map(v => v + 0.3 * gauss(r)), o = analyse(t, f, QC);
   [o.f0D, o.VD, o.dD, o.t0D].forEach((v, i) => $("q_" + QF[i]).value = v); qDraw(); };
 qNew(); qLog();

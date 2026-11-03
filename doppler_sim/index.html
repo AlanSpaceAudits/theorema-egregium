@@ -47,6 +47,10 @@ td.hid{color:var(--muted)}
 .legend{font-size:12.5px;color:var(--ink2);display:flex;gap:14px;flex-wrap:wrap;margin-top:4px}.legend i{display:inline-block;width:18px;height:3px;vertical-align:middle;margin-right:5px}
 #tip{position:fixed;pointer-events:none;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:4px 8px;font:12px ui-monospace,monospace;opacity:0;z-index:9}
 a{color:var(--acc)}
+.qs{display:grid;grid-template-columns:220px 1fr 110px;gap:6px 14px;align-items:center;margin:10px 0}.qs label{margin:0}.qs input{width:100%;accent-color:var(--acc)}.qs b{text-align:right;font:600 14px ui-monospace,Consolas,monospace}
+.qr{display:grid;grid-template-columns:max-content max-content;gap:2px 18px;font:14px ui-monospace,Consolas,monospace;margin:6px 0 10px;padding:8px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}.qr div{display:contents}.qr span{font-weight:700}
+#q_cv{width:100%;height:auto;display:block}#q_log{margin-top:10px}
+@media(max-width:600px){.qs{grid-template-columns:1fr 90px}.qs label{grid-column:1/-1}}
 .mode{display:flex;gap:8px;margin:0 0 16px}.mode button{margin:0}.mode button.on{background:var(--acc);border-color:var(--acc);color:#fff}
 body:not([data-m=sim]) main>.grid,body:not([data-m=sim]) main>.panel:not(.doc){display:none}body:not([data-m=paper]) #howto,body:not([data-m=worked]) #worked{display:none}
 .doc{font-size:15.5px;line-height:1.7}.doc h3{font-size:17px;margin:22px 0 6px}.doc p{max-width:820px}
@@ -64,6 +68,22 @@ table.vars{font:14px system-ui,sans-serif}table.vars td{white-space:normal;text-
 <h1>Doppler Simulator and Calculator</h1>
 <p class="sub">A transmitter passes an observer. The observer records only the received frequency. From that one curve the page solves the speed and the closest distance four ways, and tests whether the path was straight. Set the distance yourself, or hide it and let the curve find it.</p>
 <div class="mode"><button id="mPaper" class="on">Read the paper</button><button id="mSim">Open the sim</button><button id="mWork">Worked problems</button></div>
+
+<div class="panel" id="quick">
+ <h2>Doppler curve fit</h2>
+ <p class="hint">A hidden propeller plane passes a microphone. Its engine tone shows as the bright S in the spectrogram. Move the four sliders until the red curve sits on the bright line. The sliders then give the plane's tone, speed, closest distance and the time of closest approach. Sound travels at 343 m/s.</p>
+ <div class="qs">
+  <label>f₀ (tone the engine makes)</label><input type="range" id="q_f0" min="50" max="300" step="0.1"><b id="q_f0v"></b>
+  <label>v (plane speed)</label><input type="range" id="q_v" min="0" max="300" step="0.5"><b id="q_vv"></b>
+  <label>d (closest distance)</label><input type="range" id="q_d" min="100" max="10000" step="10"><b id="q_dv"></b>
+  <label>t₀ (time of closest approach)</label><input type="range" id="q_t0" min="0" max="105" step="0.1"><b id="q_t0v"></b>
+ </div>
+ <div class="qr" id="q_out"></div>
+ <canvas id="q_cv" width="1100" height="420" aria-label="Spectrogram of the recording with the model curve"></canvas>
+ <button class="pri" id="q_snap">Take snapshot</button><button id="q_clr">Clear log</button><button id="q_fit">Fit it for me</button><button id="q_new">New plane</button><button id="q_ans">Show the answer</button>
+ <div id="q_log"></div>
+</div>
+<div class="panel"><h2>Full simulator and calculator</h2><p class="hint">Radio and sound sources, hidden distances, curved paths, your own recordings, and all four solving methods.</p></div>
 
 <div class="grid">
 <div>
@@ -646,6 +666,59 @@ function locate() {
 }
 $("locNew").onclick = newHouse; $("locRev").onclick = () => { houseShown = true; locate(); };
 newHouse();
+// ---------- quick Doppler curve fit (sound, c = 343 m/s)
+const QC = 343, QW = 105, QF = ["f0", "v", "d", "t0"];
+let qTrue, qStart, qImg, qSnaps = [], qShow = false;
+const qClock = s => { const x = Math.round((qStart + s) * 100) / 100, h = Math.floor(x / 3600), m = Math.floor(x / 60) % 60, ss = x % 60; return `${h}:${String(m).padStart(2, "0")}:${ss.toFixed(2).padStart(5, "0")}`; };
+const qVal = () => QF.map(k => +$("q_" + k).value);
+const qCurve = (p, t) => model(t, p[3], p[1], p[2], p[0], QC);
+function qNew() {
+  const r = rng((Math.random() * 4294967295) >>> 0);
+  qTrue = [90 + r() * 110, 70 + r() * 150, 800 + r() * 5000, 35 + r() * 35]; qStart = 3600 + Math.floor(r() * 20000); qShow = false;
+  const lo = qTrue[0] * QC / (QC + qTrue[1]) * 0.8, hi = qTrue[0] * QC / (QC - qTrue[1]) * 1.1;
+  const W = 940, H = 340, img = new ImageData(W, H), t = Array.from({ length: W }, (_, i) => QW * i / (W - 1)), tr = qCurve(qTrue, t);
+  for (let i = 0; i < W; i++) for (let j = 0; j < H; j++) {
+    const fr = hi - (hi - lo) * j / (H - 1), db = -56 + 8 * gauss(r) + 44 * Math.exp(-(((fr - tr[i]) / ((hi - lo) * 0.009)) ** 2)) * (0.6 + 0.4 * r());
+    const u = Math.min(1, Math.max(0, (db + 80) / 80)), k = (j * W + i) * 4;   // dark blue to white
+    img.data[k] = 20 + 225 * u ** 1.6; img.data[k + 1] = 30 + 220 * u ** 1.3; img.data[k + 2] = 140 + 115 * u ** 0.5; img.data[k + 3] = 255;
+  }
+  qImg = { img, lo, hi, W, H };
+  [[100 + r() * 100, 0], [150, 1], [3000, 2], [52.5, 3]].forEach(([v, i]) => $("q_" + QF[i]).value = v);
+  qDraw();
+}
+function qDraw() {
+  const p = qVal(), cv = $("q_cv"), g = cv.getContext("2d"), cs = getComputedStyle(document.body), L = 70, T = 14, { img, lo, hi, W, H } = qImg;
+  g.clearRect(0, 0, cv.width, cv.height); g.putImageData(img, L, T);
+  const X = s => L + s / QW * (W - 1), Y = f => T + (hi - f) / (hi - lo) * (H - 1);
+  g.fillStyle = cs.getPropertyValue("--ink2"); g.strokeStyle = cs.getPropertyValue("--muted"); g.font = "13px system-ui,sans-serif";
+  g.textAlign = "right"; ticks([lo, hi]).forEach(f => { g.fillText(tk(f), L - 8, Y(f) + 4); g.beginPath(); g.moveTo(L - 4, Y(f)); g.lineTo(L, Y(f)); g.stroke(); });
+  g.textAlign = "center"; for (let s = 0; s <= QW; s += 15) { g.fillText(qClock(s), X(s), T + H + 18); g.beginPath(); g.moveTo(X(s), T + H); g.lineTo(X(s), T + H + 4); g.stroke(); }
+  g.fillText("clock time (h:mm:ss)", L + W / 2, T + H + 40);
+  g.save(); g.translate(18, T + H / 2); g.rotate(-Math.PI / 2); g.fillText("frequency (Hz)", 0, 0); g.restore();
+  g.save(); g.beginPath(); g.rect(L, T, W, H); g.clip();
+  const t = Array.from({ length: 400 }, (_, i) => QW * i / 399), f = qCurve(p, t);
+  g.strokeStyle = "#e0242c"; g.lineWidth = 2.5; g.beginPath(); t.forEach((s, i) => i ? g.lineTo(X(s), Y(f[i])) : g.moveTo(X(s), Y(f[i]))); g.stroke(); g.restore();
+  $("q_f0v").textContent = p[0].toFixed(2) + " Hz"; $("q_vv").textContent = p[1].toFixed(2) + " m/s"; $("q_dv").textContent = p[2].toFixed(1) + " m"; $("q_t0v").textContent = qClock(p[3]);
+  let roc = 0; for (let i = 1; i < t.length; i++) roc = Math.max(roc, Math.abs(f[i] - f[i - 1]) / (t[i] - t[i - 1]));
+  const row = (a, b) => `<div><span>${a}</span><b>${b}</b></div>`;
+  $("q_out").innerHTML = row("f₊ (approach)", (p[0] * QC / (QC - p[1])).toFixed(2) + " Hz") + row("f₋ (moving away)", (p[0] * QC / (QC + p[1])).toFixed(2) + " Hz") + row("steepest drop", roc.toFixed(3) + " Hz/s")
+    + (qShow ? row("answer", `f₀ ${qTrue[0].toFixed(2)} Hz, v ${qTrue[1].toFixed(2)} m/s, d ${qTrue[2].toFixed(1)} m, t₀ ${qClock(qTrue[3])}`) : "");
+}
+function qLog() {
+  if (!qSnaps.length) { $("q_log").innerHTML = `<p class="hint">No snapshots yet. Take one each time the curve looks right; the spread shows how well the line fixes each value.</p>`; return; }
+  const fmt = [v => v.toFixed(2) + " Hz", v => v.toFixed(2) + " m/s", v => v.toFixed(1) + " m", qClock], col = k => qSnaps.map(s => s[k]);
+  const st = (n, fn) => `<tr><td><b>${n}</b></td>${QF.map((_, k) => `<td>${fmt[k](fn(col(k)))}</td>`).join("")}</tr>`;
+  $("q_log").innerHTML = `<table><thead><tr><th>Snapshot</th><th>f₀</th><th>v</th><th>d</th><th>t₀</th></tr></thead><tbody>`
+    + qSnaps.map((s, i) => `<tr><td>${i + 1}</td>${s.map((v, k) => `<td>${fmt[k](v)}</td>`).join("")}</tr>`).join("")
+    + st("MIN", a => Math.min(...a)) + st("MAX", a => Math.max(...a)) + st("BEST (midpoint)", a => (Math.min(...a) + Math.max(...a)) / 2) + `</tbody></table>`;
+}
+QF.forEach(k => $("q_" + k).addEventListener("input", qDraw));
+$("q_snap").onclick = () => { qSnaps.push(qVal()); qLog(); }; $("q_clr").onclick = () => { qSnaps = []; qLog(); };
+$("q_new").onclick = () => { qSnaps = []; qLog(); qNew(); }; $("q_ans").onclick = () => { qShow = true; qDraw(); };
+$("q_fit").onclick = () => {   // least squares (method D) on the tone's peak, read once per second
+  const r = rng(7), t = Array.from({ length: QW + 1 }, (_, i) => i), f = qCurve(qTrue, t).map(v => v + 0.3 * gauss(r)), o = analyse(t, f, QC);
+  [o.f0D, o.VD, o.dD, o.t0D].forEach((v, i) => $("q_" + QF[i]).value = v); qDraw(); };
+qNew(); qLog();
 </script>
 </body>
 </html>

@@ -71,7 +71,7 @@ table.vars{font:14px system-ui,sans-serif}table.vars td{white-space:normal;text-
 
 <div class="panel" id="quick">
  <h2>Doppler curve fit</h2>
- <p class="hint">A hidden transmitter passes a receiver. Its signal shows as the bright S in the spectrogram. Move the four sliders until the red curve sits on the bright line. The sliders then give the transmitter's frequency, its speed, the closest distance and the time of closest approach. The same curve holds for any moving source: sound, radio or light. Only the wave speed c changes. This example uses sound, c = 343 m/s.</p>
+ <p class="hint">A hidden transmitter passes a receiver. Does it pass in a straight line or along a curve? The recording answers that too: see <a href="#p11" onclick="mode('paper'); setTimeout(() => $('p11').scrollIntoView(), 0); return false;">part 11 of the paper</a> (the straight-path test) and the Path setting in the full simulator below. Its signal shows as the bright S in the spectrogram. Move the four sliders until the red curve sits on the bright line. The sliders then give the transmitter's frequency, its speed, the closest distance and the time of closest approach. The same curve holds for any moving source: sound, radio or light. Only the wave speed c changes. This example uses sound, c = 343 m/s.</p>
  <div class="qs">
   <label>f₀ (transmitted frequency)</label><input type="range" id="q_f0" min="50" max="300" step="0.1"><b id="q_f0v"></b>
   <label>v (transmitter speed)</label><input type="range" id="q_v" min="0" max="300" step="0.5"><b id="q_vv"></b>
@@ -275,7 +275,7 @@ table.vars{font:14px system-ui,sans-serif}table.vars td{white-space:normal;text-
  $$ \Delta r(\tau) = r(\tau) - d = \sum \dot r\,\Delta\tau \;\;\to\;\; \int_0^{\tau} \dot r\,d\tau' \tag{9} $$
  <p>The sim adds the pieces with the trapezoid rule: the average of two neighbouring \(\dot r\) values times the time step. This gives the whole distance profile from the frequencies alone, except for one unknown starting value, \(d\).</p>
 
- <h3>11. Straight or curved? The straight-path test</h3>
+ <h3 id="p11">11. Straight or curved? The straight-path test</h3>
  <p>For a straight path, (1) says \(r^2 = d^2 + V^2\tau^2\). Write \(r = d + \Delta r\) and multiply out:</p>
  $$ (d + \Delta r)^2 = d^2 + V^2\tau^2 \;\Rightarrow\; d^2 + 2d\,\Delta r + \Delta r^2 = d^2 + V^2\tau^2 $$
  $$ \Delta r^2 = V^2\,\tau^2 - 2d\,\Delta r \tag{10} $$

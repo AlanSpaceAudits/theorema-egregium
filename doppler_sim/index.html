@@ -48,7 +48,7 @@ td.hid{color:var(--muted)}
 #tip{position:fixed;pointer-events:none;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:4px 8px;font:12px ui-monospace,monospace;opacity:0;z-index:9}
 a{color:var(--acc)}
 .mode{display:flex;gap:8px;margin:0 0 16px}.mode button{margin:0}.mode button.on{background:var(--acc);border-color:var(--acc);color:#fff}
-body.paper main>.grid,body.paper main>.panel:not(#howto){display:none}body:not(.paper) #howto{display:none}
+body:not([data-m=sim]) main>.grid,body:not([data-m=sim]) main>.panel:not(.doc){display:none}body:not([data-m=paper]) #howto,body:not([data-m=worked]) #worked{display:none}
 .doc{font-size:15.5px;line-height:1.7}.doc h3{font-size:17px;margin:22px 0 6px}.doc p{max-width:820px}
 .terms{display:grid;grid-template-columns:150px 1fr;gap:6px 14px;margin:0}.terms dt{font-weight:700}.terms dd{margin:0;color:var(--ink2)}
 @media(max-width:600px){.terms{grid-template-columns:1fr}.terms dd{margin-bottom:6px}}
@@ -57,13 +57,13 @@ table.vars{font:14px system-ui,sans-serif}table.vars td{white-space:normal;text-
 </style>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.getElementById('howto'),{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}]})"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="['howto','worked'].forEach(i=>renderMathInElement(document.getElementById(i),{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}]}))"></script>
 </head>
-<body class="paper">
+<body data-m="paper">
 <main>
 <h1>Doppler Simulator and Calculator</h1>
 <p class="sub">A transmitter passes an observer. The observer records only the received frequency. From that one curve the page solves the speed and the closest distance four ways, and tests whether the path was straight. Set the distance yourself, or hide it and let the curve find it.</p>
-<div class="mode"><button id="mPaper" class="on">Read the paper</button><button id="mSim">Open the sim</button></div>
+<div class="mode"><button id="mPaper" class="on">Read the paper</button><button id="mSim">Open the sim</button><button id="mWork">Worked problems</button></div>
 
 <div class="grid">
 <div>
@@ -254,6 +254,71 @@ table.vars{font:14px system-ui,sans-serif}table.vars td{white-space:normal;text-
  <h3>Reference</h3>
  <p class="hint">Doppler, C. (1842). Über das farbige Licht der Doppelsterne und einiger anderer Gestirne des Himmels. <i>Abhandlungen der Königlichen Böhmischen Gesellschaft der Wissenschaften</i>, 5. Folge, 2, 465–482.</p>
  <p class="hint">Used in <a href="https://alanspaceaudits.github.io/theorema-egregium/shape_of_distance_v26/#doppler">The Shape of Distance, ISS Doppler tab</a>.</p>
+</div>
+<div class="panel doc" id="worked">
+ <h2>Worked problems</h2>
+ <p>Part 1 solves three textbook Doppler problems. None of them needs the distance to the source or the position of the listener. Part 2 shows what a full raw recording gives in addition: the position of the station that made it. That is the reason raw recordings from stations are not published here.</p>
+
+ <h3>Part 1. Speed from frequency only</h3>
+
+ <h3>Problem 1. A train horn</h3>
+ <p>A train passes a person standing beside the track. While the train comes closer, the person hears the horn at 470 Hz. After it passes, they hear 410 Hz. The speed of sound is 343 m/s. How fast is the train, and what frequency does the horn send?</p>
+ <p><b>Step 1.</b> Write down the two plateau equations for a moving source of sound:</p>
+ $$f_+ = \frac{f_0\,c}{c - V} \qquad f_- = \frac{f_0\,c}{c + V}$$
+ <p><b>Step 2.</b> Equation (4) of the paper solves them for \(V\) and \(f_0\):</p>
+ $$V = c\,\frac{f_+ - f_-}{f_+ + f_-} = 343 \times \frac{470 - 410}{470 + 410} = 343 \times \frac{60}{880} = 23.39\ \text{m/s}$$
+ $$f_0 = \frac{2 f_+ f_-}{f_+ + f_-} = \frac{2 \times 470 \times 410}{880} = 437.95\ \text{Hz}$$
+ <p><b>What was not used:</b> the distance from the track, where the person stands, or where the train is. Two frequencies and the speed of sound are enough.</p>
+
+ <h3>Problem 2. An ambulance coming closer</h3>
+ <p>An ambulance siren sends 700 Hz. A person ahead of it hears 750 Hz while it comes straight toward them. The speed of sound is 343 m/s. How fast is the ambulance?</p>
+ <p><b>Step 1.</b> Start from the approach equation and solve it for \(V\):</p>
+ $$f_+ = \frac{f_0\,c}{c - V} \;\Rightarrow\; c - V = \frac{f_0\,c}{f_+} \;\Rightarrow\; V = c\left(1 - \frac{f_0}{f_+}\right)$$
+ <p><b>Step 2.</b> Put in the numbers:</p>
+ $$V = 343 \times \left(1 - \frac{700}{750}\right) = 343 \times \frac{50}{750} = 22.87\ \text{m/s}$$
+ <p><b>What was not used:</b> distance and position. When the sent frequency is known, one frequency is enough.</p>
+
+ <h3>Problem 3. A satellite radio signal</h3>
+ <p>A station tunes to a satellite that sends 437.550 MHz. Early in the pass the signal is flat at 437,561,180 Hz. Late in the pass it is flat at 437,538,820 Hz. Radio waves travel at \(c = 299{,}792{,}458\) m/s. How fast is the satellite?</p>
+ <p><b>Step 1.</b> The difference and the sum of the two plateaus:</p>
+ $$f_+ - f_- = 22{,}360\ \text{Hz} \qquad f_+ + f_- = 875{,}100{,}000\ \text{Hz}$$
+ <p><b>Step 2.</b> Equation (4):</p>
+ $$V = 299{,}792{,}458 \times \frac{22{,}360}{875{,}100{,}000} = 7{,}660\ \text{m/s}$$
+ <p><b>What was not used:</b> distance and position again. The speed comes from the height of the S only (part 6 of the paper).</p>
+
+ <h3>Part 2. Why a raw recording gives away the station</h3>
+ <p>The problems above use only the plateaus. A full raw recording has much more: the clock time of every sample. From that, the paper's method gives two more numbers for each pass (parts 7 to 12):</p>
+ <dl class="terms">
+  <dt>\(t_0\)</dt><dd>the clock time when the source was nearest to the station</dd>
+  <dt>\(d\)</dt><dd>how near it came</dd>
+ </dl>
+ <p>The path of a satellite is public. Anyone can look up where it was at every second. Combine that with \(t_0\) and \(d\), and the station can be found. Only three facts are used: the path, the clock, and the speed of the wave.</p>
+
+ <h3>Step 1. One pass puts the station on a flat sheet</h3>
+ <p>At closest approach the source moves neither toward the station nor away from it. So the line from the source to the station is square (at 90°) to the path. All the points that are square to the path at that moment form a flat sheet that cuts across the path. The station is on that sheet. Call the source's position at that moment \(S\). With \(\hat{u}\) the direction of the path:</p>
+ $$(O - S)\cdot\hat{u} = 0 \tag{11}$$
+ <p>Here \(O\) is the station's position and \(\cdot\) is the dot product. The dot product is zero when two directions are square to each other.</p>
+
+ <h3>Step 2. A second pass on a different path gives a line</h3>
+ <p>A second pass gives a second sheet. Two flat sheets that are not parallel meet in a straight line. The station is on that line. For two level passes the line stands straight up, so the station's map position \((X, Y)\) is now known. It comes from the two times \(t_0\) only:</p>
+ $$\hat{u}_1\cdot(X, Y) = \hat{u}_1\cdot S_1 \qquad \hat{u}_2\cdot(X, Y) = \hat{u}_2\cdot S_2 \tag{12}$$
+ <p>These are two straight-line equations with two unknowns, solved as in school algebra.</p>
+
+ <h3>Step 3. The closest distance gives the height</h3>
+ <p>Let \(\rho\) be the flat distance from the line to \(S\), and \(h\) the height of the path. Pythagoras with the closest distance \(d\) gives the station's height \(Z\):</p>
+ $$d^2 = \rho^2 + (h - Z)^2 \;\Rightarrow\; Z = h - \sqrt{d^2 - \rho^2} \tag{13}$$
+ <p>The other root, \(h + \sqrt{d^2 - \rho^2}\), is above the satellite and is not a place where a station can be. A third pass, or more passes, repeats the check and makes the answer sharper.</p>
+ <p>No shape of the Earth goes into steps 1 to 3. They use the path, square corners and Pythagoras only. The same idea located ships from satellite Doppler in the Transit system (Guier &amp; Weiffenbach, 1960).</p>
+
+ <h3>Try it: find the hidden station</h3>
+ <p>The demo hides a station on a 300 km × 300 km map. A source at 420 km height passes twice on two known level paths, at 7,660 m/s, sending 437.550 MHz, with 30 Hz of noise. Each recording goes through the same least-squares fit as the sim (method D). Then steps 1 to 3 find the station.</p>
+ <svg id="loc" viewBox="0 0 760 480" role="img" aria-label="Top view of two passes and the solved station position"></svg>
+ <div class="legend"><span><i style="background:var(--acc)"></i>known paths</span><span><i style="background:var(--mark)"></i>sheets from \(t_0\), seen from above</span><span><i style="background:var(--acc2);height:8px;width:8px;border-radius:4px"></i>solved station</span><span><i style="background:var(--good);height:8px;width:8px;border-radius:4px"></i>true station (after Reveal)</span></div>
+ <button class="pri" id="locNew">New hidden station</button><button id="locRev">Reveal the true position</button>
+ <div class="out" id="locOut"></div>
+
+ <h3>Reference</h3>
+ <p class="hint">Guier, W. H., &amp; Weiffenbach, G. C. (1960). A satellite Doppler navigation system. <i>Proceedings of the IRE</i>, 48(4), 507–516.</p>
 </div>
 <div id="tip"></div>
 </main>
@@ -541,9 +606,46 @@ $("rev").onclick = () => { shown = true; update(); };
 $("usep").onclick = () => { const t = [], f = []; $("paste").value.split(/\n/).forEach(l => { const p = l.trim().split(/[\s,;]+/).map(Number); if (p.length >= 2 && p.every(Number.isFinite)) { t.push(p[0]); f.push(p[1]); } });
   if (t.length < 20) { alert("Need at least 20 rows of: time_s frequency_Hz"); return; } pasted = { t, f }; update(); };
 $("clrp").onclick = () => { pasted = null; update(); };
-function mode(paper) { document.body.classList.toggle("paper", paper); $("mPaper").classList.toggle("on", paper); $("mSim").classList.toggle("on", !paper); scrollTo(0, 0); }
-$("mPaper").onclick = () => mode(true); $("mSim").onclick = () => mode(false);
+function mode(m) { document.body.dataset.m = m; [["mPaper", "paper"], ["mSim", "sim"], ["mWork", "worked"]].forEach(([b, v]) => $(b).classList.toggle("on", v === m)); scrollTo(0, 0); }
+$("mPaper").onclick = () => mode("paper"); $("mSim").onclick = () => mode("sim"); $("mWork").onclick = () => mode("worked");
 $("src").value = 1; $("mov").value = 0; setSrc(); setMov(); autoLen(); update();
+// ---------- worked problems: find the station from two passes, eqs. (11) to (13)
+const LH = 420e3, LV = 7660, LF0 = 437.55e6, LN = 30, a2 = 65 * Math.PI / 180;
+const TRK = [{ p: [0, -60e3], u: [1, 0] }, { p: [40e3, 0], u: [Math.cos(a2), Math.sin(a2)] }];
+let house = null, houseShown = false, locSeed = 1;
+const sn = (v, n) => (v < 0 ? "−" : "") + nf(Math.abs(v), n), dot2 = (a, b) => a[0] * b[0] + a[1] * b[1];
+function newHouse() { const r = rng((Math.random() * 4294967295) >>> 0); house = [(r() - 0.5) * 300e3, (r() - 0.5) * 300e3, 0]; locSeed = (r() * 4294967295) >>> 0; houseShown = false; locate(); }
+function locate() {
+  const P = TRK.map((T, k) => {
+    const w = [house[0] - T.p[0], house[1] - T.p[1]], s = dot2(w, T.u), q = [w[0] - s * T.u[0], w[1] - s * T.u[1]], d = Math.hypot(Math.hypot(...q), LH - house[2]);
+    const rec = simulate({ win: 600, dt: 1, d, V: LV, c: C, f0: LF0, bend: 0, R: 1, noise: LN, seed: locSeed + k });
+    const t = rec.t.map(v => v + s / LV + d / C);   // clock 0 = source at the path's reference point
+    const o = analyse(t, rec.f, C, LF0), te = o.t0D - o.dD / C;
+    return { T, t0: o.t0D, d: o.dD, S: [T.p[0] + T.u[0] * LV * te, T.p[1] + T.u[1] * LV * te] };
+  });
+  const [A, B] = P, b1 = dot2(A.T.u, A.S), b2 = dot2(B.T.u, B.S), det = A.T.u[0] * B.T.u[1] - A.T.u[1] * B.T.u[0];
+  const X = (b1 * B.T.u[1] - b2 * A.T.u[1]) / det, Y = (A.T.u[0] * b2 - B.T.u[0] * b1) / det;
+  P.forEach(p => { p.rho = Math.hypot(X - p.S[0], Y - p.S[1]); p.Z = LH - Math.sqrt(Math.max(p.d ** 2 - p.rho ** 2, 0)); });
+  const Z = (P[0].Z + P[1].Z) / 2, err = Math.hypot(X - house[0], Y - house[1], Z - house[2]);
+  const F = frame($("loc"), 760, 480, [-400, 400], [-255.6, 255.6], { xl: "X (km)", yl: "Y (km)" }), K = v => v / 1e3;
+  const across = (p, u, st) => {   // clip the line p + s·u to the plot box
+    let lo = -Infinity, hi = Infinity; [[0, 400e3], [1, 255.6e3]].forEach(([i, m]) => { if (Math.abs(u[i]) > 1e-12) { const s1 = (-m - p[i]) / u[i], s2 = (m - p[i]) / u[i]; lo = Math.max(lo, Math.min(s1, s2)); hi = Math.min(hi, Math.max(s1, s2)); } });
+    if (lo < hi) F.line([lo, hi].map(s => [K(p[0] + u[0] * s), K(p[1] + u[1] * s)]), st); };
+  P.forEach((p, k) => {
+    across(p.T.p, p.T.u, { stroke: "var(--acc)", "stroke-width": 2 });
+    across(p.S, [-p.T.u[1], p.T.u[0]], { stroke: "var(--mark)", "stroke-dasharray": "5 4" });
+    F.el("circle", { cx: F.X(K(p.S[0])), cy: F.Y(K(p.S[1])), r: 4, fill: "var(--acc)" });
+    F.el("text", { x: F.X(K(p.S[0])) + 7, y: F.Y(K(p.S[1])) + 14, fill: "var(--acc)" }, `S${k + 1}`);
+  });
+  F.el("circle", { cx: F.X(K(X)), cy: F.Y(K(Y)), r: 6, fill: "var(--acc2)" });
+  if (houseShown) F.el("circle", { cx: F.X(K(house[0])), cy: F.Y(K(house[1])), r: 9, fill: "none", stroke: "var(--good)", "stroke-width": 2.5 });
+  $("locOut").innerHTML = P.map((p, k) => `<div><b>Pass ${k + 1}</b>: fit gives t₀ = ${sn(p.t0, 4)} s and d = ${sn(p.d / 1e3, 3)} km → S${k + 1} = (${sn(K(p.S[0]), 3)}, ${sn(K(p.S[1]), 3)}) km</div>`).join("")
+    + `<div><b>(12)</b> two sheets meet at X = ${sn(K(X), 3)} km, Y = ${sn(K(Y), 3)} km</div>`
+    + `<div><b>(13)</b> Z = 420 − √(d² − ρ²): pass 1 gives ${sn(P[0].Z, 1)} m, pass 2 gives ${sn(P[1].Z, 1)} m, mean ${sn(Z, 1)} m</div>`
+    + (houseShown ? `<div>True station: (${sn(K(house[0]), 3)}, ${sn(K(house[1]), 3)}) km, Z = 0 m. <b class="ok">Miss: ${mm(err)}</b></div>` : `<div>Press Reveal to compare with the hidden station.</div>`);
+}
+$("locNew").onclick = newHouse; $("locRev").onclick = () => { houseShown = true; locate(); };
+newHouse();
 </script>
 </body>
 </html>

@@ -705,10 +705,22 @@ function qDraw() {
   g.save(); g.beginPath(); g.rect(L, T, W, H); g.clip();
   const t = Array.from({ length: 400 }, (_, i) => QW * i / 399), f = qCurve(p, t);
   g.strokeStyle = "#e0242c"; g.lineWidth = 2.5; g.beginPath(); t.forEach((s, i) => i ? g.lineTo(X(s), Y(f[i])) : g.moveTo(X(s), Y(f[i]))); g.stroke(); g.restore();
+  // half-plateau points: ṙ = ±v/2, so f = f₀c/(c ∓ v/2); the time between them is the width Δt
+  const fh = [p[0] * QC / (QC - p[1] / 2), p[0] * QC / (QC + p[1] / 2)], th = fh.map(F => { for (let i = 1; i < t.length; i++) if ((f[i - 1] - F) * (f[i] - F) <= 0) return t[i - 1] + (t[i] - t[i - 1]) * (F - f[i - 1]) / (f[i] - f[i - 1]); return NaN; });
+  const hp = th.every(Number.isFinite), dt = th[1] - th[0];
+  if (hp) {
+    g.strokeStyle = "#ffd23f"; g.fillStyle = "#ffd23f"; g.lineWidth = 2.5; g.font = "bold 13px system-ui,sans-serif";
+    const lab = (s, x, y) => { g.lineWidth = 4; g.strokeStyle = "#0b1030"; g.strokeText(s, x, y); g.fillText(s, x, y); g.strokeStyle = "#ffd23f"; g.lineWidth = 2.5; };
+    th.forEach((s, k) => { g.beginPath(); g.arc(X(s), Y(fh[k]), 11, 0, 7); g.stroke(); g.textAlign = k ? "left" : "right"; lab("half-plateau", X(s) + (k ? 16 : -16), Y(fh[k]) + (k ? 22 : -14)); });
+    const yb = Math.max(T + 22, Y(fh[0]) - 50);
+    g.setLineDash([4, 4]); g.lineWidth = 1.5; th.forEach((s, k) => { g.beginPath(); g.moveTo(X(s), Y(fh[k]) - 11); g.lineTo(X(s), yb); g.stroke(); }); g.setLineDash([]);
+    g.lineWidth = 2; g.beginPath(); g.moveTo(X(th[0]), yb); g.lineTo(X(th[1]), yb); g.stroke(); g.textAlign = "center"; lab(`Δt = ${dt.toFixed(2)} s`, (X(th[0]) + X(th[1])) / 2, yb - 7);
+  }
   $("q_f0v").textContent = p[0].toFixed(2) + " Hz"; $("q_vv").textContent = p[1].toFixed(2) + " m/s"; $("q_dv").textContent = p[2].toFixed(1) + " m"; $("q_t0v").textContent = qClock(p[3]);
   let roc = 0; for (let i = 1; i < t.length; i++) roc = Math.max(roc, Math.abs(f[i] - f[i - 1]) / (t[i] - t[i - 1]));
   const row = (a, b) => `<div><span>${a}</span><b>${b}</b></div>`;
   $("q_out").innerHTML = row("f₊ (approach)", (p[0] * QC / (QC - p[1])).toFixed(2) + " Hz") + row("f₋ (moving away)", (p[0] * QC / (QC + p[1])).toFixed(2) + " Hz") + row("steepest drop", roc.toFixed(3) + " Hz/s")
+    + (hp ? row("width Δt", dt.toFixed(2) + " s (between the half-plateau points)") + row("d = Δt·v·√3/2", (dt * p[1] * Math.sqrt(3) / 2).toFixed(1) + " m") : "")
     + (qShow ? row("answer", `f₀ ${qTrue[0].toFixed(2)} Hz, v ${qTrue[1].toFixed(2)} m/s, d ${qTrue[2].toFixed(1)} m, t₀ ${qClock(qTrue[3])}`) : "");
 }
 function qLog() {

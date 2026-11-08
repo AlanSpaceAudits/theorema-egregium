@@ -2,6 +2,8 @@
 
 Usage: python3 make_test_iq.py [folder]   (about 70 MB, deleted afterwards). Also checks slr_fit.py on a synthetic laser pass.
 Pass: v 7,660 m/s, d 420 km, f0 437.800 MHz + 1,200 Hz, 300 s at 96 kS/s, 16-bit, with noise and one fixed receiver line.
+Burst pass (--burst): v 7,400 m/s, d 600 km, f0 436.650 MHz, 300 s at 24 kS/s cf32, a 1 s 2-FSK burst every 10 s
+(+-500 Hz, 1,200 baud) under a steady line 5 times stronger.
 """
 import json, os, subprocess, sys
 
@@ -11,16 +13,40 @@ C, FC, FS, T = 299792458.0, 437.8e6, 96000, 300.0
 V, D, T0, OFF = 7660.0, 420e3, 150.0, 1200.0
 
 
+def doppler(t, t0, v, d, f0):
+    tp = t - t0; te = tp.copy()
+    for _ in range(6):
+        te = tp - (np.sqrt(d * d + v * v * te * te) - d) / C
+    return f0 / (1 + v * v * te / np.sqrt(d * d + v * v * te * te) / C)
+
+
+def burst_check(d, here):
+    fs, fc, v, dist, t0 = 24000, 436.65e6, 7400.0, 600e3, 150.0
+    n = int(T * fs); t = np.arange(n) / fs
+    rng = np.random.default_rng(2)
+    bits = rng.integers(0, 2, int(T * 1200) + 1)[(t * 1200).astype(int)] * 2 - 1
+    on = (t % 10.0) < 1.0
+    f = doppler(t, t0, v, dist, fc) - fc + 500.0 * bits
+    x = 0.1 * on * np.exp(2j * np.pi * np.cumsum(f) / fs) + 0.5 * np.exp(2j * np.pi * 3000.0 * t)
+    x += 0.1 * (rng.standard_normal(n) + 1j * rng.standard_normal(n))
+    raw = os.path.join(d, "burst_test.cf32")
+    x.astype(np.complex64).tofile(raw)
+    subprocess.run([sys.executable, os.path.join(here, "iq_to_trace.py"), raw, "--rate", str(fs), "--center", str(fc),
+                    "--format", "cf32", "--span", "11500", "--burst", "--out", d], check=True)
+    os.remove(raw)
+    subprocess.run([sys.executable, os.path.join(here, "fit_pass.py"), os.path.join(d, "burst_test_trace.csv")], check=True)
+    r = json.load(open(os.path.join(d, "burst_test_fit.json")))["method_D"]
+    print(f"known: v {v / 1e3:.3f} km/s, d {dist / 1e3:.1f} km, t0 {t0:.2f} s, f0 {fc:.1f} Hz", flush=True)
+    assert abs(r["v_m_s"] - v) / v < 0.01 and abs(r["d_m"] - dist) / dist < 0.03 and abs(r["t0_s"] - t0) < 1.0 and abs(r["f0_Hz"] - fc) < 30, r
+
+
 def main():
     d = sys.argv[1] if len(sys.argv) > 1 else "test_out"
     os.makedirs(d, exist_ok=True)
     wav = os.path.join(d, "test_437800000Hz.wav")
     n = int(T * FS)
     t = np.arange(n) / FS
-    tp = t - T0; te = tp.copy()
-    for _ in range(6):
-        te = tp - (np.sqrt(D * D + V * V * te * te) - D) / C
-    f = (FC + OFF) / (1 + V * V * te / np.sqrt(D * D + V * V * te * te) / C) - FC
+    f = doppler(t, T0, V, D, FC + OFF) - FC
     rng = np.random.default_rng(1)
     x = 0.05 * np.exp(2j * np.pi * np.cumsum(f) / FS) + 0.02 * np.exp(2j * np.pi * 5306.0 * t)
     x += 0.2 * (rng.standard_normal(n) + 1j * rng.standard_normal(n))
@@ -35,8 +61,9 @@ def main():
     subprocess.run([sys.executable, os.path.join(here, "fit_pass.py"), os.path.join(d, "test_437800000Hz_trace.csv")], check=True)
     os.remove(wav)
     r = json.load(open(os.path.join(d, "test_437800000Hz_fit.json")))["method_D"]
-    print(f"known: v {V / 1e3:.3f} km/s, d {D / 1e3:.1f} km, t0 {T0:.2f} s, f0 {FC + OFF:.1f} Hz")
+    print(f"known: v {V / 1e3:.3f} km/s, d {D / 1e3:.1f} km, t0 {T0:.2f} s, f0 {FC + OFF:.1f} Hz", flush=True)
     assert abs(r["v_m_s"] - V) / V < 0.01 and abs(r["d_m"] - D) / D < 0.02 and abs(r["t0_s"] - T0) < 0.5 and abs(r["f0_Hz"] - FC - OFF) < 20, r
+    burst_check(d, here)
     # laser ranging: a synthetic CRD pass, 5 s shots, d 500 km, v 7.4 km/s
     import slr_fit
     crd = os.path.join(d, "test.np2")

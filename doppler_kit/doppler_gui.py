@@ -30,8 +30,8 @@ class App:
         root.title("Doppler kit"); root.geometry("1400x900")
         left = ttk.Frame(root, padding=8); left.pack(side="left", fill="y")
         self.v = {k: tk.StringVar(value=d) for k, d in dict(file="", centre="", start="", f0="", span="15000", rate="", fmt="cs16",
-                                                            out="", wave=list(WAVES)[0], c="", which="0").items()}
-        self.swap = tk.BooleanVar()
+                                                            out="", wave=list(WAVES)[0], c="", which="0", lo="", hi="").items()}
+        self.swap, self.burst = tk.BooleanVar(), tk.BooleanVar()
         row = 0
         def add(label, w):
             nonlocal row
@@ -44,6 +44,9 @@ class App:
         add("Wave speed m/s (other)", ttk.Entry(left, textvariable=self.v["c"]))
         add("Fix transmitted f₀ (Hz, optional)", ttk.Entry(left, textvariable=self.v["f0"]))
         add("Search ± Hz", ttk.Entry(left, textvariable=self.v["span"]))
+        add("Tone band low (Hz)", ttk.Entry(left, textvariable=self.v["lo"]))
+        add("Tone band high (Hz)", ttk.Entry(left, textvariable=self.v["hi"]))
+        add("Burst signal (FSK satellites)", ttk.Checkbutton(left, variable=self.burst))
         add("Raw IQ sample rate (S/s)", ttk.Entry(left, textvariable=self.v["rate"]))
         add("Raw IQ format", ttk.Combobox(left, textvariable=self.v["fmt"], values=["cs16", "cf32", "cu8"], state="readonly"))
         add("Q stored before I", ttk.Checkbutton(left, variable=self.swap))
@@ -92,8 +95,11 @@ class App:
                     return
                 c = WAVES.get(self.v["wave"].get()) or self.num("c")
                 assert c, "give the wave speed"
+                lo, hi = self.num("lo"), self.num("hi")
+                assert (lo is None) == (hi is None), "give both tone band limits, or neither"
                 S = iq_to_trace.run(path, self.num("centre"), self.v["start"].get().strip() or None, self.num("span") or 15000.0,
-                                    self.swap.get(), out, self.num("rate"), self.v["fmt"].get())
+                                    self.swap.get(), out, self.num("rate"), self.v["fmt"].get(),
+                                    band=(lo, hi) if lo is not None else None, burst=self.burst.get())
                 self.q.put(("image", ("Waterfall", S["files"]["waterfall"])))
                 if S["points"] < 20:
                     raise RuntimeError("too few points on the trace to fit")
@@ -171,8 +177,9 @@ def report(S, F):
         f"  {P['path'].upper()}: smooth pattern left by the fit {P['pattern_rms_Hz']:.1f} Hz rms against scatter {P['scatter_rms_Hz']:.1f} Hz rms (p = {P['p_value']:.2g})",
         "  A straight path leaves only scatter. A bending path leaves a smooth wave (p below 0.001).",
     ]
-    if S.get("note"):
-        lines += ["", "NOTE: " + S["note"]]
+    for k in ("note", "burst_hint"):
+        if S.get(k):
+            lines += ["", "NOTE: " + S[k]]
     lines += ["", "Files:"] + [f"  {p}" for p in list(S["files"].values()) + list(F["files"].values())]
     return "\n".join(lines) + "\n"
 

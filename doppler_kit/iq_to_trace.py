@@ -8,6 +8,8 @@ for sound recordings), and the strongest tone is tracked.
 Usage:
   python3 iq_to_trace.py RECORDING.wav [--center HZ] [--start 2026-06-14T18:10:09Z] [--span 15000] [--swap-iq] [--out DIR]
   python3 iq_to_trace.py RECORDING.raw --rate 48000 --center 437800000 [--format cs16|cf32|cu8]
+  python3 iq_to_trace.py RECORDING.wav --band LO HI     (audio: tone between LO and HI Hz; IQ: offsets LO..HI from the centre)
+  python3 iq_to_trace.py RECORDING.cf32 --rate 48000 --center 436650000 --format cf32 --burst   (short FSK/packet bursts)
 
 Writes to DIR (default: next to the recording):
   <name>_trace.csv      t_s, utc, f_offset_Hz, f_Hz, snr_dB   (accepted points only)
@@ -23,6 +25,16 @@ Method (no orbit and no station position is used anywhere):
      each pass with a better reference. Final value = noise-subtracted power centroid in the band.
   4. Keep a point if its peak is more than 14 dB above the frame median, it is not on a fixed
      receiver line, and it is within 4 sigma of a smoothing spline (sigma from second differences).
+
+--band LO HI: one FFT of the whole signal, bins outside LO..HI set to 0 (audio: also the negative bins, the rest x2),
+  inverse FFT, band centre (LO+HI)/2 moved to 0 Hz, search +-(HI-LO)/2. For IQ the DC blank moves to -(LO+HI)/2.
+  Audio has no DC line and no receiver lines: no DC removal, no DC blank, no fixed-line mask.
+  In the dechirp passes, bins whose source frequency (bin + reference) lies outside the band are set to 0; the frame
+  floor is the median of the other bins, with no per-bin floor.
+--burst (for short bursts under steady lines): 0.5 s Hann frames, 100 Hz boxcar across frequency, each bin divided by
+  its running median over +-20 s (steady lines go to 1), excess E = ratio - 1. Strongest 2000 Hz band of E per frame;
+  keep the frame if 10 log10(mean E in the band + 1) >= 6 dB; value = centroid of max(E, 0) over that band (for 2-FSK
+  the midpoint of the two tones). Outliers: soft-L1 fit of the pass shape from a grid of starts, drop points off by > 800 Hz.
 """
 import argparse, json, os, re, struct
 from datetime import datetime, timedelta, timezone
@@ -39,6 +51,8 @@ COARSE_THR_DB, A_THR_DB, C_THR_DB = 3.0, 15.0, 14.0
 SEARCH_B, SEARCH_C, SEARCH_D = 400.0, 100.0, 150.0
 SPUR_HALF = 40.0
 CLIP_K = 4.0
+BURST_FRAME_S, BURST_SMOOTH_HZ, BURST_MEDIAN_S, BURST_BAND_HZ, BURST_THR_DB = 0.5, 100.0, 20.0, 2000.0, 6.0
+BURST_FSCALE_HZ, BURST_GATE_HZ = 300.0, 800.0
 
 
 # ---------- reading ----------
@@ -105,6 +119,17 @@ def to_analytic(y, fsd):
     return (hilbert(y) * np.exp(-2j * np.pi * tone * np.arange(len(y)) / fsd)).astype(np.complex64), tone
 
 
+def band_shift(y, fsd, band, audio):
+    """Zero everything outside LO..HI in one FFT of the whole signal (for audio this also drops the negative
+    frequencies, x2 keeps the amplitude) and move the band centre to 0 Hz. Returns the signal and the centre (Hz).
+    The cut must come first: the dechirp passes shift the spectrum by up to the swing and would pull outside
+    sound (engine rumble) into the search window."""
+    f = np.fft.fftfreq(len(y), 1 / fsd)
+    z = np.fft.ifft(np.fft.fft(y) * (((f >= band[0]) & (f <= band[1])) * (2.0 if audio else 1.0)))
+    c = (band[0] + band[1]) / 2
+    return (z * np.exp(-2j * np.pi * c * np.arange(len(y)) / fsd)).astype(np.complex64), c
+
+
 def audio_to_wav(path, out):
     """Any audio format ffmpeg reads -> a 48 kHz mono 16-bit WAV next to the outputs."""
     import subprocess
@@ -146,10 +171,12 @@ def fixed_lines(f, P):
         grp.append(j)
     if grp:
         lines.append(float(np.mean(f[grp])))
-    return np.array(lines + [0.0])
+    return np.array(lines)
 
 
 def near(fr, lines):
+    if len(lines) == 0:
+        return np.zeros(len(fr), bool)
     return np.min(np.abs(np.asarray(fr)[:, None] - lines[None, :]), axis=1) < SPUR_HALF
 
 
@@ -203,15 +230,18 @@ def peak_interp(row, j):
 
 
 # ---------- tracking ----------
-def pass_a(y, fsd, T, span):
+def pass_a(y, fsd, T, span, dc):
     win = int(round(fsd / 4))
     t, f, P = stft(y, fsd, win, win // 2, span, win)                  # 4 Hz grid
-    lines = fixed_lines(f, P)
+    if dc is None:
+        lines = np.array([])            # audio with --band: no receiver lines; a source on one plateau is not a line
+    else:
+        lines = np.append(fixed_lines(f, P), dc)
     R = P / np.median(P, axis=0); R /= np.median(R, axis=1, keepdims=True)
     R[:, near(f, lines)] = 1.0
     df = f[1] - f[0]
     inside = (t > EDGE_S) & (t < T - EDGE_S)
-    Rs = uniform_filter1d(R, max(3, int(300 / df)), axis=1)
+    Rs = uniform_filter1d(R, max(3, int(min(300.0, span / 2) / df)), axis=1)   # narrower in a narrow --band
     ci = np.argmax(Rs, axis=1)
     csnr = 10 * np.log10(Rs[np.arange(len(t)), ci] / np.median(Rs, axis=1))
     cdet = (csnr > COARSE_THR_DB) & inside
@@ -230,15 +260,25 @@ def pass_a(y, fsd, T, span):
     return fit_model(t[det], pk[det], span), lines
 
 
-def dechirp_pass(y, fsd, T, ref, search, span):
+def dechirp_pass(y, fsd, T, ref, search, span, cut=False):
     ts = np.arange(len(y)) / fsd
     z = (y * np.exp(-2j * np.pi * np.cumsum(ref(ts)) / fsd)).astype(np.complex64)
     win = int(round(fsd))
     t, f, P = stft(z, fsd, win, win // 4, span, win)                 # 1 s windows, 0.25 s hop, 1 Hz grid
-    med = np.median(P, axis=1); df = f[1] - f[0]
+    df = f[1] - f[0]
     j0, j1 = np.searchsorted(f, -search), np.searchsorted(f, search)
     fref = ref(t)
-    nbin = np.median(P / med[:, None], axis=0)
+    if cut:
+        # --band: bins that came from outside the cut band are empty, so the floor is the median of the bins
+        # inside it, and they cannot hold the peak or the centroid. No per-bin floor: in a narrow band the
+        # tone sits in the same dechirped bins all the time and that floor would subtract the tone itself.
+        out = np.abs(f[None, :] + fref[:, None]) > span
+        med = np.array([np.median(P[i, ~out[i]]) if (~out[i]).any() else np.inf for i in range(len(t))])
+        nbin = np.ones(len(f))
+        P[out] = 0.0
+    else:
+        med = np.median(P, axis=1)
+        nbin = np.median(P / med[:, None], axis=0)
     pk = np.full(len(t), np.nan); snr = np.full(len(t), np.nan); lc = np.full(len(t), np.nan)
     for i in range(len(t)):
         j = int(np.argmax(P[i, j0:j1])) + j0
@@ -251,11 +291,11 @@ def dechirp_pass(y, fsd, T, ref, search, span):
     return dict(t=t, pk=pk, snr=snr, lc=lc, inside=inside)
 
 
-def track(y, fsd, span):
+def track(y, fsd, span, dc, cut=False):
+    """dc: offset of the receiver DC line (blanked), or None for audio. cut: the signal was cut to +-span (--band)."""
     T = len(y) / fsd
-    y = remove_dc(y, int(5 * fsd))
-    pA, lines = pass_a(y, fsd, T, span)
-    D = dechirp_pass(y, fsd, T, lambda tt: pass_model(np.asarray(tt, float), *pA), SEARCH_B, span)
+    pA, lines = pass_a(y, fsd, T, span, dc)
+    D = dechirp_pass(y, fsd, T, lambda tt: pass_model(np.asarray(tt, float), *pA), SEARCH_B, span, cut)
     det = (D["snr"] > C_THR_DB) & D["inside"] & ~near(D["pk"], lines)
     _, ok = robust_spline(D["t"][det], D["pk"][det])
     tb, fb = D["t"][det][ok], D["pk"][det][ok]
@@ -268,20 +308,60 @@ def track(y, fsd, span):
             cx.append(tb[m].mean()); cy.append(np.median(resB[m]))
     cx, cy = np.array(cx), np.array(cy)
     refC = lambda tt: pass_model(np.asarray(tt, float), *pB) + np.interp(tt, cx, cy)
-    D = dechirp_pass(y, fsd, T, refC, SEARCH_C, span)
+    D = dechirp_pass(y, fsd, T, refC, SEARCH_C, span, cut)
     det = (D["snr"] > C_THR_DB) & D["inside"] & ~near(D["pk"], lines)
     _, ok0 = robust_spline(D["t"][det], D["pk"][det])
     sig, _ = second_diff_sigma(D["t"][det][ok0], D["pk"][det][ok0])
     sp, ok = robust_spline(D["t"][det], D["pk"][det], sigma=sig)
     tc = D["t"][det][ok]; c0, c1 = tc[0], tc[-1]
     refD = lambda tt: refC(tt) + sp(np.clip(np.asarray(tt, float), c0, c1)) - refC(np.clip(np.asarray(tt, float), c0, c1))
-    D = dechirp_pass(y, fsd, T, refD, SEARCH_D, span)
+    D = dechirp_pass(y, fsd, T, refD, SEARCH_D, span, cut)
     det = (D["snr"] > C_THR_DB) & D["inside"] & ~near(D["pk"], lines) & np.isfinite(D["lc"])
     _, ok0 = robust_spline(D["t"][det], D["lc"][det])
     sig, nsig = second_diff_sigma(D["t"][det][ok0], D["lc"][det][ok0])
     _, ok = robust_spline(D["t"][det], D["lc"][det], sigma=sig)
     acc = np.zeros(len(D["t"]), bool); acc[np.where(det)[0][ok]] = True
     return D, acc, sig, nsig, lines
+
+
+def robust_pass(t, f, T, span):
+    """Soft-L1 fit of the pass shape from 15 x 3 starts (t0 across the trace, width T/30, T/10, T/3); the lowest cost wins."""
+    best = None
+    for t0 in np.linspace(t.min(), t.max(), 15):
+        for w in (T / 30, T / 10, T / 3):
+            r = least_squares(lambda p: pass_model(t, *p) - f, [float(np.median(f)), max(np.ptp(f) / 2, 100.0), t0, max(w, 1.0)],
+                              loss="soft_l1", f_scale=BURST_FSCALE_HZ,
+                              bounds=([-span, 10, t.min() - T, 0.5], [span, 2 * span, t.max() + T, 10 * T]))
+            if best is None or r.cost < best.cost:
+                best = r
+    return best.x
+
+
+def burst_track(y, fsd, span):
+    T = len(y) / fsd
+    win = int(BURST_FRAME_S * fsd)
+    t, f, S = stft(y, fsd, win, win, span, win)
+    df = f[1] - f[0]
+    S = uniform_filter1d(S, max(1, int(BURST_SMOOTH_HZ / df)), axis=1)
+    base = median_filter(S, size=(2 * int(BURST_MEDIAN_S / BURST_FRAME_S) + 1, 1), mode="nearest")
+    E = S / (base + 1e-30) - 1.0
+    nb = max(1, int(BURST_BAND_HZ / df))
+    B = uniform_filter1d(E, nb, axis=1)
+    lc = np.full(len(t), np.nan); snr = np.full(len(t), np.nan)
+    for i in range(len(t)):
+        j = int(np.argmax(B[i]))
+        snr[i] = 10 * np.log10(max(B[i, j], 1e-6) + 1.0)
+        lo, hi = max(0, j - nb // 2), min(len(f), j + nb // 2 + 1)
+        e = np.clip(E[i, lo:hi], 0, None)
+        if snr[i] >= BURST_THR_DB and e.sum() > 0:
+            lc[i] = (e * f[lo:hi]).sum() / e.sum()
+    det = np.isfinite(lc)
+    assert det.sum() > 10, "no bursts found: check --center, --span and --band"
+    p = robust_pass(t[det], lc[det], T, span)
+    acc = det.copy(); acc[det] = np.abs(lc[det] - pass_model(t[det], *p)) < BURST_GATE_HZ
+    r = lc[acc] - pass_model(t[acc], *p)
+    sig = 1.4826 * float(np.median(np.abs(r - np.median(r))))
+    return dict(t=t, lc=lc, snr=snr), acc, sig, int(acc.sum()), np.array([])
 
 
 def waterfall(y, fsd, span, t, f, acc, png, title):
@@ -298,8 +378,9 @@ def waterfall(y, fsd, span, t, f, acc, png, title):
     fig.tight_layout(); fig.savefig(png, dpi=110); plt.close(fig)
 
 
-def run(path, center=None, start=None, span=15000.0, swap_iq=False, out=None, rate=None, fmt="cs16", log=print):
-    """Trace one recording. Returns the summary dict, with the output file paths under "files"."""
+def run(path, center=None, start=None, span=15000.0, swap_iq=False, out=None, rate=None, fmt="cs16", log=print, band=None, burst=False):
+    """Trace one recording. band = (lo, hi) Hz or None; burst = short-burst mode.
+    Returns the summary dict, with the output file paths under "files"."""
     name, orig = os.path.splitext(os.path.basename(path))[0], os.path.basename(path)
     out = out or os.path.dirname(os.path.abspath(path)); os.makedirs(out, exist_ok=True)
     fc = center
@@ -327,15 +408,31 @@ def run(path, center=None, start=None, span=15000.0, swap_iq=False, out=None, ra
     y, fsd = decimate(path, info, swap_iq)
     if tmp:
         os.remove(tmp)
-    tone = 0.0
-    if audio:
+    tone, dc = 0.0, None
+    if band:
+        band = (float(min(band)), float(max(band)))
+        assert band[1] - band[0] >= 50, "the band must be at least 50 Hz wide"
+        assert (0 <= band[0] if audio else -fsd / 2 < band[0]) and band[1] < fsd / 2, f"the band must lie inside the recording (+-{fsd / 2:.0f} Hz)"
+    if audio and band:
+        y, tone = band_shift(y, fsd, band, True)
+        span = (band[1] - band[0]) / 2
+        log(f"  audio band {band[0]:.0f} to {band[1]:.0f} Hz")
+    elif audio:
         y, tone = to_analytic(y, fsd)
-        span = min(span, fsd / 2 - 100)
+        y, dc, span = remove_dc(y, int(5 * fsd)), 0.0, min(span, fsd / 2 - 100)
         log(f"  strongest audio tone {tone:.0f} Hz")
-        fc += tone
     else:
-        y = y.astype(np.complex64)
-    D, acc, sig, nsig, lines = track(y, fsd, span)
+        y, dc = remove_dc(y.astype(np.complex64), int(5 * fsd)), 0.0
+        if band:
+            y, tone = band_shift(y, fsd, band, False)
+            span, dc = (band[1] - band[0]) / 2, -tone
+            log(f"  offsets {band[0]:.0f} to {band[1]:.0f} Hz from the centre")
+    fc += tone
+    if burst:
+        log("  burst mode")
+        D, acc, sig, nsig, lines = burst_track(y, fsd, span)
+    else:
+        D, acc, sig, nsig, lines = track(y, fsd, span, dc, cut=bool(band))
     t, f = D["t"], D["lc"]
     files = dict(trace=os.path.join(out, f"{name}_trace.csv"), waterfall=os.path.join(out, f"{name}_waterfall.png"),
                  summary=os.path.join(out, f"{name}_summary.json"))
@@ -344,13 +441,14 @@ def run(path, center=None, start=None, span=15000.0, swap_iq=False, out=None, ra
         for i in np.where(acc)[0]:
             utc = (t_start + timedelta(seconds=float(t[i]))).isoformat(timespec="milliseconds") if t_start else ""
             fh.write(f"{t[i]:.3f},{utc},{f[i]:.2f},{fc + f[i]:.2f},{D['snr'][i]:.1f}\n")
-    waterfall(remove_dc(y, int(5 * fsd)), fsd, span, t, f, acc, files["waterfall"], f"{name}\ncentre {fc / 1e6:.6f} MHz")
+    waterfall(y, fsd, span, t, f, acc, files["waterfall"], f"{name}\ncentre {fc / 1e6:.6f} MHz")
     swing = float(np.ptp(f[acc])) if acc.any() else 0.0
-    summ = dict(file=orig, centre_Hz=fc, audio_tone_Hz=tone if audio else None, sample_rate=info["rate"],
+    summ = dict(file=orig, centre_Hz=fc, audio_tone_Hz=tone if audio else None, band_Hz=list(band) if band else None,
+                burst=bool(burst), sample_rate=info["rate"],
                 decimated_rate=fsd, duration_s=info["n"] / info["rate"], start_utc=start, points=int(acc.sum()),
                 point_noise_Hz=round(float(sig), 2), point_noise_pairs=nsig, swing_Hz=round(swing, 1),
-                fixed_receiver_lines_Hz=[round(float(v), 1) for v in lines if v != 0],
-                window="1.0 s Hann, 0.25 s hop (only every 4th point is independent)")
+                fixed_receiver_lines_Hz=[round(float(v), 1) for v in lines if v != dc],
+                window="0.5 s Hann frames, no overlap" if burst else "1.0 s Hann, 0.25 s hop (only every 4th point is independent)")
     json.dump(summ, open(files["summary"], "w"), indent=1)
     log(f"  {acc.sum()} points, point noise {sig:.1f} Hz, swing {swing:.0f} Hz -> {out}")
     if not audio and swing < 0.2 * span:
@@ -358,6 +456,12 @@ def run(path, center=None, start=None, span=15000.0, swap_iq=False, out=None, ra
                         "This recording looks Doppler-corrected (the receiver followed a predicted orbit), so it holds only the leftover. "
                         "The fit needs a recording made at a fixed frequency with Doppler correction off." % swing)
         log("  NOTE: " + summ["note"])
+    if not audio and not burst:
+        cover = acc.sum() / max(1, D["inside"].sum())
+        if swing < 0.2 * span or cover < 0.3:
+            summ["burst_hint"] = ("The trace covers %.0f%% of the recording and moves %.0f Hz. If the satellite sends short bursts "
+                                  "(FSK or packets) under steady lines, run again with --burst." % (100 * cover, swing))
+            log("  NOTE: " + summ["burst_hint"])
     summ["files"] = files
     return summ
 
@@ -371,8 +475,11 @@ def main():
     ap.add_argument("--out", help="output folder (default: next to the recording)")
     ap.add_argument("--rate", type=float, help="sample rate, for a raw IQ file")
     ap.add_argument("--format", default="cs16", choices=["cs16", "cf32", "cu8"], help="raw IQ sample type (default cs16)")
+    ap.add_argument("--band", type=float, nargs=2, metavar=("LO", "HI"),
+                    help="audio: pick the tone between LO and HI Hz; IQ: search offsets LO to HI Hz from the centre")
+    ap.add_argument("--burst", action="store_true", help="the signal comes in short bursts (FSK/packet satellites)")
     a = ap.parse_args()
-    run(a.wav, a.center, a.start, a.span, a.swap_iq, a.out, a.rate, a.format)
+    run(a.wav, a.center, a.start, a.span, a.swap_iq, a.out, a.rate, a.format, band=a.band, burst=a.burst)
 
 
 if __name__ == "__main__":

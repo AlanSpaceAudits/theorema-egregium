@@ -22,7 +22,8 @@ From one recording you get:
     - a WAV file with 2 channels (I and Q), 8-bit, 16-bit or 32-bit float, such as an SDR++ "baseband" recording,
     - a headerless raw IQ file (`.raw`, `.cs16`, `.cf32`, `.cu8`, `.sigmf-data`) with its sample rate, or
     - audio: a 1-channel WAV, `.ogg`, `.mp3`, `.flac`, `.m4a` or `.opus`. This can be a receiver's audio output in USB or CW mode,
-      or a plain sound recording of a passing source (a horn, an engine, a siren). The strongest tone is tracked.
+      or a plain sound recording of a passing source (a horn, an engine, a siren). The strongest tone is tracked,
+      or the tone inside a band you give with `--band`.
 - The centre frequency of the recording. SDR++ puts it in the file name (`baseband_437800000Hz_...`).
   For receiver audio, the dial frequency (USB). For a sound recording, leave it blank.
 - Or a laser-ranging file: see Laser ranging below.
@@ -57,11 +58,39 @@ python3 iq_to_trace.py iq_5408034.raw --rate 48000 --center 437800000           
 python3 iq_to_trace.py capture.cf32 --rate 250000 --center 437800000 --format cf32
 python3 iq_to_trace.py beacon_usb.ogg --center 145796000                         # receiver audio, dial frequency
 python3 iq_to_trace.py horn.wav && python3 fit_pass.py horn_trace.csv --c 343   # sound
+python3 iq_to_trace.py aircraft.wav --band 1300 2700                             # sound: engine tone between 1300 and 2700 Hz
+python3 iq_to_trace.py pocketqube.cf32 --rate 48000 --center 436650000 --format cf32 --burst   # short FSK bursts
 ```
 
-Options: `--span` (search ± Hz around the centre, default 15000), `--swap-iq` (Q stored before I), `--out` (output folder).
+Options: `--span` (search ± Hz around the centre, default 15000), `--swap-iq` (Q stored before I), `--out` (output folder),
+`--band LO HI` (search only this band, see below), `--burst` (signal in short bursts, see below).
 For the fit: `--c` (wave speed, default radio and light; 343 for sound) and `--f0` (fix the transmitted frequency).
 `fit_pass.py` also takes a trace from anywhere else: a CSV with columns `t_s` and `f_Hz`.
+
+In the window, fill in "Tone band low / high (Hz)" for `--band` and tick "Burst signal (FSK satellites)" for `--burst`.
+
+### Tone band (`--band LO HI`)
+
+Use it when a different sound or signal is stronger than the one you want.
+For example, the low rumble of an aircraft engine (50 to 135 Hz) is often stronger than the engine tone.
+Without a band, the trace jumps between the two.
+
+- Audio: LO and HI are audio frequencies in Hz. The kit uses only the sound between LO and HI.
+- IQ: LO and HI are offsets in Hz from the centre frequency, for example `--band -5000 3000`.
+
+Look at the waterfall or a spectrum of the recording first. Choose a band that holds the whole S-curve of the tone
+and leaves out the other strong sounds. The search span is then half the band width.
+
+### Burst signals (`--burst`)
+
+Some satellites do not send a steady carrier. They send short packets (FSK) every few seconds.
+The recording can also hold steady lines from the receiver or from other transmitters, and these lines can be stronger than the packets.
+The normal tracer then follows a steady line or only part of a packet.
+`--burst` finds the packets under the steady lines and gives one point for each half second that holds a packet.
+The trace file has the same columns, so `fit_pass.py` works the same way.
+
+When you do not give `--burst` and the trace covers less than 30% of an IQ recording, or moves less than a fifth of the span,
+`iq_to_trace.py` prints a note that suggests `--burst`.
 
 ## Output
 
@@ -72,7 +101,7 @@ For the fit: `--c` (wave speed, default radio and light; 343 for sound) and `--f
 | `<name>_trace.csv` | `t_s, utc, f_offset_Hz, f_Hz, snr_dB`: received frequency against time |
 | `<name>_waterfall.png` | 0.1 s spectra, frequency across and time up the page, with the measured trace in red |
 | `<name>_waterfall.npz` | the waterfall data, used for the marked waterfall |
-| `<name>_summary.json` | settings, number of points, point noise, the frequency swing, fixed receiver lines found |
+| `<name>_summary.json` | settings (with `band_Hz` and `burst`), number of points, point noise, the frequency swing, fixed receiver lines found, notes |
 
 `fit_pass.py`
 
@@ -89,7 +118,8 @@ python3 make_test_iq.py
 ```
 
 It writes a 300 s synthetic recording of a known pass (7.660 km/s, 420 km), runs both scripts, compares the answer
-and deletes the recording. It also checks `slr_fit.py` on a synthetic laser pass. It ends with `self-check passed`. These are its pictures:
+and deletes the recording. Then it does the same with `--burst` for a 300 s pass of short FSK bursts (7.400 km/s, 600 km)
+under a steady line five times stronger. It also checks `slr_fit.py` on a synthetic laser pass. It ends with `self-check passed`. These are its pictures:
 
 ![S-curve of the synthetic pass with the half-plateau points and the width marked](examples/synthetic_scurve.png)
 
@@ -122,6 +152,22 @@ Data: CAMRAS, Dwingeloo radio telescope, SatNOGS IQ data, CC BY 4.0, https://dat
    and it lies within 4 sigma of a smoothing spline. Sigma (the point noise) comes from second differences.
 
 Points are 0.25 s apart but each uses a 1 s window, so only every 4th point is independent. `fit_pass.py` allows for this in its errors.
+
+**With `--band LO HI`**
+
+1. One FFT of the whole recording. All bins outside LO to HI are set to zero (for audio also all negative frequencies).
+   Then the inverse FFT, and the band centre is moved to 0 Hz. The search span is (HI − LO)/2.
+2. The steps above follow. In each measuring pass, the bins that came from outside the band are left out.
+   The noise floor of a spectrum is the median of the bins inside the band.
+3. Audio has no receiver DC line and no fixed receiver lines, so nothing is blanked. A tone that stays on one plateau for most of the clip stays in the trace.
+
+**With `--burst`**
+
+1. Spectra of 0.5 s (Hann window, no overlap), smoothed over 100 Hz.
+2. Every bin is divided by its running median over ±20 s. A steady line, present most of the time, goes to 1. A short packet stands above 1.
+3. In each spectrum, take the 2000 Hz band with the most excess power. Keep the spectrum when that band is 6 dB or more above the floor.
+4. The point is the power centroid of the excess in that band. For a packet with two FSK tones, this is the middle between the two tones.
+5. Fit the S-curve shape to all points with a robust fit, from 45 start values. Drop the points more than 800 Hz from that curve.
 
 **The fit** (`fit_pass.py`)
 
@@ -174,6 +220,37 @@ is 1,009.8 km away: √(1,009.8² − 537.3²) = 855.0 km along the path, and 85
 
 Data: EUROLAS Data Center (EDC), DGFI-TUM, https://edc.dgfi.tum.de/
 
+
+## Tested recordings
+
+Recordings made by others, measured with the kit alone. No position, orbit or flight data went into the measurement.
+
+**Aircraft sound** (`--band`, `fit_pass.py --c 343.8`). Reference: a straight-line fit to the ADS-B positions over 10 s around closest approach.
+
+| Aircraft (ICAO) | Band (Hz) | Kit: v | Kit: d | ADS-B: v | ADS-B: d |
+|---|---|---|---|---|---|
+| 7C6D29 | 1300 to 2700 | 82.0 ± 1.4 m/s | 229 ± 15 m | 82.9 m/s | 224 m |
+| 7C6DA0 | 1300 to 2600 | 79.6 ± 1.5 m/s | 244 ± 15 m | 80.4 m/s | 223 m |
+| 7C77D9 | 2000 to 4000 | 73.0 ± 2.3 m/s | 255 ± 26 m | 74.2 m/s | 246 m |
+| 7C7773 | 1500 to 3000 | 107 ± 10 m/s | 735 ± 164 m | 74.8 m/s | 290 m |
+
+In the 7C7773 clip the tone stops at 12.5 s, before the falling half of the S-curve. The fit has only one plateau to work with.
+
+Data: Downward, B. (2023). *AeroSonicDB (YPAD-0523): Labelled audio dataset for acoustic detection and classification of aircraft* (Version 0.3) [Data set]. Zenodo. https://doi.org/10.5281/zenodo.8004108 (https://zenodo.org/records/8004108, licence on the Zenodo page: CC BY 4.0).
+ADS-B positions: ADS-B Exchange, historical data samples, https://www.adsbexchange.com/
+
+**Satellites** (`--burst`). Reference: published-orbit model (TLE), straight-line fit over the same time span.
+
+| Satellite | Kit: v | Kit: d | Kit: t₀ (UTC) | Published-orbit model (TLE): v | d |
+|---|---|---|---|---|---|
+| DELFI-PQ, 2022-01-16, 436.650 MHz | 7.234 ± 0.027 km/s | 890.9 ± 10.7 km | 17:58:57.11 | 7.238 km/s | 889.7 km |
+| HADES-D, 2023-12-09, 436.666 MHz | 7.41 ± 0.15 km/s | 564 ± 28 km | 11:21:17.35 | 7.355 km/s | 544.8 km |
+
+Data: Estévez, D. (2022). *Recording of DELFI-PQ/EASAT-2/HADES PocketQubes and other amateur satellites in the SpaceX Transporter 3 launch with the Allen Telescope Array on 2022-01-16* [Data set]. Zenodo. https://doi.org/10.5281/zenodo.5876090 (https://zenodo.org/records/5876090, CC BY 4.0).
+
+Estévez, D. (2023). *Recording of HADES-D satellite* [Data set]. Zenodo. https://doi.org/10.5281/zenodo.10343047 (https://zenodo.org/records/10343047, CC BY 4.0).
+
+The kit read narrow channels cut from these wideband recordings: 48,000 S/s around 436.650 MHz (DELFI-PQ), and 50,000 S/s around 436.666 MHz for the second part of the HADES-D recording.
 
 ## Where to find recordings
 

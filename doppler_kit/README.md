@@ -24,8 +24,9 @@ From one recording you get:
     - audio: a 1-channel WAV, `.ogg`, `.mp3`, `.flac`, `.m4a` or `.opus`. This can be a receiver's audio output in USB or CW mode,
       or a plain sound recording of a passing source (a horn, an engine, a siren). The strongest tone is tracked,
       or the tone inside a band you give with `--band`.
-- The centre frequency of the recording. SDR++ puts it in the file name (`baseband_437800000Hz_...`).
-  For receiver audio, the dial frequency (USB). For a sound recording, leave it blank.
+- The centre frequency of the recording. For radio, v needs the real centre. The kit reads it from an SDR++ file name
+  (`baseband_437800000Hz_...`), a SigMF meta file or a SatNOGS observation. If none of these has it, type it in.
+  For receiver audio, type the dial frequency (USB). The kit cannot find a dial frequency. For a sound recording, leave it blank.
 - Or a laser-ranging file: see Laser ranging below.
 
 A cheap RTL-SDR and a simple antenna are enough for the ISS (437.800 MHz FM repeater, 145.800 MHz voice).
@@ -38,7 +39,8 @@ The window:
 python3 doppler_gui.py
 ```
 
-Pick the recording, fill in the centre frequency if the file name does not hold it, and press Run.
+Pick the recording and press Run. Leave a field blank and the kit works the value out from the file (see "Blank fields" below).
+After a run, each worked-out value shows as "auto: ..." next to its field. The values you type stay as you typed them.
 The tabs show the waterfall, the S-curve and the marked waterfall. The Results tab lists every number:
 v, d, t₀, f₀, the plateaus, the half-plateau points and Δt, the three ways to v and d, the path test and the distances.
 For a sound recording choose "sound in air (343 m/s)".
@@ -53,7 +55,7 @@ python3 fit_pass.py my_recording_trace.csv
 Other inputs:
 
 ```
-python3 iq_to_trace.py my_recording.wav --center 145800000 --start 2026-06-14T18:10:09Z
+python3 iq_to_trace.py my_recording.wav --center 145800000 --start 2026-06-01T12:00:00Z
 python3 iq_to_trace.py iq_5408034.raw --rate 48000 --center 437800000            # raw 16-bit IQ
 python3 iq_to_trace.py capture.cf32 --rate 250000 --center 437800000 --format cf32
 python3 iq_to_trace.py beacon_usb.ogg --center 145796000                         # receiver audio, dial frequency
@@ -62,12 +64,42 @@ python3 iq_to_trace.py aircraft.wav --band 1300 2700                            
 python3 iq_to_trace.py pocketqube.cf32 --rate 48000 --center 436650000 --format cf32 --burst   # short FSK bursts
 ```
 
-Options: `--span` (search ± Hz around the centre, default 15000), `--swap-iq` (Q stored before I), `--out` (output folder),
+Options: `--span` (search ± Hz around the centre, default: found by the scan), `--swap-iq` (Q stored before I), `--out` (output folder),
 `--band LO HI` (search only this band, see below), `--burst` (signal in short bursts, see below).
 For the fit: `--c` (wave speed, default radio and light; 343 for sound) and `--f0` (fix the transmitted frequency).
 `fit_pass.py` also takes a trace from anywhere else: a CSV with columns `t_s` and `f_Hz`.
 
 In the window, fill in "Tone band low / high (Hz)" for `--band` and tick "Burst signal (FSK satellites)" for `--burst`.
+
+### Blank fields
+
+A value you type always wins. For each blank field the kit looks in the file, in this order, and logs the value with its source,
+for example `auto: centre 437,800,000 Hz (from file name)`.
+
+1. SigMF: a `FILE.sigmf-meta` beside `FILE.sigmf-data` (or pick the `.sigmf-meta` file). It gives the sample rate,
+   the sample format (`ci16_le`, `cf32_le`, `cu8`), the centre frequency and the start time.
+2. WAV header: the sample rate, the channels and the sample size.
+3. File name: an SDR++ name holds the centre frequency (`..._437800000Hz_...`).
+4. SatNOGS: a file `iq_<observation id>.raw` is 48,000 S/s, 16-bit. The kit asks network.satnogs.org for the start time
+   and the centre frequency of the observation. It sends only the observation id. When the computer is offline, the kit says so and goes on.
+5. Start time: when no other source has it, the kit takes the time the file was last changed and subtracts the length of the recording.
+   The log marks this value "check it". Copying a file can change this time.
+
+Radio needs the real centre frequency for v. It must come from the file name, SigMF, SatNOGS or you.
+
+**Search span (scan).** When the span is blank, the kit first looks over the full recorded band. It takes short spectra
+spread over the whole file, divides every frequency bin by its median over time (a steady line goes to 1) and follows the strongest
+line that falls in frequency. It looks near the centre first (±21.6 kHz), then over the whole band. The span then covers the line
+plus a margin, and stays at 15,000 Hz when the line fits inside. A line outside the default window moves the centre to it.
+When no moving line is found, the span is 15,000 Hz and the log says so.
+
+**Tone band (audio).** When no band is given, the same scan picks the strongest tone that moves (falls in frequency) and sets the band
+around its swing. A steady tone, such as low engine rumble, does not count. When the strongest tone in the recording is the moving one,
+no band is needed and the kit tracks it as before.
+
+**Burst mode.** When "Burst" is not ticked and the trace looks like bursts (it covers less than 30% of the recording, moves less than
+a fifth of the span, or does not fit a pass cleanly), the kit also runs burst mode. It keeps the clean pass that covers more of the
+recording and logs which one it used and why. A tick forces burst mode.
 
 ### Tone band (`--band LO HI`)
 
@@ -89,8 +121,7 @@ The normal tracer then follows a steady line or only part of a packet.
 `--burst` finds the packets under the steady lines and gives one point for each half second that holds a packet.
 The trace file has the same columns, so `fit_pass.py` works the same way.
 
-When you do not give `--burst` and the trace covers less than 30% of an IQ recording, or moves less than a fifth of the span,
-`iq_to_trace.py` prints a note that suggests `--burst`.
+When you do not give `--burst`, the kit tries burst mode by itself when the trace looks like bursts (see "Blank fields").
 
 ## Output
 
@@ -101,13 +132,13 @@ When you do not give `--burst` and the trace covers less than 30% of an IQ recor
 | `<name>_trace.csv` | `t_s, utc, f_offset_Hz, f_Hz, snr_dB`: received frequency against time |
 | `<name>_waterfall.png` | 0.1 s spectra, frequency across and time up the page, with the measured trace in red |
 | `<name>_waterfall.npz` | the waterfall data, used for the marked waterfall |
-| `<name>_summary.json` | settings (with `band_Hz` and `burst`), number of points, point noise, the frequency swing, fixed receiver lines found, notes |
+| `<name>_summary.json` | settings (with `band_Hz` and `burst`), number of points, point noise, the frequency swing, fixed receiver lines found, and under `auto` every value the kit worked out, with its source |
 
 `fit_pass.py`
 
 | File | Content |
 |---|---|
-| `<name>_fit.json` | v, d, t₀, f₀ with errors (full fit), the plateau estimate, the marks, the path test, the distances at the first and last point |
+| `<name>_fit.json` | v, d, t₀, f₀ with errors (full fit), the plateau estimate, the marks, the path test with `detectable_rms_Hz`, the distances at the first and last point |
 | `<name>_scurve.png` | the S-curve with plateaus f₊ and f₋, middle f₀, half-plateau points, Δt, and the numbers worked from them; below it, what the fit leaves over |
 | `<name>_waterfall_marked.png` | the waterfall with the fitted curve, f₊, f₀, f₋, the half-plateau points and Δt marked |
 
@@ -117,9 +148,9 @@ When you do not give `--burst` and the trace covers less than 30% of an IQ recor
 python3 make_test_iq.py
 ```
 
-It writes a 300 s synthetic recording of a known pass (7.660 km/s, 420 km), runs both scripts, compares the answer
-and deletes the recording. Then it does the same with `--burst` for a 300 s pass of short FSK bursts (7.400 km/s, 600 km)
-under a steady line five times stronger. It also checks `slr_fit.py` on a synthetic laser pass. It ends with `self-check passed`. These are its pictures:
+It writes a 300 s synthetic recording of a known pass (7.660 km/s, 420 km), runs both scripts with the file alone, compares the answer
+and deletes the recording. A second run with `--span 15000` must give the same v and d. Then it does the same with `--burst` for a 300 s pass of short FSK bursts (7.400 km/s, 600 km)
+under a steady line five times stronger, and once more without `--burst`: burst mode must come on by itself and give the same trace. It also checks `slr_fit.py` on a synthetic laser pass. It ends with `self-check passed`. These are its pictures:
 
 ![S-curve of the synthetic pass with the half-plateau points and the width marked](examples/synthetic_scurve.png)
 
@@ -187,7 +218,18 @@ where τ is the emission time from closest approach. Read off the curve:
 
 What the fit leaves over shows the path: a straight path leaves scatter around zero, a bending path leaves a smooth wave.
 `fit_pass.py` fits a degree-6 polynomial through the leftover and compares it with the scatter (F-test, counting only independent points).
-When the smooth part stands out (p below 0.001) the path is reported as bending, otherwise as straight.
+When the smooth part stands out (p below 0.001) the path is reported as bending, otherwise as "no bending detected".
+
+The report also gives the smallest smooth pattern this recording can detect. With N points, pattern rms A, scatter rms s
+and the F-test degrees of freedom d₁ = 7 and d₂ = n_eff − 7:
+
+    RSS₀ − RSS₁ = N A²
+    RSS₁ = N s²
+    F = (A² / s²) · d₂ / d₁
+    bending when F ≥ F_crit, the 0.999 point of the F(d₁, d₂) distribution
+    A_min = s · √(F_crit · d₁ / d₂)
+
+A_min is `detectable_rms_Hz` in the fit file. A smaller pattern can be there and not be seen.
 
 ## Laser ranging
 

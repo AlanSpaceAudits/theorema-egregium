@@ -17,7 +17,8 @@ Two estimates:
      (Needs the trace to reach both plateaus; a pass cut off by the horizon gives a low v here.)
   D  least squares of the full model above, free t0, v, d, f0, started from A.
 Path test: a straight path leaves only scatter around the fit; a bending path leaves a smooth pattern.
-  A degree-6 polynomial through the leftover, F-test with the independent point count: p < 0.001 = bending.
+  A degree-6 polynomial through the leftover, F-test with the independent point count: p < 0.001 = bending,
+  otherwise no bending detected. detectable_rms_Hz: the smallest smooth-pattern rms this test calls bending.
 Writes <name>_fit.json, <name>_scurve.png (the S-curve with plateaus, middle, half-plateau points and the width marked,
   plus what the fit leaves over) and, when iq_to_trace.py saved a waterfall, <name>_waterfall_marked.png.
 """
@@ -58,12 +59,23 @@ def straightness(t, left, indep, k=6):
     x = (t - t.mean()) / np.ptp(t)
     smooth = np.polyval(np.polyfit(x, left, k), x)
     n = len(t) / indep
+    df1, df2 = k + 1, max(1.0, n - k - 1)
     rss0, rss1 = np.sum(left ** 2), np.sum((left - smooth) ** 2)
-    F = ((rss0 - rss1) / (k + 1)) / (rss1 / max(1.0, n - k - 1))
-    p = float(fdist.sf(F, k + 1, max(1.0, n - k - 1)))
+    F = ((rss0 - rss1) / df1) / (rss1 / df2)
+    p = float(fdist.sf(F, df1, df2))
     amp = float(np.sqrt(np.mean(smooth ** 2)))
-    return dict(path="bending" if p < 0.001 else "straight", p_value=p, pattern_rms_Hz=amp,
-                scatter_rms_Hz=float(np.sqrt(rss1 / len(t))))
+    scatter = float(np.sqrt(rss1 / len(t)))
+    # Detection limit. N = len(t) points, A = pattern rms, s = scatter rms.
+    #   the polynomial is a least-squares projection, so rss0 - rss1 = sum(smooth^2) = N A^2
+    #   rss1 = N s^2
+    #   F = (N A^2 / df1) / (N s^2 / df2)
+    #   F = (A^2 / s^2) (df2 / df1)
+    #   bending when F >= F_crit = F.ppf(0.999; df1, df2)
+    #   A^2 = s^2 F_crit df1 / df2
+    #   A_min = s sqrt(F_crit df1 / df2)
+    detect = scatter * float(np.sqrt(fdist.ppf(0.999, df1, df2) * df1 / df2))
+    return dict(path="bending" if p < 0.001 else "no bending detected", p_value=p, pattern_rms_Hz=amp,
+                scatter_rms_Hz=scatter, detectable_rms_Hz=detect)
 
 
 def run(trace, c=299792458.0, f0=None, out=None, log=print):
@@ -105,7 +117,8 @@ def run(trace, c=299792458.0, f0=None, out=None, log=print):
     log(f"A (plateaus): v {A['v'] / 1e3:.3f} km/s, d {A['d'] / 1e3:.1f} km, f0 {A['f0']:.1f} Hz")
     log(f"D (full fit): v {p[1] / 1e3:.3f} ± {err['v'] / 1e3:.3f} km/s, d {p[2] / 1e3:.1f} ± {err['d'] / 1e3:.1f} km, "
         f"t0 {p[0]:.2f} s, f0 {p[3]:.1f} Hz, left over {rms:.1f} Hz rms over {len(t)} points")
-    log(f"Path: {S['path']} (smooth pattern {S['pattern_rms_Hz']:.1f} Hz rms against scatter {S['scatter_rms_Hz']:.1f} Hz, p = {S['p_value']:.2g})")
+    log(f"Path: {S['path']} (smooth pattern {S['pattern_rms_Hz']:.1f} Hz rms against scatter {S['scatter_rms_Hz']:.1f} Hz, p = {S['p_value']:.2g}; "
+        f"detectable from {S['detectable_rms_Hz']:.1f} Hz rms)")
     centre = None
     if rows and rows[0].get("f_offset_Hz"):
         centre = float(rows[0]["f_Hz"]) - float(rows[0]["f_offset_Hz"])
@@ -173,7 +186,8 @@ def figures(t, f, p, c, left, out, name, centre, S=None):
     ax[0].set_title("Doppler S-curve: plateaus, middle, half-plateau points and width")
     ax[1].plot(t - t0, left, ".", ms=2.5, color="#2b6cb0"); ax[1].axhline(0, color="k", lw=0.8)
     if S:
-        ax[1].set_title(f"left over: {S['path']} path (smooth pattern {S['pattern_rms_Hz']:.1f} Hz rms, scatter {S['scatter_rms_Hz']:.1f} Hz rms)", fontsize=10)
+        ax[1].set_title(f"left over: {S['path']} (smooth pattern {S['pattern_rms_Hz']:.1f} Hz rms, scatter {S['scatter_rms_Hz']:.1f} Hz rms, "
+                        f"detectable from {S['detectable_rms_Hz']:.1f} Hz rms)", fontsize=10)
     ax[1].set_ylabel("left over (Hz)"); ax[1].set_xlabel("time from closest approach (s)")
     fig.tight_layout(); fig.savefig(os.path.join(out, f"{name}_scurve.png"), dpi=120); plt.close(fig)
     # 2: the same marks on the waterfall, if iq_to_trace.py saved one

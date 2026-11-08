@@ -2,8 +2,9 @@
 
 Usage: python3 make_test_iq.py [folder]   (about 70 MB, deleted afterwards). Also checks slr_fit.py on a synthetic laser pass.
 Pass: v 7,660 m/s, d 420 km, f0 437.800 MHz + 1,200 Hz, 300 s at 96 kS/s, 16-bit, with noise and one fixed receiver line.
+  Run with the file alone (centre from the name, span from the scan), then with --span 15000: the same v and d.
 Burst pass (--burst): v 7,400 m/s, d 600 km, f0 436.650 MHz, 300 s at 24 kS/s cf32, a 1 s 2-FSK burst every 10 s
-(+-500 Hz, 1,200 baud) under a steady line 5 times stronger.
+(+-500 Hz, 1,200 baud) under a steady line 5 times stronger. Run again without --burst: burst mode comes on by itself.
 """
 import json, os, subprocess, sys
 
@@ -31,11 +32,15 @@ def burst_check(d, here):
     x += 0.1 * (rng.standard_normal(n) + 1j * rng.standard_normal(n))
     raw = os.path.join(d, "burst_test.cf32")
     x.astype(np.complex64).tofile(raw)
-    subprocess.run([sys.executable, os.path.join(here, "iq_to_trace.py"), raw, "--rate", str(fs), "--center", str(fc),
-                    "--format", "cf32", "--span", "11500", "--burst", "--out", d], check=True)
+    args = [sys.executable, os.path.join(here, "iq_to_trace.py"), raw, "--rate", str(fs), "--center", str(fc), "--format", "cf32", "--span", "11500"]
+    subprocess.run(args + ["--burst", "--out", d], check=True)
+    auto = os.path.join(d, "auto_burst"); os.makedirs(auto, exist_ok=True)
+    subprocess.run(args + ["--out", auto], check=True)
     os.remove(raw)
     subprocess.run([sys.executable, os.path.join(here, "fit_pass.py"), os.path.join(d, "burst_test_trace.csv")], check=True)
     r = json.load(open(os.path.join(d, "burst_test_fit.json")))["method_D"]
+    assert json.load(open(os.path.join(auto, "burst_test_summary.json")))["burst"], "burst mode did not come on by itself"
+    assert open(os.path.join(auto, "burst_test_trace.csv")).read() == open(os.path.join(d, "burst_test_trace.csv")).read(), "auto burst trace differs"
     print(f"known: v {v / 1e3:.3f} km/s, d {dist / 1e3:.1f} km, t0 {t0:.2f} s, f0 {fc:.1f} Hz", flush=True)
     assert abs(r["v_m_s"] - v) / v < 0.01 and abs(r["d_m"] - dist) / dist < 0.03 and abs(r["t0_s"] - t0) < 1.0 and abs(r["f0_Hz"] - fc) < 30, r
 
@@ -58,11 +63,17 @@ def main():
         fh.write(hdr); fh.write(iq.tobytes())
     here = os.path.dirname(os.path.abspath(__file__))
     subprocess.run([sys.executable, os.path.join(here, "iq_to_trace.py"), wav, "--out", d], check=True)
-    subprocess.run([sys.executable, os.path.join(here, "fit_pass.py"), os.path.join(d, "test_437800000Hz_trace.csv")], check=True)
+    fixed = os.path.join(d, "span15000"); os.makedirs(fixed, exist_ok=True)
+    subprocess.run([sys.executable, os.path.join(here, "iq_to_trace.py"), wav, "--span", "15000", "--out", fixed], check=True)
     os.remove(wav)
-    r = json.load(open(os.path.join(d, "test_437800000Hz_fit.json")))["method_D"]
+    for o in (d, fixed):
+        subprocess.run([sys.executable, os.path.join(here, "fit_pass.py"), os.path.join(o, "test_437800000Hz_trace.csv")], check=True)
+    fit = json.load(open(os.path.join(d, "test_437800000Hz_fit.json")))
+    r, r2 = fit["method_D"], json.load(open(os.path.join(fixed, "test_437800000Hz_fit.json")))["method_D"]
     print(f"known: v {V / 1e3:.3f} km/s, d {D / 1e3:.1f} km, t0 {T0:.2f} s, f0 {FC + OFF:.1f} Hz", flush=True)
     assert abs(r["v_m_s"] - V) / V < 0.01 and abs(r["d_m"] - D) / D < 0.02 and abs(r["t0_s"] - T0) < 0.5 and abs(r["f0_Hz"] - FC - OFF) < 20, r
+    assert (r["v_m_s"], r["d_m"]) == (r2["v_m_s"], r2["d_m"]), ("file alone and --span 15000 differ", r, r2)
+    assert fit["path"]["path"] == "no bending detected", fit["path"]
     burst_check(d, here)
     # laser ranging: a synthetic CRD pass, 5 s shots, d 500 km, v 7.4 km/s
     import slr_fit

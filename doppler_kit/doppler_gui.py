@@ -29,32 +29,37 @@ class App:
         self.root, self.q = root, queue.Queue()
         root.title("Doppler kit"); root.geometry("1400x900")
         left = ttk.Frame(root, padding=8); left.pack(side="left", fill="y")
-        self.v = {k: tk.StringVar(value=d) for k, d in dict(file="", centre="", start="", f0="", span="15000", rate="", fmt="cs16",
+        self.v = {k: tk.StringVar(value=d) for k, d in dict(file="", centre="", start="", f0="", span="", rate="", fmt="auto",
                                                             out="", wave=list(WAVES)[0], c="", which="0", lo="", hi="").items()}
         self.swap, self.burst = tk.BooleanVar(), tk.BooleanVar()
         row = 0
-        def add(label, w):
+        self.auto = {}
+        def add(label, w, key=None):
             nonlocal row
-            ttk.Label(left, text=label).grid(row=row, column=0, sticky="w", pady=2); w.grid(row=row, column=1, sticky="we", pady=2); row += 1
+            ttk.Label(left, text=label).grid(row=row, column=0, sticky="w", pady=2); w.grid(row=row, column=1, sticky="we", pady=2)
+            if key:
+                self.auto[key] = ttk.Label(left, text="", foreground="#777", wraplength=260)
+                self.auto[key].grid(row=row, column=2, sticky="w", padx=4)
+            row += 1
         f = ttk.Frame(left); ttk.Entry(f, textvariable=self.v["file"], width=34).pack(side="left"); ttk.Button(f, text="Browse…", command=self.pick).pack(side="left")
         add("Recording", f)
-        add("Centre / dial frequency (Hz)", ttk.Entry(left, textvariable=self.v["centre"]))
-        add("Start time UTC (optional)", ttk.Entry(left, textvariable=self.v["start"]))
+        add("Centre / dial frequency (Hz)", ttk.Entry(left, textvariable=self.v["centre"]), "centre")
+        add("Start time UTC (optional)", ttk.Entry(left, textvariable=self.v["start"]), "start")
         add("Wave", ttk.Combobox(left, textvariable=self.v["wave"], values=list(WAVES) + ["other (m/s below)"], state="readonly", width=30))
         add("Wave speed m/s (other)", ttk.Entry(left, textvariable=self.v["c"]))
         add("Fix transmitted f₀ (Hz, optional)", ttk.Entry(left, textvariable=self.v["f0"]))
-        add("Search ± Hz", ttk.Entry(left, textvariable=self.v["span"]))
-        add("Tone band low (Hz)", ttk.Entry(left, textvariable=self.v["lo"]))
+        add("Search ± Hz (blank: scan)", ttk.Entry(left, textvariable=self.v["span"]), "span")
+        add("Tone band low (Hz)", ttk.Entry(left, textvariable=self.v["lo"]), "band")
         add("Tone band high (Hz)", ttk.Entry(left, textvariable=self.v["hi"]))
-        add("Burst signal (FSK satellites)", ttk.Checkbutton(left, variable=self.burst))
-        add("Raw IQ sample rate (S/s)", ttk.Entry(left, textvariable=self.v["rate"]))
-        add("Raw IQ format", ttk.Combobox(left, textvariable=self.v["fmt"], values=["cs16", "cf32", "cu8"], state="readonly"))
+        add("Burst signal (FSK satellites)", ttk.Checkbutton(left, variable=self.burst), "burst")
+        add("Raw IQ sample rate (S/s)", ttk.Entry(left, textvariable=self.v["rate"]), "rate")
+        add("Raw IQ format", ttk.Combobox(left, textvariable=self.v["fmt"], values=["auto", "cs16", "cf32", "cu8"], state="readonly"), "format")
         add("Q stored before I", ttk.Checkbutton(left, variable=self.swap))
         add("Laser file: pass to plot", ttk.Entry(left, textvariable=self.v["which"]))
         f = ttk.Frame(left); ttk.Entry(f, textvariable=self.v["out"], width=34).pack(side="left"); ttk.Button(f, text="…", width=3, command=self.pick_out).pack(side="left")
         add("Output folder (blank: next to file)", f)
-        self.go = ttk.Button(left, text="Run", command=self.start); self.go.grid(row=row, column=0, columnspan=2, sticky="we", pady=8); row += 1
-        self.log = tk.Text(left, width=60, height=18, wrap="word", font=("monospace", 9)); self.log.grid(row=row, column=0, columnspan=2, sticky="nswe")
+        self.go = ttk.Button(left, text="Run", command=self.start); self.go.grid(row=row, column=0, columnspan=3, sticky="we", pady=8); row += 1
+        self.log = tk.Text(left, width=60, height=18, wrap="word", font=("monospace", 9)); self.log.grid(row=row, column=0, columnspan=3, sticky="nswe")
         left.rowconfigure(row, weight=1)
         self.nb = ttk.Notebook(root); self.nb.pack(side="left", fill="both", expand=True)
         self.res = tk.Text(self.nb, wrap="word", font=("monospace", 11)); self.nb.add(self.res, text="Results")
@@ -66,9 +71,6 @@ class App:
                                                   ("Laser ranging", "*.np2 *.npt *.crd"), ("All files", "*")])
         if p:
             self.v["file"].set(p)
-            m = re.search(r"(\d{6,})Hz", os.path.basename(p))
-            if m:
-                self.v["centre"].set(m.group(1))
 
     def pick_out(self):
         p = filedialog.askdirectory()
@@ -81,6 +83,8 @@ class App:
 
     def start(self):
         self.go.state(["disabled"]); self.log.delete("1.0", "end"); self.res.delete("1.0", "end")
+        for w in self.auto.values():
+            w.config(text="")
         threading.Thread(target=self.work, daemon=True).start()
 
     def work(self):
@@ -97,9 +101,11 @@ class App:
                 assert c, "give the wave speed"
                 lo, hi = self.num("lo"), self.num("hi")
                 assert (lo is None) == (hi is None), "give both tone band limits, or neither"
-                S = iq_to_trace.run(path, self.num("centre"), self.v["start"].get().strip() or None, self.num("span") or 15000.0,
-                                    self.swap.get(), out, self.num("rate"), self.v["fmt"].get(),
+                fmt = self.v["fmt"].get()
+                S = iq_to_trace.run(path, self.num("centre"), self.v["start"].get().strip() or None, self.num("span"),
+                                    self.swap.get(), out, self.num("rate"), None if fmt == "auto" else fmt,
                                     band=(lo, hi) if lo is not None else None, burst=self.burst.get())
+                self.q.put(("auto", S["auto"]))
                 self.q.put(("image", ("Waterfall", S["files"]["waterfall"])))
                 if S["points"] < 20:
                     raise RuntimeError("too few points on the trace to fit")
@@ -117,6 +123,10 @@ class App:
             kind, x = self.q.get()
             if kind == "log":
                 self.log.insert("end", x); self.log.see("end")
+            elif kind == "auto":
+                for k, text in x.items():
+                    if k in self.auto:
+                        self.auto[k].config(text="auto: " + text)
             elif kind == "image":
                 self.show(*x)
             elif kind == "done":
@@ -175,9 +185,12 @@ def report(S, F):
         "",
         "PATH",
         f"  {P['path'].upper()}: smooth pattern left by the fit {P['pattern_rms_Hz']:.1f} Hz rms against scatter {P['scatter_rms_Hz']:.1f} Hz rms (p = {P['p_value']:.2g})",
-        "  A straight path leaves only scatter. A bending path leaves a smooth wave (p below 0.001).",
+        f"  This recording can detect a smooth pattern of {P['detectable_rms_Hz']:.1f} Hz rms or more (p below 0.001).",
+        "  A straight path leaves only scatter. A bending path leaves a smooth wave.",
     ]
-    for k in ("note", "burst_hint"):
+    if S.get("auto"):
+        lines += ["", "AUTO VALUES (from the file; a value you type always wins)"] + [f"  {v}" for v in S["auto"].values()]
+    for k in ("note",):
         if S.get(k):
             lines += ["", "NOTE: " + S[k]]
     lines += ["", "Files:"] + [f"  {p}" for p in list(S["files"].values()) + list(F["files"].values())]

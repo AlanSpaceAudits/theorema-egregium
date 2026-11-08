@@ -35,8 +35,9 @@ The kit also reads satellite laser ranging, where the distances themselves are m
   or the tone inside a band you give with <code>--band</code>.</li>
 </ul>
 </li>
-<li>The centre frequency of the recording. SDR++ puts it in the file name (<code>baseband_437800000Hz_...</code>).
-  For receiver audio, the dial frequency (USB). For a sound recording, leave it blank.</li>
+<li>The centre frequency of the recording. For radio, v needs the real centre. The kit reads it from an SDR++ file name
+  (<code>baseband_437800000Hz_...</code>), a SigMF meta file or a SatNOGS observation. If none of these has it, type it in.
+  For receiver audio, type the dial frequency (USB). The kit cannot find a dial frequency. For a sound recording, leave it blank.</li>
 <li>Or a laser-ranging file: see Laser ranging below.</li>
 </ul>
 <p>A cheap RTL-SDR and a simple antenna are enough for the ISS (437.800 MHz FM repeater, 145.800 MHz voice).</p>
@@ -44,7 +45,8 @@ The kit also reads satellite laser ranging, where the distances themselves are m
 <p>The window:</p>
 <pre><code>python3 doppler_gui.py
 </code></pre>
-<p>Pick the recording, fill in the centre frequency if the file name does not hold it, and press Run.
+<p>Pick the recording and press Run. Leave a field blank and the kit works the value out from the file (see "Blank fields" below).
+After a run, each worked-out value shows as "auto: ..." next to its field. The values you type stay as you typed them.
 The tabs show the waterfall, the S-curve and the marked waterfall. The Results tab lists every number:
 v, d, t₀, f₀, the plateaus, the half-plateau points and Δt, the three ways to v and d, the path test and the distances.
 For a sound recording choose "sound in air (343 m/s)".</p>
@@ -53,7 +55,7 @@ For a sound recording choose "sound in air (343 m/s)".</p>
 python3 fit_pass.py my_recording_trace.csv
 </code></pre>
 <p>Other inputs:</p>
-<pre><code>python3 iq_to_trace.py my_recording.wav --center 145800000 --start 2026-06-14T18:10:09Z
+<pre><code>python3 iq_to_trace.py my_recording.wav --center 145800000 --start 2026-06-01T12:00:00Z
 python3 iq_to_trace.py iq_5408034.raw --rate 48000 --center 437800000            # raw 16-bit IQ
 python3 iq_to_trace.py capture.cf32 --rate 250000 --center 437800000 --format cf32
 python3 iq_to_trace.py beacon_usb.ogg --center 145796000                         # receiver audio, dial frequency
@@ -61,11 +63,36 @@ python3 iq_to_trace.py horn.wav &amp;&amp; python3 fit_pass.py horn_trace.csv --
 python3 iq_to_trace.py aircraft.wav --band 1300 2700                             # sound: engine tone between 1300 and 2700 Hz
 python3 iq_to_trace.py pocketqube.cf32 --rate 48000 --center 436650000 --format cf32 --burst   # short FSK bursts
 </code></pre>
-<p>Options: <code>--span</code> (search ± Hz around the centre, default 15000), <code>--swap-iq</code> (Q stored before I), <code>--out</code> (output folder),
+<p>Options: <code>--span</code> (search ± Hz around the centre, default: found by the scan), <code>--swap-iq</code> (Q stored before I), <code>--out</code> (output folder),
 <code>--band LO HI</code> (search only this band, see below), <code>--burst</code> (signal in short bursts, see below).
 For the fit: <code>--c</code> (wave speed, default radio and light; 343 for sound) and <code>--f0</code> (fix the transmitted frequency).
 <a href="fit_pass.py"><code>fit_pass.py</code></a> also takes a trace from anywhere else: a CSV with columns <code>t_s</code> and <code>f_Hz</code>.</p>
 <p>In the window, fill in "Tone band low / high (Hz)" for <code>--band</code> and tick "Burst signal (FSK satellites)" for <code>--burst</code>.</p>
+<h3>Blank fields</h3>
+<p>A value you type always wins. For each blank field the kit looks in the file, in this order, and logs the value with its source,
+for example <code>auto: centre 437,800,000 Hz (from file name)</code>.</p>
+<ol>
+<li>SigMF: a <code>FILE.sigmf-meta</code> beside <code>FILE.sigmf-data</code> (or pick the <code>.sigmf-meta</code> file). It gives the sample rate,
+   the sample format (<code>ci16_le</code>, <code>cf32_le</code>, <code>cu8</code>), the centre frequency and the start time.</li>
+<li>WAV header: the sample rate, the channels and the sample size.</li>
+<li>File name: an SDR++ name holds the centre frequency (<code>..._437800000Hz_...</code>).</li>
+<li>SatNOGS: a file <code>iq_&lt;observation id&gt;.raw</code> is 48,000 S/s, 16-bit. The kit asks network.satnogs.org for the start time
+   and the centre frequency of the observation. It sends only the observation id. When the computer is offline, the kit says so and goes on.</li>
+<li>Start time: when no other source has it, the kit takes the time the file was last changed and subtracts the length of the recording.
+   The log marks this value "check it". Copying a file can change this time.</li>
+</ol>
+<p>Radio needs the real centre frequency for v. It must come from the file name, SigMF, SatNOGS or you.</p>
+<p><strong>Search span (scan).</strong> When the span is blank, the kit first looks over the full recorded band. It takes short spectra
+spread over the whole file, divides every frequency bin by its median over time (a steady line goes to 1) and follows the strongest
+line that falls in frequency. It looks near the centre first (±21.6 kHz), then over the whole band. The span then covers the line
+plus a margin, and stays at 15,000 Hz when the line fits inside. A line outside the default window moves the centre to it.
+When no moving line is found, the span is 15,000 Hz and the log says so.</p>
+<p><strong>Tone band (audio).</strong> When no band is given, the same scan picks the strongest tone that moves (falls in frequency) and sets the band
+around its swing. A steady tone, such as low engine rumble, does not count. When the strongest tone in the recording is the moving one,
+no band is needed and the kit tracks it as before.</p>
+<p><strong>Burst mode.</strong> When "Burst" is not ticked and the trace looks like bursts (it covers less than 30% of the recording, moves less than
+a fifth of the span, or does not fit a pass cleanly), the kit also runs burst mode. It keeps the clean pass that covers more of the
+recording and logs which one it used and why. A tick forces burst mode.</p>
 <h3>Tone band (<code>--band LO HI</code>)</h3>
 <p>Use it when a different sound or signal is stronger than the one you want.
 For example, the low rumble of an aircraft engine (50 to 135 Hz) is often stronger than the engine tone.
@@ -82,10 +109,9 @@ The recording can also hold steady lines from the receiver or from other transmi
 The normal tracer then follows a steady line or only part of a packet.
 <code>--burst</code> finds the packets under the steady lines and gives one point for each half second that holds a packet.
 The trace file has the same columns, so <code>fit_pass.py</code> works the same way.</p>
-<p>When you do not give <code>--burst</code> and the trace covers less than 30% of an IQ recording, or moves less than a fifth of the span,
-<a href="iq_to_trace.py"><code>iq_to_trace.py</code></a> prints a note that suggests <code>--burst</code>.</p>
+<p>When you do not give <code>--burst</code>, the kit tries burst mode by itself when the trace looks like bursts (see "Blank fields").</p>
 <h2>Output</h2>
-<p><code>iq_to_trace.py</code></p>
+<p><a href="iq_to_trace.py"><code>iq_to_trace.py</code></a></p>
 <table>
 <thead>
 <tr>
@@ -108,7 +134,7 @@ The trace file has the same columns, so <code>fit_pass.py</code> works the same 
 </tr>
 <tr>
 <td><code>&lt;name&gt;_summary.json</code></td>
-<td>settings (with <code>band_Hz</code> and <code>burst</code>), number of points, point noise, the frequency swing, fixed receiver lines found, notes</td>
+<td>settings (with <code>band_Hz</code> and <code>burst</code>), number of points, point noise, the frequency swing, fixed receiver lines found, and under <code>auto</code> every value the kit worked out, with its source</td>
 </tr>
 </tbody>
 </table>
@@ -123,7 +149,7 @@ The trace file has the same columns, so <code>fit_pass.py</code> works the same 
 <tbody>
 <tr>
 <td><code>&lt;name&gt;_fit.json</code></td>
-<td>v, d, t₀, f₀ with errors (full fit), the plateau estimate, the marks, the path test, the distances at the first and last point</td>
+<td>v, d, t₀, f₀ with errors (full fit), the plateau estimate, the marks, the path test with <code>detectable_rms_Hz</code>, the distances at the first and last point</td>
 </tr>
 <tr>
 <td><code>&lt;name&gt;_scurve.png</code></td>
@@ -138,9 +164,9 @@ The trace file has the same columns, so <code>fit_pass.py</code> works the same 
 <h2>Check that it works</h2>
 <pre><code>python3 make_test_iq.py
 </code></pre>
-<p>It writes a 300 s synthetic recording of a known pass (7.660 km/s, 420 km), runs both scripts, compares the answer
-and deletes the recording. Then it does the same with <code>--burst</code> for a 300 s pass of short FSK bursts (7.400 km/s, 600 km)
-under a steady line five times stronger. It also checks <code>slr_fit.py</code> on a synthetic laser pass. It ends with <code>self-check passed</code>. These are its pictures:</p>
+<p>It writes a 300 s synthetic recording of a known pass (7.660 km/s, 420 km), runs both scripts with the file alone, compares the answer
+and deletes the recording. A second run with <code>--span 15000</code> must give the same v and d. Then it does the same with <code>--burst</code> for a 300 s pass of short FSK bursts (7.400 km/s, 600 km)
+under a steady line five times stronger, and once more without <code>--burst</code>: burst mode must come on by itself and give the same trace. It also checks <code>slr_fit.py</code> on a synthetic laser pass. It ends with <code>self-check passed</code>. These are its pictures:</p>
 <p><img alt="S-curve of the synthetic pass with the half-plateau points and the width marked" src="examples/synthetic_scurve.png" /></p>
 <p><img alt="Waterfall of the synthetic pass with the half-plateau points and the width marked" src="examples/synthetic_waterfall_marked.jpg" /></p>
 <h2>Doppler-corrected recordings do not work</h2>
@@ -196,7 +222,16 @@ With the travel time of the signal included, the received frequency is</p>
 </ul>
 <p>What the fit leaves over shows the path: a straight path leaves scatter around zero, a bending path leaves a smooth wave.
 <code>fit_pass.py</code> fits a degree-6 polynomial through the leftover and compares it with the scatter (F-test, counting only independent points).
-When the smooth part stands out (p below 0.001) the path is reported as bending, otherwise as straight.</p>
+When the smooth part stands out (p below 0.001) the path is reported as bending, otherwise as "no bending detected".</p>
+<p>The report also gives the smallest smooth pattern this recording can detect. With N points, pattern rms A, scatter rms s
+and the F-test degrees of freedom d₁ = 7 and d₂ = n_eff − 7:</p>
+<pre><code>RSS₀ − RSS₁ = N A²
+RSS₁ = N s²
+F = (A² / s²) · d₂ / d₁
+bending when F ≥ F_crit, the 0.999 point of the F(d₁, d₂) distribution
+A_min = s · √(F_crit · d₁ / d₂)
+</code></pre>
+<p>A_min is <code>detectable_rms_Hz</code> in the fit file. A smaller pattern can be there and not be seen.</p>
 <h2>Laser ranging</h2>
 <p>Laser stations fire short pulses at a satellite and time each return. Each shot gives a distance directly:</p>
 <pre><code>r = round-trip time × c / 2

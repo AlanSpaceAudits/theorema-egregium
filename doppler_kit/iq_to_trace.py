@@ -6,10 +6,19 @@ Accepts a WAV file (2 channels I/Q, or 1 channel audio; 8/16-bit int or 32-bit f
 for sound recordings), and the strongest tone is tracked.
 
 Usage:
-  python3 iq_to_trace.py RECORDING.wav [--center HZ] [--start 2026-06-14T18:10:09Z] [--span 15000] [--swap-iq] [--out DIR]
+  python3 iq_to_trace.py RECORDING.wav [--center HZ] [--start 2026-06-01T12:00:00Z] [--span HZ] [--swap-iq] [--out DIR]
   python3 iq_to_trace.py RECORDING.raw --rate 48000 --center 437800000 [--format cs16|cf32|cu8]
   python3 iq_to_trace.py RECORDING.wav --band LO HI     (audio: tone between LO and HI Hz; IQ: offsets LO..HI from the centre)
   python3 iq_to_trace.py RECORDING.cf32 --rate 48000 --center 436650000 --format cf32 --burst   (short FSK/packet bursts)
+
+Blank values are worked out from the file; a value given always wins, and every auto value is logged with its source:
+  rate, format, centre, start: SigMF meta file (FILE.sigmf-meta beside FILE.sigmf-data), WAV header, an SDR++ file name
+  (...437800000Hz...), a SatNOGS iq_<id>.raw (48,000 S/s cs16; centre and start from network.satnogs.org), and for the
+  start the file's modified time minus the recording length (check it).
+  span (IQ): a scan of the whole recorded band finds the falling line (steady lines removed) and sets the span and,
+  when needed, moves the centre. band (audio): the scan picks the strongest tone that moves.
+  burst: when the trace looks like bursts (covers < 30%, moves < span/5, or does not fit a pass cleanly), burst mode
+  runs too and the clean pass that covers more of the recording is kept.
 
 Writes to DIR (default: next to the recording):
   <name>_trace.csv      t_s, utc, f_offset_Hz, f_Hz, snr_dB   (accepted points only)
@@ -36,7 +45,7 @@ Method (no orbit and no station position is used anywhere):
   keep the frame if 10 log10(mean E in the band + 1) >= 6 dB; value = centroid of max(E, 0) over that band (for 2-FSK
   the midpoint of the two tones). Outliers: soft-L1 fit of the pass shape from a grid of starts, drop points off by > 800 Hz.
 """
-import argparse, json, os, re, struct
+import argparse, json, math, os, re, struct
 from datetime import datetime, timedelta, timezone
 
 import numpy as np
@@ -79,7 +88,7 @@ def wav_info(path):
     return dict(rate=rate, dtype=dt, offset=data, n=n, bits=bits, float=(tag == 3), ch=ch)
 
 
-def raw_info(path, rate, fmt):
+def raw_info(path, rate, fmt="cs16"):
     dt, bits, flt = {"cs16": (np.dtype("<i2"), 16, False), "cf32": (np.dtype("<f4"), 32, True), "cu8": (np.uint8, 8, False)}[fmt]
     return dict(rate=int(rate), dtype=dt, offset=0, n=os.path.getsize(path) // (2 * np.dtype(dt).itemsize), bits=bits, float=flt, ch=2)
 
@@ -95,27 +104,38 @@ def to_complex(raw, info, swap):
     return (x[:, 1] + 1j * x[:, 0]) if swap else (x[:, 0] + 1j * x[:, 1])
 
 
-def decimate(path, info, swap):
+def decimate(path, info, swap, shift=0, target=TARGET):
+    """Mix the recording down by `shift` Hz (an integer), then decimate to about `target` S/s."""
     fs, n = info["rate"], info["n"]
-    dec = max(1, int(round(fs / TARGET)))
+    dec = max(1, int(round(fs / target)))
     x = np.memmap(path, dtype=info["dtype"], mode="r", offset=info["offset"], shape=(n, info["ch"]))
     ch = dec * TARGET            # about 1 s per chunk, a multiple of dec
     marg = dec * 200
     out = []
     for s in range(0, n, ch):
         a, b = max(0, s - marg), min(n, s + ch + marg)
-        y = resample_poly(to_complex(np.asarray(x[a:b]), info, swap), 1, dec) if dec > 1 else to_complex(np.asarray(x[a:b]), info, swap)
+        z = to_complex(np.asarray(x[a:b]), info, swap)
+        if shift:
+            ph = (np.arange(a, b, dtype=np.int64) * int(shift)) % int(fs)        # exact phase index, no float drift
+            z = (z * np.exp(-2j * np.pi * ph / fs)).astype(np.complex64)
+        y = resample_poly(z, 1, dec) if dec > 1 else z
         i0 = (s - a) // dec
         out.append(y[i0:i0 + (min(s + ch, n) - s) // dec])
     return np.concatenate(out), fs / dec
 
 
-def to_analytic(y, fsd):
-    """Audio: keep the positive frequencies only and move the strongest tone to 0 Hz. Returns the signal and the tone (Hz)."""
-    from scipy.signal import hilbert, welch
+def strongest_tone(y, fsd):
+    """Audio: the strongest tone above 50 Hz in the average spectrum (Welch, 8192 samples)."""
+    from scipy.signal import welch
     f, P = welch(y, fsd, nperseg=8192)
     P[f < 50] = 0
-    tone = float(f[np.argmax(P)])
+    return float(f[np.argmax(P)])
+
+
+def to_analytic(y, fsd, tone=None):
+    """Audio: keep the positive frequencies only and move the strongest tone to 0 Hz. Returns the signal and the tone (Hz)."""
+    from scipy.signal import hilbert
+    tone = strongest_tone(y, fsd) if tone is None else tone
     return (hilbert(y) * np.exp(-2j * np.pi * tone * np.arange(len(y)) / fsd)).astype(np.complex64), tone
 
 
@@ -136,6 +156,205 @@ def audio_to_wav(path, out):
     wav = os.path.join(out, os.path.splitext(os.path.basename(path))[0] + "_audio48k.wav")
     subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-i", path, "-ac", "1", "-ar", "48000", "-c:a", "pcm_s16le", wav], check=True)
     return wav
+
+
+# ---------- auto values: metadata ----------
+SIGMF_FORMATS = {"ci16_le": "cs16", "ci16": "cs16", "cf32_le": "cf32", "cf32": "cf32", "cu8": "cu8", "cu8_le": "cu8"}
+
+
+def utc_text(ts):
+    """Unix time (s) -> 2025-01-02T03:04:05Z, rounded to the nearest second."""
+    return datetime.fromtimestamp(math.floor(ts + 0.5), timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+def iso_utc(s):
+    """An ISO time from a metadata file, as a start time the kit reads: fraction cut to 6 digits, no zone = UTC."""
+    s = s.strip()
+    m = re.fullmatch(r"([0-9-]+T[0-9:]+)(?:[.,]([0-9]+))?(Z|z|[+-][0-9:]+)?", s)
+    if not m:
+        return None
+    zone = m.group(3) or "Z"
+    return m.group(1) + ("." + m.group(2)[:6] if m.group(2) else "") + ("Z" if zone in "Zz" else zone)
+
+
+def sigmf_files(path):
+    """(data file, meta file or None) for a SigMF pair; any other file: (path, None)."""
+    if path.endswith(".sigmf-meta"):
+        return path[:-len("meta")] + "data", path
+    if path.endswith(".sigmf-data") and os.path.exists(path[:-len("data")] + "meta"):
+        return path, path[:-len("data")] + "meta"
+    return path, None
+
+
+def sigmf_values(meta):
+    """rate, fmt, centre and start from a SigMF meta file (only the fields present)."""
+    d = json.load(open(meta, encoding="utf-8"))
+    g, c = d.get("global", {}), (d.get("captures") or [{}])[0]
+    out = {}
+    if isinstance(g.get("core:sample_rate"), (int, float)):
+        out["rate"] = float(g["core:sample_rate"])
+    dt = g.get("core:datatype")
+    if isinstance(dt, str):
+        assert dt.lower() in SIGMF_FORMATS, f"SigMF datatype {dt} is not supported (ci16_le, cf32_le or cu8)"
+        out["fmt"] = SIGMF_FORMATS[dt.lower()]
+    if isinstance(c.get("core:frequency"), (int, float)):
+        out["centre"] = float(c["core:frequency"])
+    if isinstance(c.get("core:datetime"), str) and iso_utc(c["core:datetime"]):
+        out["start"] = iso_utc(c["core:datetime"])
+    return out
+
+
+def satnogs_values(obs, log):
+    """Start and centre of SatNOGS observation `obs` from network.satnogs.org (None when offline or on failure)."""
+    import urllib.request
+    url = f"https://network.satnogs.org/api/observations/{obs}/"
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": "doppler-kit"})
+        d = json.load(urllib.request.urlopen(req, timeout=10))
+    except Exception as e:
+        log(f"auto: SatNOGS observation {obs} not read ({type(e).__name__}): give the centre and start time")
+        return {}
+    out = {}
+    fc, src = d.get("center_frequency"), "centre frequency"
+    if fc is None:
+        fc, src = d.get("transmitter_downlink_low"), "transmitter downlink"
+    if isinstance(fc, (int, float)):
+        out["centre"] = (float(fc), src)
+    if isinstance(d.get("start"), str) and iso_utc(d["start"]):
+        out["start"] = iso_utc(d["start"])
+    return out
+
+
+# ---------- auto values: signal scan ----------
+SCAN_FRAMES, SCAN_SAMPLES, SCAN_SLEW_HZ_S = 400, 1 << 26, 500.0
+SCAN_ON_DB, SCAN_CAP_DB = 3.0, 20.0
+DEFAULT_SPAN = 15000.0
+
+
+def scan_spectra(path, info, swap, audio):
+    """Coarse spectra of the full recorded band, streamed: frames of nblk Hann blocks (power averaged) at M times
+    spread evenly over the file. IQ: bins about fs/64 wide, frames up to 1 s; audio: about fs/16, up to 0.25 s."""
+    fs, n = info["rate"], info["n"]
+    nfft = 1 << int(round(np.log2(fs / (16.0 if audio else 64.0))))
+    nblk = max(1, min(16, int(fs * (0.25 if audio else 1.0)) // nfft))
+    L = nblk * nfft
+    if nfft < 16 or n < 10 * L:
+        return None
+    M = int(min(n // L, max(SCAN_FRAMES, SCAN_SAMPLES // L)))
+    x = np.memmap(path, dtype=info["dtype"], mode="r", offset=info["offset"], shape=(n, info["ch"]))
+    w = np.hanning(nfft)
+    P = np.empty((M, nfft)); t = np.empty(M)
+    for k in range(M):
+        s = k * (n - L) // (M - 1)
+        z = to_complex(np.asarray(x[s:s + L]), info, swap).astype(np.complex128).reshape(nblk, nfft) * w
+        X = np.fft.fft(z, axis=1)
+        P[k] = np.fft.fftshift((X.real ** 2 + X.imag ** 2).mean(axis=0))
+        t[k] = (s + L / 2) / fs
+    return t, np.fft.fftshift(np.fft.fftfreq(nfft, 1 / fs)), P
+
+
+def strongest_path(v, D):
+    """Column index per row of the path with the largest sum of v that never moves up and moves down at most
+    D columns from one row to the next (the received frequency of a passing source only falls)."""
+    M, N = v.shape
+    S = v[0].copy(); back = np.zeros((M, N), np.int32); idx = np.arange(N)
+    for k in range(1, M):
+        best = np.full(N, -np.inf); arg = idx.copy()
+        for d in range(D + 1):                  # predecessor j + d; the smallest d wins a tie
+            cand = np.full(N, -np.inf); cand[:N - d] = S[d:]
+            better = cand > best
+            best[better] = cand[better]; arg[better] = idx[better] + d
+        S = v[k] + best; back[k] = arg
+    j = np.empty(M, np.int64); j[-1] = int(np.argmax(S))
+    for k in range(M - 1, 0, -1):
+        j[k - 1] = back[k, j[k]]
+    return j
+
+
+def moving_line(t, f, v, keep, min_move, mask_half):
+    """The strongest falling path over the bins in `keep`; a path that moves less than min_move (5th to 95th percentile
+    of its strong frames) is masked (+-mask_half around its median) and the search runs again, 3 times at most.
+    Returns (lo, hi, strong frames) or None."""
+    cols = np.where(keep)[0]
+    if len(cols) < 3:
+        return None
+    c0, c1 = cols[0], cols[-1] + 1
+    vv = np.where(keep[None, c0:c1], v[:, c0:c1], 0.0); ff = f[c0:c1]
+    D = max(1, int(np.ceil(SCAN_SLEW_HZ_S * (t[1] - t[0]) / (f[1] - f[0]))))
+    for _ in range(3):
+        j = strongest_path(vv, D)
+        on = vv[np.arange(len(t)), j] > SCAN_ON_DB
+        if on.sum() < 8:
+            return None
+        fo = ff[j][on]
+        lo, hi = np.percentile(fo, [5, 95])
+        if hi - lo >= min_move:
+            return float(lo), float(hi), int(on.sum())
+        vv[:, np.abs(ff - np.median(fo)) < mask_half] = 0.0
+    return None
+
+
+def scan_iq(t, f, P, fs):
+    """IQ: every bin over its median in time (steady lines go to 1), every frame over its median, 300 Hz boxcar.
+    First the default window (+-21.6 kHz), then the full band. Returns (lo, hi, frames) in Hz from the centre, or None."""
+    df = f[1] - f[0]
+    R = P / np.median(P, axis=0); R /= np.median(R, axis=1, keepdims=True)
+    Rs = uniform_filter1d(R, max(1, int(round(300.0 / df))), axis=1)
+    v = np.clip(10 * np.log10(Rs) - SCAN_ON_DB, 0.0, SCAN_CAP_DB)
+    near_lim = min(0.45 * fs, 0.45 * TARGET)
+    for lim in [near_lim] + ([0.45 * fs] if 0.45 * fs > near_lim else []):
+        r = moving_line(t, f, v, np.abs(f) <= lim, max(10 * df, 1000.0), max(10 * df, 1000.0))
+        if r:
+            return r
+    return None
+
+
+def scan_audio(t, f, P, fs):
+    """Audio: positive frequencies 50 Hz to 0.45 fs, each spectrum over its running median across 1 kHz (tones stand
+    out, broadband sound does not), every bin over its median in time (steady tones go to 1), 50 Hz boxcar."""
+    from scipy.ndimage import median_filter
+    df = f[1] - f[0]
+    keep = (f >= 50.0) & (f <= 0.45 * fs)
+    f, P = f[keep], P[:, keep]
+    if len(f) < 3:
+        return None
+    C = P / median_filter(P, size=(1, int(round(1000.0 / df)) // 2 * 2 + 1), mode="nearest")
+    R = C / np.median(C, axis=0)
+    Rs = uniform_filter1d(R, max(1, int(round(50.0 / df))), axis=1)
+    v = np.clip(10 * np.log10(Rs) - SCAN_ON_DB, 0.0, SCAN_CAP_DB)
+    return moving_line(t, f, v, np.ones(len(f), bool), max(5 * df, 100.0), max(5 * df, 200.0))
+
+
+def span_from_scan(lo, hi):
+    """(centre shift, search span) covering lo..hi (Hz from the centre) plus a margin; the default span when it fits."""
+    m = max(2000.0, 0.1 * (hi - lo))
+    a, b = lo - m, hi + m
+    if a >= -DEFAULT_SPAN and b <= DEFAULT_SPAN:
+        return 0, DEFAULT_SPAN
+    shift = int(1000 * math.floor((a + b) / 2000 + 0.5))
+    return shift, max(DEFAULT_SPAN, 500.0 * math.ceil(max(b - shift, shift - a) / 500))
+
+
+def band_from_scan(lo, hi, fs):
+    m = max(50.0, 0.25 * (hi - lo))
+    return max(0.0, 10.0 * math.floor((lo - m) / 10)), min(10.0 * math.ceil((hi + m) / 10), float(math.floor(0.45 * fs)))
+
+
+def pass_quality(t, f, acc, T, span, sig):
+    """Accepted points of a trace against the pass shape: clean when >= 20 points, the swing is at least a fifth of
+    the span (not a steady line) and the soft-L1 pass fit leaves at most 3 x the point noise (rms)."""
+    if acc.sum() < 20:
+        return dict(clean=False, why="fewer than 20 points", cover=0.0)
+    tt, ff = t[acc], f[acc]
+    swing = float(np.ptp(ff)); cover = float((tt.max() - tt.min()) / T)
+    if swing < 0.2 * span:
+        return dict(clean=False, why=f"moves only {swing:.0f} Hz", cover=cover)
+    p = robust_pass(tt, ff, T, span)
+    rms = float(np.sqrt(np.mean((ff - pass_model(tt, *p)) ** 2)))
+    noise = max(float(sig), 1.0) if np.isfinite(sig) else 1.0
+    if rms > 3 * noise:
+        return dict(clean=False, why=f"pass fit leaves {rms:.0f} Hz rms against point noise {noise:.0f} Hz", cover=cover)
+    return dict(clean=True, why=f"covers {100 * cover:.0f}% of the recording", cover=cover)
 
 
 # ---------- helpers ----------
@@ -378,39 +597,107 @@ def waterfall(y, fsd, span, t, f, acc, png, title):
     fig.tight_layout(); fig.savefig(png, dpi=110); plt.close(fig)
 
 
-def run(path, center=None, start=None, span=15000.0, swap_iq=False, out=None, rate=None, fmt="cs16", log=print, band=None, burst=False):
-    """Trace one recording. band = (lo, hi) Hz or None; burst = short-burst mode.
-    Returns the summary dict, with the output file paths under "files"."""
+def run(path, center=None, start=None, span=None, swap_iq=False, out=None, rate=None, fmt=None, log=print, band=None, burst=False):
+    """Trace one recording. band = (lo, hi) Hz or None; burst = short-burst mode (on), else tried when the trace
+    looks like bursts. Blank values (None) are worked out from the file; a value given here always wins.
+    Returns the summary dict, with the output file paths under "files" and the auto values under "auto"."""
+    auto = {}
+
+    def note(key, text, indent=""):
+        auto[key] = text
+        log(f"{indent}auto: {text}")
+
+    path, meta = sigmf_files(path)
     name, orig = os.path.splitext(os.path.basename(path))[0], os.path.basename(path)
     out = out or os.path.dirname(os.path.abspath(path)); os.makedirs(out, exist_ok=True)
     fc = center
+    sm = sigmf_values(meta) if meta else {}
+    if meta:
+        mname = os.path.basename(meta)
+        if rate is None and "rate" in sm:
+            rate = sm["rate"]; note("rate", f"sample rate {rate:,.0f} S/s (SigMF {mname})")
+        if fmt is None and "fmt" in sm:
+            fmt = sm["fmt"]; note("format", f"format {fmt} (SigMF {mname})")
+        if fc is None and "centre" in sm:
+            fc = sm["centre"]; note("centre", f"centre {fc:,.0f} Hz (SigMF {mname})")
+        if start is None and "start" in sm:
+            start = sm["start"]; note("start", f"start {start} (SigMF {mname})")
     if fc is None:
         m = re.search(r"(\d{6,})Hz", name)
-        fc = float(m.group(1)) if m else None
-    t_start = datetime.fromisoformat(start.replace("Z", "+00:00")) if start else None
+        if m:
+            fc = float(m.group(1)); note("centre", f"centre {fc:,.0f} Hz (from file name)")
     ext = os.path.splitext(path)[1].lower()
+    satnogs = re.fullmatch(r"iq_(\d+)", name)
+    if ext in (".wav", ".ogg", ".oga", ".mp3", ".flac", ".m4a", ".opus", ".aac"):
+        satnogs = None
+    if satnogs and (fc is None or start is None):
+        sv = satnogs_values(satnogs.group(1), log)
+        if fc is None and "centre" in sv:
+            fc = sv["centre"][0]; note("centre", f"centre {fc:,.0f} Hz (SatNOGS observation {satnogs.group(1)}, {sv['centre'][1]})")
+        if start is None and "start" in sv:
+            start = sv["start"]; note("start", f"start {start} (SatNOGS observation {satnogs.group(1)})")
+    t_start = datetime.fromisoformat(start.replace("Z", "+00:00")) if start else None
+    mtime = os.path.getmtime(path)
     tmp = None
     if ext in (".ogg", ".oga", ".mp3", ".flac", ".m4a", ".opus", ".aac"):
         path = tmp = audio_to_wav(path, out); ext = ".wav"
     if ext == ".wav":
         info = wav_info(path)
     else:
-        if not rate and re.fullmatch(r"iq_\d+", name):
+        if not rate and satnogs:
             rate = 48000.0                                          # SatNOGS IQ files: 16-bit IQ at 48,000 S/s
-            log("SatNOGS IQ file: 48,000 S/s, 16-bit assumed")
+            fmt = fmt or "cs16"
+            note("rate", "sample rate 48,000 S/s, cs16 (SatNOGS IQ file)")
         assert rate, "give the sample rate for a raw IQ file"
-        info = raw_info(path, rate, fmt)
+        info = raw_info(path, rate, fmt or "cs16")
     audio = info["ch"] == 1
+    T = info["n"] / info["rate"]
+    if start is None:
+        start = utc_text(mtime - T); t_start = datetime.fromisoformat(start.replace("Z", "+00:00"))
+        note("start", f"start {start} (file modified time minus length: check it)")
     if fc is None:
-        assert audio, "give the centre frequency (Hz)"
+        assert audio, "give the centre frequency (Hz): it is not in the file name, a SigMF file or a SatNOGS observation"
         fc = 0.0
-    log(f"{name}: {info['rate']} S/s, {info['bits']}-bit, {'audio' if audio else 'IQ'}, {info['n'] / info['rate']:.1f} s, centre {fc / 1e6:.6f} MHz")
-    y, fsd = decimate(path, info, swap_iq)
-    if tmp:
-        os.remove(tmp)
-    tone, dc = 0.0, None
+    log(f"{name}: {info['rate']} S/s, {info['bits']}-bit, {'audio' if audio else 'IQ'}, {T:.1f} s, centre {fc / 1e6:.6f} MHz")
     if band:
         band = (float(min(band)), float(max(band)))
+    shift, target, auto_band, scanned = 0, TARGET, None, False
+    if not audio and band is None and span is None:
+        sc = scan_spectra(path, info, swap_iq, False)
+        r = scan_iq(*sc, info["rate"]) if sc else None
+        if r:
+            shift, span = span_from_scan(r[0], r[1])
+            if shift:
+                note("span", f"signal found at {r[0] / 1e3:+.1f} to {r[1] / 1e3:+.1f} kHz: centre moved by {shift:+,} Hz, "
+                             f"search \u00b1{span:,.0f} Hz (scan)", "  ")
+            else:
+                note("span", f"signal found at {r[0] / 1e3:+.1f} to {r[1] / 1e3:+.1f} kHz, search \u00b1{span:,.0f} Hz (scan)", "  ")
+            target, scanned = max(TARGET, 2.5 * span), True
+        else:
+            span = DEFAULT_SPAN
+            note("span", f"no moving signal found: search \u00b1{span:,.0f} Hz (scan)", "  ")
+    elif audio and band is None:
+        sc = scan_spectra(path, info, False, True)
+        r = scan_audio(*sc, info["rate"]) if sc else None
+        if r:
+            auto_band = band_from_scan(r[0], r[1], info["rate"])
+        else:
+            note("band", "no moving tone found: the strongest tone is tracked (scan)", "  ")
+    span = DEFAULT_SPAN if span is None else span
+    y, fsd = decimate(path, info, swap_iq, shift, target)
+    if tmp:
+        os.remove(tmp)
+    if scanned:
+        span = min(span, 0.45 * fsd)
+    tone, dc = 0.0, None
+    if auto_band:
+        strong = strongest_tone(y, fsd)
+        if auto_band[0] <= strong <= auto_band[1]:
+            note("band", f"the strongest tone {strong:.0f} Hz moves: no band needed (scan)", "  ")
+        else:
+            band = auto_band
+            note("band", f"band {band[0]:.0f} to {band[1]:.0f} Hz around the moving tone; the strongest tone {strong:.0f} Hz is steady (scan)", "  ")
+    if band:
         assert band[1] - band[0] >= 50, "the band must be at least 50 Hz wide"
         assert (0 <= band[0] if audio else -fsd / 2 < band[0]) and band[1] < fsd / 2, f"the band must lie inside the recording (+-{fsd / 2:.0f} Hz)"
     if audio and band:
@@ -422,17 +709,49 @@ def run(path, center=None, start=None, span=15000.0, swap_iq=False, out=None, ra
         y, dc, span = remove_dc(y, int(5 * fsd)), 0.0, min(span, fsd / 2 - 100)
         log(f"  strongest audio tone {tone:.0f} Hz")
     else:
-        y, dc = remove_dc(y.astype(np.complex64), int(5 * fsd)), 0.0
+        y, dc = remove_dc(y.astype(np.complex64), int(5 * fsd)), (-float(shift) if shift else 0.0)
         if band:
             y, tone = band_shift(y, fsd, band, False)
             span, dc = (band[1] - band[0]) / 2, -tone
             log(f"  offsets {band[0]:.0f} to {band[1]:.0f} Hz from the centre")
-    fc += tone
+    fc += tone + shift
+    hint = None
     if burst:
         log("  burst mode")
         D, acc, sig, nsig, lines = burst_track(y, fsd, span)
     else:
-        D, acc, sig, nsig, lines = track(y, fsd, span, dc, cut=bool(band))
+        try:
+            D, acc, sig, nsig, lines = track(y, fsd, span, dc, cut=bool(band))
+            normal_err = None
+        except Exception as e:                  # the normal tracer can fail in many ways on a burst signal
+            if audio:
+                raise
+            normal_err = e
+        qn = None
+        if normal_err is None and not audio:
+            swing0 = float(np.ptp(D["lc"][acc])) if acc.any() else 0.0
+            cover0 = acc.sum() / max(1, D["inside"].sum())
+            hint = swing0 < 0.2 * span or cover0 < 0.3
+            qn = pass_quality(D["t"], D["lc"], acc, T, span, sig)
+        if normal_err is not None or hint or (qn and not qn["clean"]):
+            try:
+                B = burst_track(y, fsd, span)
+            except Exception:
+                B = None
+            qb = pass_quality(B[0]["t"], B[0]["lc"], B[1], T, span, B[2]) if B else dict(clean=False, why="no bursts found")
+            if normal_err is not None:
+                if not qb["clean"]:
+                    raise normal_err
+                D, acc, sig, nsig, lines = B
+                burst = True
+                note("burst", "burst mode on (the normal trace found no signal)", "  ")
+            elif qb["clean"] and (not qn["clean"] or qb["cover"] > qn["cover"]):
+                D, acc, sig, nsig, lines = B
+                burst = True
+                why = f"normal trace {qn['why']}" if not qn["clean"] else f"burst trace {qb['why']}, normal trace {100 * qn['cover']:.0f}%"
+                note("burst", f"burst mode on (steady lines stronger than the signal: {why})", "  ")
+            else:
+                note("burst", f"burst mode tried and not used (burst trace {qb['why']})", "  ")
     t, f = D["t"], D["lc"]
     files = dict(trace=os.path.join(out, f"{name}_trace.csv"), waterfall=os.path.join(out, f"{name}_waterfall.png"),
                  summary=os.path.join(out, f"{name}_summary.json"))
@@ -445,10 +764,11 @@ def run(path, center=None, start=None, span=15000.0, swap_iq=False, out=None, ra
     swing = float(np.ptp(f[acc])) if acc.any() else 0.0
     summ = dict(file=orig, centre_Hz=fc, audio_tone_Hz=tone if audio else None, band_Hz=list(band) if band else None,
                 burst=bool(burst), sample_rate=info["rate"],
-                decimated_rate=fsd, duration_s=info["n"] / info["rate"], start_utc=start, points=int(acc.sum()),
+                decimated_rate=fsd, duration_s=T, start_utc=start, points=int(acc.sum()),
                 point_noise_Hz=round(float(sig), 2), point_noise_pairs=nsig, swing_Hz=round(swing, 1),
                 fixed_receiver_lines_Hz=[round(float(v), 1) for v in lines if v != dc],
-                window="0.5 s Hann frames, no overlap" if burst else "1.0 s Hann, 0.25 s hop (only every 4th point is independent)")
+                window="0.5 s Hann frames, no overlap" if burst else "1.0 s Hann, 0.25 s hop (only every 4th point is independent)",
+                auto=auto)
     json.dump(summ, open(files["summary"], "w"), indent=1)
     log(f"  {acc.sum()} points, point noise {sig:.1f} Hz, swing {swing:.0f} Hz -> {out}")
     if not audio and swing < 0.2 * span:
@@ -456,12 +776,6 @@ def run(path, center=None, start=None, span=15000.0, swap_iq=False, out=None, ra
                         "This recording looks Doppler-corrected (the receiver followed a predicted orbit), so it holds only the leftover. "
                         "The fit needs a recording made at a fixed frequency with Doppler correction off." % swing)
         log("  NOTE: " + summ["note"])
-    if not audio and not burst:
-        cover = acc.sum() / max(1, D["inside"].sum())
-        if swing < 0.2 * span or cover < 0.3:
-            summ["burst_hint"] = ("The trace covers %.0f%% of the recording and moves %.0f Hz. If the satellite sends short bursts "
-                                  "(FSK or packets) under steady lines, run again with --burst." % (100 * cover, swing))
-            log("  NOTE: " + summ["burst_hint"])
     summ["files"] = files
     return summ
 
@@ -469,15 +783,15 @@ def run(path, center=None, start=None, span=15000.0, swap_iq=False, out=None, ra
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("wav"); ap.add_argument("--center", type=float, help="centre (IQ) or dial (audio) frequency, Hz (default: read from an SDR++ file name; 0 for audio)")
-    ap.add_argument("--start", help="UTC time of the first sample, e.g. 2026-06-14T18:10:09Z (optional)")
-    ap.add_argument("--span", type=float, default=15000, help="search +- this many Hz around the centre (default 15000)")
+    ap.add_argument("--start", help="UTC time of the first sample, e.g. 2026-06-01T12:00:00Z (optional)")
+    ap.add_argument("--span", type=float, help="search +- this many Hz around the centre (default: found by a scan of the whole band)")
     ap.add_argument("--swap-iq", action="store_true", help="the recording stores Q before I")
     ap.add_argument("--out", help="output folder (default: next to the recording)")
     ap.add_argument("--rate", type=float, help="sample rate, for a raw IQ file")
-    ap.add_argument("--format", default="cs16", choices=["cs16", "cf32", "cu8"], help="raw IQ sample type (default cs16)")
+    ap.add_argument("--format", choices=["cs16", "cf32", "cu8"], help="raw IQ sample type (default: from SigMF, else cs16)")
     ap.add_argument("--band", type=float, nargs=2, metavar=("LO", "HI"),
                     help="audio: pick the tone between LO and HI Hz; IQ: search offsets LO to HI Hz from the centre")
-    ap.add_argument("--burst", action="store_true", help="the signal comes in short bursts (FSK/packet satellites)")
+    ap.add_argument("--burst", action="store_true", help="the signal comes in short bursts (FSK/packet satellites); without it, tried when the trace looks like bursts")
     a = ap.parse_args()
     run(a.wav, a.center, a.start, a.span, a.swap_iq, a.out, a.rate, a.format, band=a.band, burst=a.burst)
 

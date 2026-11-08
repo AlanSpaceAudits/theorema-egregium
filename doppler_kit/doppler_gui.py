@@ -99,6 +99,8 @@ class App:
                     raise RuntimeError("too few points on the trace to fit")
                 F = fit_pass.run(S["files"]["trace"], c, self.num("f0"), out)
                 self.q.put(("done", (S, F)))
+        except AssertionError as e:
+            self.q.put(("log", f"Stopped: {e}\n"))
         except Exception:
             self.q.put(("log", traceback.format_exc()))
         finally:

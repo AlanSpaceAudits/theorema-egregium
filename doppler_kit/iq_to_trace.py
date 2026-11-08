@@ -314,6 +314,9 @@ def run(path, center=None, start=None, span=15000.0, swap_iq=False, out=None, ra
     if ext == ".wav":
         info = wav_info(path)
     else:
+        if not rate and re.fullmatch(r"iq_\d+", name):
+            rate = 48000.0                                          # SatNOGS IQ files: 16-bit IQ at 48,000 S/s
+            log("SatNOGS IQ file: 48,000 S/s, 16-bit assumed")
         assert rate, "give the sample rate for a raw IQ file"
         info = raw_info(path, rate, fmt)
     audio = info["ch"] == 1

@@ -10,8 +10,9 @@ pre{background:var(--code);padding:12px 14px;border-radius:6px;overflow-x:auto}p
 table{border-collapse:collapse;width:100%;font-size:.94rem;display:block;overflow-x:auto}th,td{border-bottom:1px solid var(--rule);padding:6px 10px;text-align:left;vertical-align:top}
 img{max-width:100%;height:auto;border:1px solid var(--rule);border-radius:4px;display:block;margin:10px 0}</style></head>
 <body><main><h1>Doppler kit</h1>
-<p>Measure a passing transmitter's speed and closest distance from your own radio recording.
-Only the frequency shift you receive is used. No station position, no orbit and no map are needed.</p>
+<p>Measure a passing transmitter's speed and closest distance from your own radio or sound recording.
+Only the frequency shift you receive is used. No station position, no orbit and no map are needed.
+The kit also reads satellite laser ranging, where the distances themselves are measured.</p>
 <p>From one recording you get:</p>
 <ul>
 <li><strong>v</strong>: the speed of the source along its path.</li>
@@ -19,20 +20,34 @@ Only the frequency shift you receive is used. No station position, no orbit and 
   From several passes, the smallest d comes closest to the height.</li>
 <li><strong>t₀</strong>: the time of closest approach.</li>
 <li><strong>f₀</strong>: the frequency the source actually transmits.</li>
+<li><strong>Path</strong>: whether the source went past in a straight line or on a bending path.</li>
+<li>The distance at the first and last point of the trace.</li>
 <li>Pictures of the S-curve and the waterfall, with the plateaus, the middle, the two half-plateau points and the width Δt marked where they fall.</li>
 </ul>
 <h2>What you need</h2>
 <ul>
-<li>Python 3 with numpy, scipy and matplotlib: <code>pip install numpy scipy matplotlib</code>.</li>
-<li>An IQ recording made at a <strong>fixed frequency with Doppler correction off</strong>, through the whole pass if you can:<ul>
-<li>a WAV file with 2 channels (I and Q), 8-bit, 16-bit or 32-bit float, such as an SDR++ "baseband" recording, or</li>
-<li>a headerless raw IQ file (<code>.raw</code>, <code>.cs16</code>, <code>.cf32</code>, <code>.cu8</code>, <code>.sigmf-data</code>) with its sample rate.</li>
+<li>Python 3 with numpy, scipy and matplotlib: <code>pip install numpy scipy matplotlib</code>. Tkinter for the window (included with Python on Windows and macOS; <code>python3-tk</code> or <code>tk</code> on Linux). ffmpeg for compressed audio.</li>
+<li>A recording made at a <strong>fixed frequency with Doppler correction off</strong>, through the whole pass if you can:<ul>
+<li>a WAV file with 2 channels (I and Q), 8-bit, 16-bit or 32-bit float, such as an SDR++ "baseband" recording,</li>
+<li>a headerless raw IQ file (<code>.raw</code>, <code>.cs16</code>, <code>.cf32</code>, <code>.cu8</code>, <code>.sigmf-data</code>) with its sample rate, or</li>
+<li>audio: a 1-channel WAV, <code>.ogg</code>, <code>.mp3</code>, <code>.flac</code>, <code>.m4a</code> or <code>.opus</code>. This can be a receiver's audio output in USB or CW mode,
+  or a plain sound recording of a passing source (a horn, an engine, a siren). The strongest tone is tracked.</li>
 </ul>
 </li>
-<li>The centre frequency of the recording. SDR++ puts it in the file name (<code>baseband_437800000Hz_...</code>).</li>
+<li>The centre frequency of the recording. SDR++ puts it in the file name (<code>baseband_437800000Hz_...</code>).
+  For receiver audio, the dial frequency (USB). For a sound recording, leave it blank.</li>
+<li>Or a laser-ranging file: see Laser ranging below.</li>
 </ul>
 <p>A cheap RTL-SDR and a simple antenna are enough for the ISS (437.800 MHz FM repeater, 145.800 MHz voice).</p>
 <h2>Run</h2>
+<p>The window:</p>
+<pre><code>python3 doppler_gui.py
+</code></pre>
+<p>Pick the recording, fill in the centre frequency if the file name does not hold it, and press Run.
+The tabs show the waterfall, the S-curve and the marked waterfall. The Results tab lists every number:
+v, d, t₀, f₀, the plateaus, the half-plateau points and Δt, the three ways to v and d, the path test and the distances.
+For a sound recording choose "sound in air (343 m/s)".</p>
+<p>From the command line:</p>
 <pre><code>python3 iq_to_trace.py my_recording.wav
 python3 fit_pass.py my_recording_trace.csv
 </code></pre>
@@ -40,6 +55,8 @@ python3 fit_pass.py my_recording_trace.csv
 <pre><code>python3 iq_to_trace.py my_recording.wav --center 145800000 --start 2026-06-14T18:10:09Z
 python3 iq_to_trace.py iq_5408034.raw --rate 48000 --center 437800000            # raw 16-bit IQ
 python3 iq_to_trace.py capture.cf32 --rate 250000 --center 437800000 --format cf32
+python3 iq_to_trace.py beacon_usb.ogg --center 145796000                         # receiver audio, dial frequency
+python3 iq_to_trace.py horn.wav &amp;&amp; python3 fit_pass.py horn_trace.csv --c 343   # sound
 </code></pre>
 <p>Options: <code>--span</code> (search ± Hz around the centre, default 15000), <code>--swap-iq</code> (Q stored before I), <code>--out</code> (output folder).
 For the fit: <code>--c</code> (wave speed, default radio and light; 343 for sound) and <code>--f0</code> (fix the transmitted frequency).
@@ -83,7 +100,7 @@ For the fit: <code>--c</code> (wave speed, default radio and light; 343 for soun
 <tbody>
 <tr>
 <td><code>&lt;name&gt;_fit.json</code></td>
-<td>v, d, t₀, f₀ with errors (full fit), and the plateau estimate</td>
+<td>v, d, t₀, f₀ with errors (full fit), the plateau estimate, the marks, the path test, the distances at the first and last point</td>
 </tr>
 <tr>
 <td><code>&lt;name&gt;_scurve.png</code></td>
@@ -99,7 +116,7 @@ For the fit: <code>--c</code> (wave speed, default radio and light; 343 for soun
 <pre><code>python3 make_test_iq.py
 </code></pre>
 <p>It writes a 300 s synthetic recording of a known pass (7.660 km/s, 420 km), runs both scripts, compares the answer
-and deletes the recording. It ends with <code>self-check passed</code>. These are its pictures:</p>
+and deletes the recording. It also checks <code>slr_fit.py</code> on a synthetic laser pass. It ends with <code>self-check passed</code>. These are its pictures:</p>
 <p><img alt="S-curve of the synthetic pass with the half-plateau points and the width marked" src="examples/synthetic_scurve.png" /></p>
 <p><img alt="Waterfall of the synthetic pass with the half-plateau points and the width marked" src="examples/synthetic_waterfall_marked.jpg" /></p>
 <h2>Doppler-corrected recordings do not work</h2>
@@ -137,8 +154,30 @@ With the travel time of the signal included, the received frequency is</p>
 <li><strong>Full fit</strong>: least squares of the whole curve, free t₀, v, d and f₀. This is the result to use. A pass cut short by
   the horizon never reaches its plateaus, so the plateau estimate alone reads v and d low.</li>
 </ul>
-<p>What the fit leaves over shows the path: a straight path leaves scatter around zero, a bending path leaves a smooth wave.</p>
-<h2>Where to find IQ recordings</h2>
+<p>What the fit leaves over shows the path: a straight path leaves scatter around zero, a bending path leaves a smooth wave.
+<code>fit_pass.py</code> fits a degree-6 polynomial through the leftover and compares it with the scatter (F-test, counting only independent points).
+When the smooth part stands out (p below 0.001) the path is reported as bending, otherwise as straight.</p>
+<h2>Laser ranging</h2>
+<p>Laser stations fire short pulses at a satellite and time each return. Each shot gives a distance directly:</p>
+<pre><code>r = round-trip time × c / 2
+</code></pre>
+<p>A satellite flying straight past the station at speed v, closest distance d at time t₀, is at</p>
+<pre><code>r² = d² + (v · t)²        (Pythagoras, t from closest approach)
+</code></pre>
+<p>so every shot gives the speed on its own:</p>
+<pre><code>v = √(r² − d²) / |t|
+</code></pre>
+<p><code>slr_fit.py</code> fits d, v and t₀ to all shots within ±3 minutes of the closest one.</p>
+<pre><code>python3 slr_fit.py <a href="https://edc.dgfi.tum.de/en/data/npt2/1166240/">https://edc.dgfi.tum.de/en/data/npt2/1166240/</a>     # one pass, from its EDC page
+python3 slr_fit.py icesat2_20261025.np2 --pass 3                     # a daily CRD file, plot pass 3
+</code></pre>
+<p>It writes <code>&lt;name&gt;_slr.csv</code> (v, d, closest time, shots and fit miss for every pass) and <code>&lt;name&gt;_pass&lt;N&gt;.png</code>.
+The window takes <code>.np2</code>, <code>.npt</code> and <code>.crd</code> files too.</p>
+<p>Example: ICESat-2 past Herstmonceux (UK) on 25 October 2026, 44 shots. The last shot, 115.9 s after closest approach,
+is 1,009.8 km away: √(1,009.8² − 537.3²) = 855.0 km along the path, and 855.0 / 115.9 = 7.38 km/s.</p>
+<p><img alt="Laser ranging of ICESat-2 from Herstmonceux: distance against time and the speed from every shot" src="examples/laser_icesat2_herstmonceux.png" /></p>
+<p>Data: EUROLAS Data Center (EDC), DGFI-TUM, <a href="https://edc.dgfi.tum.de/">https://edc.dgfi.tum.de/</a></p>
+<h2>Where to find recordings</h2>
 <p>Recordings made by others. Check each one for Doppler correction before you use it.</p>
 <ul>
 <li>CAMRAS Dwingeloo telescope, SatNOGS IQ data (Doppler-corrected): <a href="https://data.camras.nl/satnogs/">https://data.camras.nl/satnogs/</a></li>
@@ -148,6 +187,7 @@ With the travel time of the signal included, the received frequency is</p>
 <li><a href="https://zenodo.org/records/8418286">OSIRIS-REx recording, Allen Telescope Array (Zenodo)</a></li>
 <li><a href="https://zenodo.org/records/16302856">LoRadar: raw IQ of satellite-to-ground LoRa signals (Zenodo)</a></li>
 <li><a href="https://www.github.com/IQEngine/IQEngine">IQEngine: browse and share IQ recordings (GitHub)</a>, site at <a href="https://iqengine.org">https://iqengine.org</a></li>
+<li>Laser ranging, every station and satellite, normal points in CRD format: <a href="https://edc.dgfi.tum.de/en/data/npt2/">EUROLAS Data Center</a> and <a href="https://cddis.nasa.gov/Data_and_Derived_Products/SLR/Normal_point_data.html">NASA CDDIS</a></li>
 </ul>
 <h2>Related</h2>
 <p>Doppler simulator and calculator: <a href="https://alanspaceaudits.github.io/theorema-egregium/doppler_sim/">https://alanspaceaudits.github.io/theorema-egregium/doppler_sim/</a></p></main></body></html>

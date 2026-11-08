@@ -1,7 +1,9 @@
-"""Received frequency against time from an IQ recording.
+"""Received frequency against time from an IQ or audio recording.
 
-Accepts a WAV file (2 channels: 8/16-bit int or 32-bit float) or a headerless raw IQ file
-(.raw/.cs16/.cf32/.cu8/.sigmf-data: give --rate, and --format if not 16-bit signed).
+Accepts a WAV file (2 channels I/Q, or 1 channel audio; 8/16-bit int or 32-bit float), a headerless raw IQ file
+(.raw/.cs16/.cf32/.cu8/.sigmf-data: give --rate, and --format if not 16-bit signed), or any audio file ffmpeg reads
+(.ogg/.mp3/.flac/.m4a/.opus). For audio, --center is the receiver dial frequency (0 = the audio frequency itself,
+for sound recordings), and the strongest tone is tracked.
 
 Usage:
   python3 iq_to_trace.py RECORDING.wav [--center HZ] [--start 2026-06-14T18:10:09Z] [--span 15000] [--swap-iq] [--out DIR]
@@ -57,15 +59,15 @@ def wav_info(path):
         i += 8 + size + (size & 1)
     assert fmt and data, "no fmt/data chunk"
     tag, ch, rate, bits = fmt
-    assert ch == 2, "need 2 channels (I and Q)"
+    assert ch in (1, 2), "need 2 channels (I and Q) or 1 channel (audio)"
     dt = {8: np.uint8, 16: np.dtype("<i2"), 32: np.dtype("<f4") if tag == 3 else np.dtype("<i4")}[bits]
-    n = (os.path.getsize(path) - data) // (2 * np.dtype(dt).itemsize)
-    return dict(rate=rate, dtype=dt, offset=data, n=n, bits=bits, float=(tag == 3))
+    n = (os.path.getsize(path) - data) // (ch * np.dtype(dt).itemsize)
+    return dict(rate=rate, dtype=dt, offset=data, n=n, bits=bits, float=(tag == 3), ch=ch)
 
 
 def raw_info(path, rate, fmt):
     dt, bits, flt = {"cs16": (np.dtype("<i2"), 16, False), "cf32": (np.dtype("<f4"), 32, True), "cu8": (np.uint8, 8, False)}[fmt]
-    return dict(rate=int(rate), dtype=dt, offset=0, n=os.path.getsize(path) // (2 * np.dtype(dt).itemsize), bits=bits, float=flt)
+    return dict(rate=int(rate), dtype=dt, offset=0, n=os.path.getsize(path) // (2 * np.dtype(dt).itemsize), bits=bits, float=flt, ch=2)
 
 
 def to_complex(raw, info, swap):
@@ -74,13 +76,15 @@ def to_complex(raw, info, swap):
         x = (x - 127.5) / 128.0
     elif not info["float"]:
         x /= float(2 ** (info["bits"] - 1))
+    if info["ch"] == 1:
+        return x[:, 0]
     return (x[:, 1] + 1j * x[:, 0]) if swap else (x[:, 0] + 1j * x[:, 1])
 
 
 def decimate(path, info, swap):
     fs, n = info["rate"], info["n"]
     dec = max(1, int(round(fs / TARGET)))
-    x = np.memmap(path, dtype=info["dtype"], mode="r", offset=info["offset"], shape=(n, 2))
+    x = np.memmap(path, dtype=info["dtype"], mode="r", offset=info["offset"], shape=(n, info["ch"]))
     ch = dec * TARGET            # about 1 s per chunk, a multiple of dec
     marg = dec * 200
     out = []
@@ -88,8 +92,25 @@ def decimate(path, info, swap):
         a, b = max(0, s - marg), min(n, s + ch + marg)
         y = resample_poly(to_complex(np.asarray(x[a:b]), info, swap), 1, dec) if dec > 1 else to_complex(np.asarray(x[a:b]), info, swap)
         i0 = (s - a) // dec
-        out.append(y[i0:i0 + (min(s + ch, n) - s) // dec].astype(np.complex64))
+        out.append(y[i0:i0 + (min(s + ch, n) - s) // dec])
     return np.concatenate(out), fs / dec
+
+
+def to_analytic(y, fsd):
+    """Audio: keep the positive frequencies only and move the strongest tone to 0 Hz. Returns the signal and the tone (Hz)."""
+    from scipy.signal import hilbert, welch
+    f, P = welch(y, fsd, nperseg=8192)
+    P[f < 50] = 0
+    tone = float(f[np.argmax(P)])
+    return (hilbert(y) * np.exp(-2j * np.pi * tone * np.arange(len(y)) / fsd)).astype(np.complex64), tone
+
+
+def audio_to_wav(path, out):
+    """Any audio format ffmpeg reads -> a 48 kHz mono 16-bit WAV next to the outputs."""
+    import subprocess
+    wav = os.path.join(out, os.path.splitext(os.path.basename(path))[0] + "_audio48k.wav")
+    subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-i", path, "-ac", "1", "-ar", "48000", "-c:a", "pcm_s16le", wav], check=True)
+    return wav
 
 
 # ---------- helpers ----------
@@ -277,9 +298,70 @@ def waterfall(y, fsd, span, t, f, acc, png, title):
     fig.tight_layout(); fig.savefig(png, dpi=110); plt.close(fig)
 
 
+def run(path, center=None, start=None, span=15000.0, swap_iq=False, out=None, rate=None, fmt="cs16", log=print):
+    """Trace one recording. Returns the summary dict, with the output file paths under "files"."""
+    name, orig = os.path.splitext(os.path.basename(path))[0], os.path.basename(path)
+    out = out or os.path.dirname(os.path.abspath(path)); os.makedirs(out, exist_ok=True)
+    fc = center
+    if fc is None:
+        m = re.search(r"(\d{6,})Hz", name)
+        fc = float(m.group(1)) if m else None
+    t_start = datetime.fromisoformat(start.replace("Z", "+00:00")) if start else None
+    ext = os.path.splitext(path)[1].lower()
+    tmp = None
+    if ext in (".ogg", ".oga", ".mp3", ".flac", ".m4a", ".opus", ".aac"):
+        path = tmp = audio_to_wav(path, out); ext = ".wav"
+    if ext == ".wav":
+        info = wav_info(path)
+    else:
+        assert rate, "give the sample rate for a raw IQ file"
+        info = raw_info(path, rate, fmt)
+    audio = info["ch"] == 1
+    if fc is None:
+        assert audio, "give the centre frequency (Hz)"
+        fc = 0.0
+    log(f"{name}: {info['rate']} S/s, {info['bits']}-bit, {'audio' if audio else 'IQ'}, {info['n'] / info['rate']:.1f} s, centre {fc / 1e6:.6f} MHz")
+    y, fsd = decimate(path, info, swap_iq)
+    if tmp:
+        os.remove(tmp)
+    tone = 0.0
+    if audio:
+        y, tone = to_analytic(y, fsd)
+        span = min(span, fsd / 2 - 100)
+        log(f"  strongest audio tone {tone:.0f} Hz")
+        fc += tone
+    else:
+        y = y.astype(np.complex64)
+    D, acc, sig, nsig, lines = track(y, fsd, span)
+    t, f = D["t"], D["lc"]
+    files = dict(trace=os.path.join(out, f"{name}_trace.csv"), waterfall=os.path.join(out, f"{name}_waterfall.png"),
+                 summary=os.path.join(out, f"{name}_summary.json"))
+    with open(files["trace"], "w") as fh:
+        fh.write("t_s,utc,f_offset_Hz,f_Hz,snr_dB\n")
+        for i in np.where(acc)[0]:
+            utc = (t_start + timedelta(seconds=float(t[i]))).isoformat(timespec="milliseconds") if t_start else ""
+            fh.write(f"{t[i]:.3f},{utc},{f[i]:.2f},{fc + f[i]:.2f},{D['snr'][i]:.1f}\n")
+    waterfall(remove_dc(y, int(5 * fsd)), fsd, span, t, f, acc, files["waterfall"], f"{name}\ncentre {fc / 1e6:.6f} MHz")
+    swing = float(np.ptp(f[acc])) if acc.any() else 0.0
+    summ = dict(file=orig, centre_Hz=fc, audio_tone_Hz=tone if audio else None, sample_rate=info["rate"],
+                decimated_rate=fsd, duration_s=info["n"] / info["rate"], start_utc=start, points=int(acc.sum()),
+                point_noise_Hz=round(float(sig), 2), point_noise_pairs=nsig, swing_Hz=round(swing, 1),
+                fixed_receiver_lines_Hz=[round(float(v), 1) for v in lines if v != 0],
+                window="1.0 s Hann, 0.25 s hop (only every 4th point is independent)")
+    json.dump(summ, open(files["summary"], "w"), indent=1)
+    log(f"  {acc.sum()} points, point noise {sig:.1f} Hz, swing {swing:.0f} Hz -> {out}")
+    if not audio and swing < 0.2 * span:
+        summ["note"] = ("The signal moves only %.0f Hz over the recording. A satellite pass at a fixed tuning moves several kHz. "
+                        "This recording looks Doppler-corrected (the receiver followed a predicted orbit), so it holds only the leftover. "
+                        "The fit needs a recording made at a fixed frequency with Doppler correction off." % swing)
+        log("  NOTE: " + summ["note"])
+    summ["files"] = files
+    return summ
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
-    ap.add_argument("wav"); ap.add_argument("--center", type=float, help="centre frequency, Hz (default: read from an SDR++ file name)")
+    ap.add_argument("wav"); ap.add_argument("--center", type=float, help="centre (IQ) or dial (audio) frequency, Hz (default: read from an SDR++ file name; 0 for audio)")
     ap.add_argument("--start", help="UTC time of the first sample, e.g. 2026-06-14T18:10:09Z (optional)")
     ap.add_argument("--span", type=float, default=15000, help="search +- this many Hz around the centre (default 15000)")
     ap.add_argument("--swap-iq", action="store_true", help="the recording stores Q before I")
@@ -287,42 +369,7 @@ def main():
     ap.add_argument("--rate", type=float, help="sample rate, for a raw IQ file")
     ap.add_argument("--format", default="cs16", choices=["cs16", "cf32", "cu8"], help="raw IQ sample type (default cs16)")
     a = ap.parse_args()
-    name = os.path.splitext(os.path.basename(a.wav))[0]
-    out = a.out or os.path.dirname(os.path.abspath(a.wav)); os.makedirs(out, exist_ok=True)
-    fc = a.center
-    if fc is None:
-        m = re.search(r"(\d{6,})Hz", name)
-        assert m, "give --center (Hz)"
-        fc = float(m.group(1))
-    t_start = datetime.fromisoformat(a.start.replace("Z", "+00:00")) if a.start else None
-    if a.wav.lower().endswith(".wav"):
-        info = wav_info(a.wav)
-    else:
-        assert a.rate, "give --rate for a raw IQ file"
-        info = raw_info(a.wav, a.rate, a.format)
-    print(f"{name}: {info['rate']} S/s, {info['bits']}-bit, {info['n'] / info['rate']:.1f} s, centre {fc / 1e6:.6f} MHz")
-    y, fsd = decimate(a.wav, info, a.swap_iq)
-    D, acc, sig, nsig, lines = track(y, fsd, a.span)
-    t, f = D["t"], D["lc"]
-    with open(os.path.join(out, f"{name}_trace.csv"), "w") as fh:
-        fh.write("t_s,utc,f_offset_Hz,f_Hz,snr_dB\n")
-        for i in np.where(acc)[0]:
-            utc = (t_start + timedelta(seconds=float(t[i]))).isoformat(timespec="milliseconds") if t_start else ""
-            fh.write(f"{t[i]:.3f},{utc},{f[i]:.2f},{fc + f[i]:.2f},{D['snr'][i]:.1f}\n")
-    waterfall(remove_dc(y, int(5 * fsd)), fsd, a.span, t, f, acc, os.path.join(out, f"{name}_waterfall.png"), f"{name}\ncentre {fc / 1e6:.6f} MHz")
-    summ = dict(file=os.path.basename(a.wav), centre_Hz=fc, sample_rate=info["rate"], decimated_rate=fsd, duration_s=info["n"] / info["rate"],
-                start_utc=a.start, points=int(acc.sum()), point_noise_Hz=round(float(sig), 2), point_noise_pairs=nsig,
-                fixed_receiver_lines_Hz=[round(float(v), 1) for v in lines if v != 0],
-                window="1.0 s Hann, 0.25 s hop (only every 4th point is independent)")
-    json.dump(summ, open(os.path.join(out, f"{name}_summary.json"), "w"), indent=1)
-    print(f"  {acc.sum()} points, point noise {sig:.1f} Hz -> {out}")
-    swing = float(np.ptp(f[acc])) if acc.any() else 0.0
-    summ["swing_Hz"] = round(swing, 1)
-    json.dump(summ, open(os.path.join(out, f"{name}_summary.json"), "w"), indent=1)
-    if swing < 0.2 * a.span:
-        print(f"  NOTE: the signal moves only {swing:.0f} Hz over the recording. A satellite pass at a fixed tuning moves several kHz.\n"
-              "        This recording looks Doppler-corrected (the receiver followed a predicted orbit), so it holds only the leftover.\n"
-              "        fit_pass.py needs a recording made at a fixed frequency with Doppler correction off.")
+    run(a.wav, a.center, a.start, a.span, a.swap_iq, a.out, a.rate, a.format)
 
 
 if __name__ == "__main__":

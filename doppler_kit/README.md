@@ -1,7 +1,8 @@
 # Doppler kit
 
-Measure a passing transmitter's speed and closest distance from your own radio recording.
+Measure a passing transmitter's speed and closest distance from your own radio or sound recording.
 Only the frequency shift you receive is used. No station position, no orbit and no map are needed.
+The kit also reads satellite laser ranging, where the distances themselves are measured.
 
 From one recording you get:
 
@@ -10,19 +11,38 @@ From one recording you get:
   From several passes, the smallest d comes closest to the height.
 - **t₀**: the time of closest approach.
 - **f₀**: the frequency the source actually transmits.
+- **Path**: whether the source went past in a straight line or on a bending path.
+- The distance at the first and last point of the trace.
 - Pictures of the S-curve and the waterfall, with the plateaus, the middle, the two half-plateau points and the width Δt marked where they fall.
 
 ## What you need
 
-- Python 3 with numpy, scipy and matplotlib: `pip install numpy scipy matplotlib`.
-- An IQ recording made at a **fixed frequency with Doppler correction off**, through the whole pass if you can:
-    - a WAV file with 2 channels (I and Q), 8-bit, 16-bit or 32-bit float, such as an SDR++ "baseband" recording, or
-    - a headerless raw IQ file (`.raw`, `.cs16`, `.cf32`, `.cu8`, `.sigmf-data`) with its sample rate.
+- Python 3 with numpy, scipy and matplotlib: `pip install numpy scipy matplotlib`. Tkinter for the window (included with Python on Windows and macOS; `python3-tk` or `tk` on Linux). ffmpeg for compressed audio.
+- A recording made at a **fixed frequency with Doppler correction off**, through the whole pass if you can:
+    - a WAV file with 2 channels (I and Q), 8-bit, 16-bit or 32-bit float, such as an SDR++ "baseband" recording,
+    - a headerless raw IQ file (`.raw`, `.cs16`, `.cf32`, `.cu8`, `.sigmf-data`) with its sample rate, or
+    - audio: a 1-channel WAV, `.ogg`, `.mp3`, `.flac`, `.m4a` or `.opus`. This can be a receiver's audio output in USB or CW mode,
+      or a plain sound recording of a passing source (a horn, an engine, a siren). The strongest tone is tracked.
 - The centre frequency of the recording. SDR++ puts it in the file name (`baseband_437800000Hz_...`).
+  For receiver audio, the dial frequency (USB). For a sound recording, leave it blank.
+- Or a laser-ranging file: see Laser ranging below.
 
 A cheap RTL-SDR and a simple antenna are enough for the ISS (437.800 MHz FM repeater, 145.800 MHz voice).
 
 ## Run
+
+The window:
+
+```
+python3 doppler_gui.py
+```
+
+Pick the recording, fill in the centre frequency if the file name does not hold it, and press Run.
+The tabs show the waterfall, the S-curve and the marked waterfall. The Results tab lists every number:
+v, d, t₀, f₀, the plateaus, the half-plateau points and Δt, the three ways to v and d, the path test and the distances.
+For a sound recording choose "sound in air (343 m/s)".
+
+From the command line:
 
 ```
 python3 iq_to_trace.py my_recording.wav
@@ -35,6 +55,8 @@ Other inputs:
 python3 iq_to_trace.py my_recording.wav --center 145800000 --start 2026-06-14T18:10:09Z
 python3 iq_to_trace.py iq_5408034.raw --rate 48000 --center 437800000            # raw 16-bit IQ
 python3 iq_to_trace.py capture.cf32 --rate 250000 --center 437800000 --format cf32
+python3 iq_to_trace.py beacon_usb.ogg --center 145796000                         # receiver audio, dial frequency
+python3 iq_to_trace.py horn.wav && python3 fit_pass.py horn_trace.csv --c 343   # sound
 ```
 
 Options: `--span` (search ± Hz around the centre, default 15000), `--swap-iq` (Q stored before I), `--out` (output folder).
@@ -56,7 +78,7 @@ For the fit: `--c` (wave speed, default radio and light; 343 for sound) and `--f
 
 | File | Content |
 |---|---|
-| `<name>_fit.json` | v, d, t₀, f₀ with errors (full fit), and the plateau estimate |
+| `<name>_fit.json` | v, d, t₀, f₀ with errors (full fit), the plateau estimate, the marks, the path test, the distances at the first and last point |
 | `<name>_scurve.png` | the S-curve with plateaus f₊ and f₋, middle f₀, half-plateau points, Δt, and the numbers worked from them; below it, what the fit leaves over |
 | `<name>_waterfall_marked.png` | the waterfall with the fitted curve, f₊, f₀, f₋, the half-plateau points and Δt marked |
 
@@ -67,7 +89,7 @@ python3 make_test_iq.py
 ```
 
 It writes a 300 s synthetic recording of a known pass (7.660 km/s, 420 km), runs both scripts, compares the answer
-and deletes the recording. It ends with `self-check passed`. These are its pictures:
+and deletes the recording. It also checks `slr_fit.py` on a synthetic laser pass. It ends with `self-check passed`. These are its pictures:
 
 ![S-curve of the synthetic pass with the half-plateau points and the width marked](examples/synthetic_scurve.png)
 
@@ -118,8 +140,42 @@ where τ is the emission time from closest approach. Read off the curve:
   the horizon never reaches its plateaus, so the plateau estimate alone reads v and d low.
 
 What the fit leaves over shows the path: a straight path leaves scatter around zero, a bending path leaves a smooth wave.
+`fit_pass.py` fits a degree-6 polynomial through the leftover and compares it with the scatter (F-test, counting only independent points).
+When the smooth part stands out (p below 0.001) the path is reported as bending, otherwise as straight.
 
-## Where to find IQ recordings
+## Laser ranging
+
+Laser stations fire short pulses at a satellite and time each return. Each shot gives a distance directly:
+
+    r = round-trip time × c / 2
+
+A satellite flying straight past the station at speed v, closest distance d at time t₀, is at
+
+    r² = d² + (v · t)²        (Pythagoras, t from closest approach)
+
+so every shot gives the speed on its own:
+
+    v = √(r² − d²) / |t|
+
+`slr_fit.py` fits d, v and t₀ to all shots within ±3 minutes of the closest one.
+
+```
+python3 slr_fit.py https://edc.dgfi.tum.de/en/data/npt2/1166240/     # one pass, from its EDC page
+python3 slr_fit.py icesat2_20261025.np2 --pass 3                     # a daily CRD file, plot pass 3
+```
+
+It writes `<name>_slr.csv` (v, d, closest time, shots and fit miss for every pass) and `<name>_pass<N>.png`.
+The window takes `.np2`, `.npt` and `.crd` files too.
+
+Example: ICESat-2 past Herstmonceux (UK) on 25 October 2026, 44 shots. The last shot, 115.9 s after closest approach,
+is 1,009.8 km away: √(1,009.8² − 537.3²) = 855.0 km along the path, and 855.0 / 115.9 = 7.38 km/s.
+
+![Laser ranging of ICESat-2 from Herstmonceux: distance against time and the speed from every shot](examples/laser_icesat2_herstmonceux.png)
+
+Data: EUROLAS Data Center (EDC), DGFI-TUM, https://edc.dgfi.tum.de/
+
+
+## Where to find recordings
 
 Recordings made by others. Check each one for Doppler correction before you use it.
 
@@ -130,6 +186,7 @@ Recordings made by others. Check each one for Doppler correction before you use 
 - [OSIRIS-REx recording, Allen Telescope Array (Zenodo)](https://zenodo.org/records/8418286)
 - [LoRadar: raw IQ of satellite-to-ground LoRa signals (Zenodo)](https://zenodo.org/records/16302856)
 - [IQEngine: browse and share IQ recordings (GitHub)](https://www.github.com/IQEngine/IQEngine), site at https://iqengine.org
+- Laser ranging, every station and satellite, normal points in CRD format: [EUROLAS Data Center](https://edc.dgfi.tum.de/en/data/npt2/) and [NASA CDDIS](https://cddis.nasa.gov/Data_and_Derived_Products/SLR/Normal_point_data.html)
 
 ## Related
 

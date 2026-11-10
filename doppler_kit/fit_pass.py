@@ -84,7 +84,7 @@ def run(trace, c=299792458.0, f0=None, out=None, log=print):
     t = np.array([float(r["t_s"]) for r in rows]); f = np.array([float(r["f_Hz"]) for r in rows])
     o = np.argsort(t); t, f = t[o], f[o]
     A = method_a(t, f, c, f0)
-    p0 = [A["t0"], A["v"], A["d"] if np.isfinite(A["d"]) and A["d"] > 0 else A["v"] * 30, A["f0"]]
+    p0 = [A["t0"], A["v"], A["d"] if np.isfinite(A["d"]) and A["d"] > 0 else A["v"] * 30 if A["v"] != 0 else 1e3, A["f0"]]
     free = [0, 1, 2] if f0 else [0, 1, 2, 3]
     def res(q):
         p = list(p0); [p.__setitem__(k, q[i]) for i, k in enumerate(free)]
@@ -109,11 +109,17 @@ def run(trace, c=299792458.0, f0=None, out=None, log=print):
         D["t0_utc"] = (datetime.fromisoformat(rows[0]["utc"]) + timedelta(seconds=p[0] - float(rows[0]["t_s"]))).isoformat(timespec="milliseconds")
     out = out or os.path.dirname(os.path.abspath(trace)); name = os.path.splitext(os.path.basename(trace))[0].replace("_trace", "")
     M = marks(p, c)
-    res_all = dict(c_m_s=c, method_A={k: float(v) for k, v in A.items()}, method_D=D, path=S,
+    bad = no_pass(t, p, err)
+    res_all = dict(c_m_s=c, pass_found=not bad, no_pass_reasons=bad, method_A={k: float(v) for k, v in A.items()}, method_D=D, path=S,
                    marks=dict(f_plus_Hz=M["fp"], f_minus_Hz=M["fm"], half_plateau_Hz=M["fh"], half_plateau_t_s=M["th"], dt_s=M["dt"],
                               slope_Hz_s=M["slope"], v_plateaus_m_s=M["v_plat"], d_width_m=M["d_width"], d_slope_m=M["d_slope"]))
     files = dict(fit=os.path.join(out, f"{name}_fit.json"), scurve=os.path.join(out, f"{name}_scurve.png"))
     json.dump(res_all, open(files["fit"], "w"), indent=1)
+    if bad:
+        log("NO PASS FOUND: " + "; ".join(bad))
+        del files["scurve"]
+        res_all["files"] = files
+        return res_all
     log(f"A (plateaus): v {A['v'] / 1e3:.3f} km/s, d {A['d'] / 1e3:.1f} km, f0 {A['f0']:.1f} Hz")
     log(f"D (full fit): v {p[1] / 1e3:.3f} ± {err['v'] / 1e3:.3f} km/s, d {p[2] / 1e3:.1f} ± {err['d'] / 1e3:.1f} km, "
         f"t0 {p[0]:.2f} s, f0 {p[3]:.1f} Hz, left over {rms:.1f} Hz rms over {len(t)} points")
@@ -126,6 +132,20 @@ def run(trace, c=299792458.0, f0=None, out=None, log=print):
         files["waterfall_marked"] = os.path.join(out, f"{name}_waterfall_marked.png")
     res_all["files"] = files
     return res_all
+
+
+def no_pass(t, p, err):
+    """Reasons the fit is not a pass; empty when it is one."""
+    r = []
+    if not (p[1] > 0 and err["v"] > 0 and err["d"] > 0):
+        return ["the fit could not move from its start: the data hold no Doppler change"]
+    if not (t[0] <= p[0] <= t[-1]):
+        r.append(f"closest approach falls at {p[0]:.1f} s, outside the recording ({t[0]:.1f} to {t[-1]:.1f} s)")
+    if not (err["v"] <= 0.1 * p[1]):
+        r.append(f"speed uncertainty +/- {err['v']:.1f} m/s is more than 10% of the speed {p[1]:.1f} m/s")
+    if not (err["d"] <= 0.25 * p[2]):
+        r.append(f"distance uncertainty +/- {err['d']:.0f} m is more than 25% of the distance {p[2]:.0f} m")
+    return r
 
 
 def main():

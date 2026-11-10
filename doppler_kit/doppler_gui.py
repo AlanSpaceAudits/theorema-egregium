@@ -131,7 +131,8 @@ class App:
                 self.show(*x)
             elif kind == "done":
                 S, F = x
-                self.show("S-curve", F["files"]["scurve"])
+                if F["pass_found"]:
+                    self.show("S-curve", F["files"]["scurve"])
                 if "waterfall_marked" in F["files"]:
                     self.show("Marked waterfall", F["files"]["waterfall_marked"])
                 self.res.insert("end", report(S, F)); self.nb.select(0)
@@ -158,10 +159,16 @@ def report(S, F):
     e = D["err"]; c = F["c_m_s"]
     km = c > 1e5
     L, V = (lambda m: f"{m / 1e3:,.2f} km") if km else (lambda m: f"{m:,.2f} m"), (lambda m: f"{m / 1e3:.4f} km/s") if km else (lambda m: f"{m:.3f} m/s")
-    lines = [
+    head = [
         f"File            {S['file']}",
         f"Points          {S['points']} (point noise {S['point_noise_Hz']} Hz, swing {S['swing_Hz']} Hz)",
         "",
+    ]
+    if not F["pass_found"]:
+        lines = head + ["NO PASS FOUND (no speed or distance is given)"] + [f"  {b}" for b in F["no_pass_reasons"]] + [
+            "  The fit always returns its best match. These checks show that match is not a pass."]
+    else:
+        lines = head + [
         "FULL FIT (straight pass, constant speed, signal travel time included)",
         f"  speed v                 {V(D['v_m_s'])}  ± {V(e.get('v_m_s', 0))}",
         f"  closest distance d      {L(D['d_m'])}  ± {L(e.get('d_m', 0))}",

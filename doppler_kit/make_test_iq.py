@@ -74,6 +74,12 @@ def main():
     assert abs(r["v_m_s"] - V) / V < 0.01 and abs(r["d_m"] - D) / D < 0.02 and abs(r["t0_s"] - T0) < 0.5 and abs(r["f0_Hz"] - FC - OFF) < 20, r
     assert (r["v_m_s"], r["d_m"]) == (r2["v_m_s"], r2["d_m"]), ("file alone and --span 15000 differ", r, r2)
     assert fit["path"]["path"] == "no bending detected", fit["path"]
+    assert fit["pass_found"], fit["no_pass_reasons"]
+    flat = os.path.join(d, "flat_trace.csv")                     # a fixed tone is no pass
+    with open(flat, "w") as fh:
+        fh.write("t_s,f_Hz\n" + "".join(f"{i * 0.25},{1.4e7 + (3, -2, 5, -4)[i % 4]}\n" for i in range(400)))
+    import fit_pass
+    assert not fit_pass.run(flat, log=lambda *_: None)["pass_found"]
     burst_check(d, here)
     # laser ranging: a synthetic CRD pass, 5 s shots, d 500 km, v 7.4 km/s
     import slr_fit

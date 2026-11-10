@@ -80,6 +80,12 @@ def main():
         fh.write("t_s,f_Hz\n" + "".join(f"{i * 0.25},{1.4e7 + (3, -2, 5, -4)[i % 4]}\n" for i in range(400)))
     import fit_pass
     assert not fit_pass.run(flat, log=lambda *_: None)["pass_found"]
+    import iq_to_trace                                           # FM mode: the centre of energy is the carrier
+    fs, P = 32000.0, (-1000.0, 3000.0, 30.0, 8.0)
+    tt = np.arange(int(60 * fs)) / fs
+    fi = iq_to_trace.pass_model(tt, *P) + 3000.0 * np.sin(2 * np.pi * 1500.0 * tt)
+    Q, acc, _, _, _ = iq_to_trace.fm_track(np.exp(1j * np.cumsum(2 * np.pi * fi / fs)).astype(np.complex64), fs, 15000.0)
+    assert acc.sum() > 100 and np.all(np.abs(Q["lc"][acc] - iq_to_trace.pass_model(Q["t"][acc], *P)) < 60), "FM mode"
     burst_check(d, here)
     # laser ranging: a synthetic CRD pass, 5 s shots, d 500 km, v 7.4 km/s
     import slr_fit

@@ -31,7 +31,7 @@ class App:
         left = ttk.Frame(root, padding=8); left.pack(side="left", fill="y")
         self.v = {k: tk.StringVar(value=d) for k, d in dict(file="", centre="", start="", f0="", span="", rate="", fmt="auto",
                                                             out="", wave=list(WAVES)[0], c="", which="0", lo="", hi="").items()}
-        self.swap, self.burst = tk.BooleanVar(), tk.BooleanVar()
+        self.swap, self.burst, self.fm = tk.BooleanVar(), tk.BooleanVar(), tk.BooleanVar()
         row = 0
         self.auto = {}
         def add(label, w, key=None):
@@ -52,6 +52,7 @@ class App:
         add("Tone band low (Hz)", ttk.Entry(left, textvariable=self.v["lo"]), "band")
         add("Tone band high (Hz)", ttk.Entry(left, textvariable=self.v["hi"]))
         add("Burst signal (FSK satellites)", ttk.Checkbutton(left, variable=self.burst), "burst")
+        add("FM carrier (ISS SSTV, voice)", ttk.Checkbutton(left, variable=self.fm))
         add("Raw IQ sample rate (S/s)", ttk.Entry(left, textvariable=self.v["rate"]), "rate")
         add("Raw IQ format", ttk.Combobox(left, textvariable=self.v["fmt"], values=["auto", "cs16", "cf32", "cu8"], state="readonly"), "format")
         add("Q stored before I", ttk.Checkbutton(left, variable=self.swap))
@@ -104,7 +105,7 @@ class App:
                 fmt = self.v["fmt"].get()
                 S = iq_to_trace.run(path, self.num("centre"), self.v["start"].get().strip() or None, self.num("span"),
                                     self.swap.get(), out, self.num("rate"), None if fmt == "auto" else fmt,
-                                    band=(lo, hi) if lo is not None else None, burst=self.burst.get())
+                                    band=(lo, hi) if lo is not None else None, burst=self.burst.get(), fm=self.fm.get())
                 self.q.put(("auto", S["auto"]))
                 self.q.put(("image", ("Waterfall", S["files"]["waterfall"])))
                 if S["points"] < 20:

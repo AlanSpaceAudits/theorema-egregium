@@ -64,10 +64,10 @@ python3 iq_to_trace.py aircraft.wav --band 1300 2700                            
 python3 iq_to_trace.py pocketqube.cf32 --rate 48000 --center 436650000 --format cf32 --burst   # short FSK bursts
 </code></pre>
 <p>Options: <code>--span</code> (search ± Hz around the centre, default: found by the scan), <code>--swap-iq</code> (Q stored before I), <code>--out</code> (output folder),
-<code>--band LO HI</code> (search only this band, see below), <code>--burst</code> (signal in short bursts, see below).
+<code>--band LO HI</code> (search only this band, see below), <code>--burst</code> (signal in short bursts, see below), <code>--fm</code> (FM carrier such as ISS SSTV, see below).
 For the fit: <code>--c</code> (wave speed, default radio and light; 343 for sound) and <code>--f0</code> (fix the transmitted frequency).
 <a href="fit_pass.py"><code>fit_pass.py</code></a> also takes a trace from anywhere else: a CSV with columns <code>t_s</code> and <code>f_Hz</code>.</p>
-<p>In the window, fill in "Tone band low / high (Hz)" for <code>--band</code> and tick "Burst signal (FSK satellites)" for <code>--burst</code>.</p>
+<p>In the window, fill in "Tone band low / high (Hz)" for <code>--band</code> and tick "Burst signal (FSK satellites)" for <code>--burst</code> and "FM carrier (ISS SSTV, voice)" for <code>--fm</code>.</p>
 <h3>Blank fields</h3>
 <p>A value you type always wins. For each blank field the kit looks in the file, in this order, and logs the value with its source,
 for example <code>auto: centre 437,800,000 Hz (from file name)</code>.</p>
@@ -110,6 +110,14 @@ The normal tracer then follows a steady line or only part of a packet.
 <code>--burst</code> finds the packets under the steady lines and gives one point for each half second that holds a packet.
 The trace file has the same columns, so <code>fit_pass.py</code> works the same way.</p>
 <p>When you do not give <code>--burst</code>, the kit tries burst mode by itself when the trace looks like bursts (see "Blank fields").</p>
+<h3>FM carriers (<code>--fm</code>)</h3>
+<p>Some satellites send FM: the ISS sends SSTV pictures and voice on 145.800 MHz. FM spreads the signal over about 15 kHz,
+and the strongest part of the spectrum jumps around the carrier, so the normal tracer and burst mode follow the picture
+content, not the carrier. <code>--fm</code> (in the window: tick "FM carrier") gives one point every half second: the centre of the
+signal's energy in each 1 s frame. The mean frequency of an FM signal is its carrier.</p>
+<p>Each frame: noise = the median bin power; the strongest 2000 Hz band must be at least 15 dB over it; the point is the
+centroid of the power above 5 times the noise, within ±10 kHz of that band, with the window moved to the centroid 3 times.
+Outliers are dropped as in burst mode.</p>
 <h2>Output</h2>
 <p><a href="iq_to_trace.py"><code>iq_to_trace.py</code></a></p>
 <table>
@@ -338,6 +346,26 @@ ADS-B positions: ADS-B Exchange, historical data samples, <a href="https://www.a
 <p>Data: Estévez, D. (2022). <em>Recording of DELFI-PQ/EASAT-2/HADES PocketQubes and other amateur satellites in the SpaceX Transporter 3 launch with the Allen Telescope Array on 2022-01-16</em> [Data set]. Zenodo. <a href="https://doi.org/10.5281/zenodo.5876090">https://doi.org/10.5281/zenodo.5876090</a> (<a href="https://zenodo.org/records/5876090,">https://zenodo.org/records/5876090,</a> CC BY 4.0).</p>
 <p>Estévez, D. (2023). <em>Recording of HADES-D satellite</em> [Data set]. Zenodo. <a href="https://doi.org/10.5281/zenodo.10343047">https://doi.org/10.5281/zenodo.10343047</a> (<a href="https://zenodo.org/records/10343047,">https://zenodo.org/records/10343047,</a> CC BY 4.0).</p>
 <p>The kit read narrow channels cut from these wideband recordings: 48,000 S/s around 436.650 MHz (DELFI-PQ), and 50,000 S/s around 436.666 MHz for the second part of the HADES-D recording.</p>
+<p><strong>ISS</strong> (<code>--fm</code>). The receiver position is not published, so there is no orbit reference for this pass.</p>
+<table>
+<thead>
+<tr>
+<th>Recording</th>
+<th>Kit: v</th>
+<th>Kit: d</th>
+<th>Kit: t₀ (UTC)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ISS SSTV, 2020-10-04, 145.800 MHz, <code>SDRSharp_20201004_025552Z_145449912Hz_IQ.wav</code></td>
+<td>7.176 ± 0.034 km/s</td>
+<td>487.8 ± 5.5 km</td>
+<td>02:57:36.6</td>
+</tr>
+</tbody>
+</table>
+<p>Data: SDR# IQ recordings of ISS SSTV, 2020-10-04, Internet Archive item <code>sdrsharp-20201004-025552-z-145449912-hz-iq</code>, <a href="https://archive.org/details/sdrsharp-20201004-025552-z-145449912-hz-iq">https://archive.org/details/sdrsharp-20201004-025552-z-145449912-hz-iq</a> (1,024,000 S/s, 16-bit IQ, fixed tuning). The start time is the UTC time in the file name.</p>
 <h2>Where to find recordings</h2>
 <p>Recordings made by others. Check each one for Doppler correction before you use it.</p>
 <ul>

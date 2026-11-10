@@ -44,6 +44,10 @@ Method (no orbit and no station position is used anywhere):
   its running median over +-20 s (steady lines go to 1), excess E = ratio - 1. Strongest 2000 Hz band of E per frame;
   keep the frame if 10 log10(mean E in the band + 1) >= 6 dB; value = centroid of max(E, 0) over that band (for 2-FSK
   the midpoint of the two tones). Outliers: soft-L1 fit of the pass shape from a grid of starts, drop points off by > 800 Hz.
+--fm (FM carriers such as ISS SSTV or voice): 1.0 s Hann frames every 0.5 s; frame noise = median bin power; the
+  strongest 2000 Hz band (boxcar) must be >= 15 dB over the noise; value = centroid of max(P - 5 noise, 0) within
+  +-10000 Hz, the window started on that band and moved to the centroid 3 times (the mean of an FM signal's frequency
+  is its carrier; the strongest band is often a sideband). Outliers as in --burst.
 """
 import argparse, json, math, os, re, struct
 from datetime import datetime, timedelta, timezone
@@ -62,6 +66,7 @@ SPUR_HALF = 40.0
 CLIP_K = 4.0
 BURST_FRAME_S, BURST_SMOOTH_HZ, BURST_MEDIAN_S, BURST_BAND_HZ, BURST_THR_DB = 0.5, 100.0, 20.0, 2000.0, 6.0
 BURST_FSCALE_HZ, BURST_GATE_HZ = 300.0, 800.0
+FM_FRAME_S, FM_HOP_S, FM_BAND_HZ, FM_HALF_HZ, FM_NOISE_K, FM_THR_DB, FM_ITER = 1.0, 0.5, 2000.0, 10000.0, 5.0, 15.0, 3
 
 
 # ---------- reading ----------
@@ -583,6 +588,38 @@ def burst_track(y, fsd, span):
     return dict(t=t, lc=lc, snr=snr), acc, sig, int(acc.sum()), np.array([])
 
 
+def fm_track(y, fsd, span):
+    T = len(y) / fsd
+    win = int(FM_FRAME_S * fsd)
+    t, f, S = stft(y, fsd, win, int(FM_HOP_S * fsd), span, win)
+    df = f[1] - f[0]
+    noise = np.median(S, axis=1)
+    B = uniform_filter1d(S, max(1, int(FM_BAND_HZ / df)), axis=1)
+    h = int(FM_HALF_HZ / df)
+    lc = np.full(len(t), np.nan); snr = np.full(len(t), np.nan)
+    for i in range(len(t)):
+        j = int(np.argmax(B[i]))
+        snr[i] = 10 * np.log10(B[i, j] / (noise[i] + 1e-30))
+        if snr[i] < FM_THR_DB:
+            continue
+        w = np.clip(S[i] - FM_NOISE_K * noise[i], 0, None).astype(np.float64)
+        for _ in range(FM_ITER):
+            lo, hi = max(0, j - h), min(len(f), j + h + 1)
+            if w[lo:hi].sum() <= 0:
+                break
+            c = (w[lo:hi] * f[lo:hi]).sum() / w[lo:hi].sum()
+            j = int(np.argmin(np.abs(f - c)))
+        else:
+            lc[i] = c
+    det = np.isfinite(lc)
+    assert det.sum() > 10, "no FM carrier found: check --center, --span and --band"
+    p = robust_pass(t[det], lc[det], T, span)
+    acc = det.copy(); acc[det] = np.abs(lc[det] - pass_model(t[det], *p)) < BURST_GATE_HZ
+    r = lc[acc] - pass_model(t[acc], *p)
+    sig = 1.4826 * float(np.median(np.abs(r - np.median(r))))
+    return dict(t=t, lc=lc, snr=snr), acc, sig, int(acc.sum()), np.array([])
+
+
 def waterfall(y, fsd, span, t, f, acc, png, title):
     import matplotlib; matplotlib.use("Agg"); import matplotlib.pyplot as plt
     win = int(round(fsd / 10))
@@ -597,7 +634,7 @@ def waterfall(y, fsd, span, t, f, acc, png, title):
     fig.tight_layout(); fig.savefig(png, dpi=110); plt.close(fig)
 
 
-def run(path, center=None, start=None, span=None, swap_iq=False, out=None, rate=None, fmt=None, log=print, band=None, burst=False):
+def run(path, center=None, start=None, span=None, swap_iq=False, out=None, rate=None, fmt=None, log=print, band=None, burst=False, fm=False):
     """Trace one recording. band = (lo, hi) Hz or None; burst = short-burst mode (on), else tried when the trace
     looks like bursts. Blank values (None) are worked out from the file; a value given here always wins.
     Returns the summary dict, with the output file paths under "files" and the auto values under "auto"."""
@@ -716,7 +753,11 @@ def run(path, center=None, start=None, span=None, swap_iq=False, out=None, rate=
             log(f"  offsets {band[0]:.0f} to {band[1]:.0f} Hz from the centre")
     fc += tone + shift
     hint = None
-    if burst:
+    if fm:
+        log("  FM mode")
+        D, acc, sig, nsig, lines = fm_track(y, fsd, span)
+        burst = False
+    elif burst:
         log("  burst mode")
         D, acc, sig, nsig, lines = burst_track(y, fsd, span)
     else:
@@ -763,11 +804,11 @@ def run(path, center=None, start=None, span=None, swap_iq=False, out=None, rate=
     waterfall(y, fsd, span, t, f, acc, files["waterfall"], f"{name}\ncentre {fc / 1e6:.6f} MHz")
     swing = float(np.ptp(f[acc])) if acc.any() else 0.0
     summ = dict(file=orig, centre_Hz=fc, audio_tone_Hz=tone if audio else None, band_Hz=list(band) if band else None,
-                burst=bool(burst), sample_rate=info["rate"],
+                burst=bool(burst), fm=bool(fm), sample_rate=info["rate"],
                 decimated_rate=fsd, duration_s=T, start_utc=start, points=int(acc.sum()),
                 point_noise_Hz=round(float(sig), 2), point_noise_pairs=nsig, swing_Hz=round(swing, 1),
                 fixed_receiver_lines_Hz=[round(float(v), 1) for v in lines if v != dc],
-                window="0.5 s Hann frames, no overlap" if burst else "1.0 s Hann, 0.25 s hop (only every 4th point is independent)",
+                window="1.0 s Hann, 0.5 s hop (only every 2nd point is independent)" if fm else "0.5 s Hann frames, no overlap" if burst else "1.0 s Hann, 0.25 s hop (only every 4th point is independent)",
                 auto=auto)
     json.dump(summ, open(files["summary"], "w"), indent=1)
     log(f"  {acc.sum()} points, point noise {sig:.1f} Hz, swing {swing:.0f} Hz -> {out}")
@@ -792,8 +833,9 @@ def main():
     ap.add_argument("--band", type=float, nargs=2, metavar=("LO", "HI"),
                     help="audio: pick the tone between LO and HI Hz; IQ: search offsets LO to HI Hz from the centre")
     ap.add_argument("--burst", action="store_true", help="the signal comes in short bursts (FSK/packet satellites); without it, tried when the trace looks like bursts")
+    ap.add_argument("--fm", action="store_true", help="the signal is an FM carrier (ISS SSTV or voice): trace the centre of its energy")
     a = ap.parse_args()
-    run(a.wav, a.center, a.start, a.span, a.swap_iq, a.out, a.rate, a.format, band=a.band, burst=a.burst)
+    run(a.wav, a.center, a.start, a.span, a.swap_iq, a.out, a.rate, a.format, band=a.band, burst=a.burst, fm=a.fm)
 
 
 if __name__ == "__main__":

@@ -780,7 +780,27 @@ def run(path, center=None, start=None, span=None, swap_iq=False, out=None, rate=
             except Exception:
                 B = None
             qb = pass_quality(B[0]["t"], B[0]["lc"], B[1], T, span, B[2]) if B else dict(clean=False, why="no bursts found")
-            if normal_err is not None:
+            # FM is tried when the normal trace is not a clean pass. Against a clean burst trace, FM needs a lower point
+            # noise and at least as many points.
+            normal_clean = bool(qn and qn["clean"])
+            F = None
+            if not normal_clean:
+                try:
+                    F = fm_track(y, fsd, span)
+                except Exception:
+                    F = None
+            qf = pass_quality(F[0]["t"], F[0]["lc"], F[1], T, span, F[2]) if F else dict(clean=False, why="no FM carrier found")
+            fm_wins = qf["clean"] and (not (B and qb["clean"]) or (F[2] < B[2] and F[3] >= B[3]))
+            if not normal_clean and not fm_wins:
+                why = "burst trace has lower point noise or more points" if qf["clean"] else f"FM trace {qf['why']}"
+                note("fm", f"FM mode tried and not used ({why})", "  ")
+            if fm_wins:
+                D, acc, sig, nsig, lines = F
+                fm = True
+                why = f"normal trace {qn['why']}" if qn else "the normal trace found no signal"
+                vs = f"; point noise {F[2]:.0f} Hz over {F[3]} points, burst mode {B[2]:.0f} Hz over {B[3]}" if B and qb["clean"] else ""
+                note("fm", f"FM mode on ({why}{vs})", "  ")
+            elif normal_err is not None:
                 if not qb["clean"]:
                     raise normal_err
                 D, acc, sig, nsig, lines = B
@@ -833,7 +853,7 @@ def main():
     ap.add_argument("--band", type=float, nargs=2, metavar=("LO", "HI"),
                     help="audio: pick the tone between LO and HI Hz; IQ: search offsets LO to HI Hz from the centre")
     ap.add_argument("--burst", action="store_true", help="the signal comes in short bursts (FSK/packet satellites); without it, tried when the trace looks like bursts")
-    ap.add_argument("--fm", action="store_true", help="the signal is an FM carrier (ISS SSTV or voice): trace the centre of its energy")
+    ap.add_argument("--fm", action="store_true", help="the signal is an FM carrier (ISS SSTV or voice): trace the centre of its energy; without it, tried when the normal trace is not a clean pass")
     a = ap.parse_args()
     run(a.wav, a.center, a.start, a.span, a.swap_iq, a.out, a.rate, a.format, band=a.band, burst=a.burst, fm=a.fm)
 

@@ -118,6 +118,9 @@ signal's energy in each 1 s frame. The mean frequency of an FM signal is its car
 <p>Each frame: noise = the median bin power; the strongest 2000 Hz band must be at least 15 dB over it; the point is the
 centroid of the power above 5 times the noise, within ±10 kHz of that band, with the window moved to the centroid 3 times.
 Outliers are dropped as in burst mode.</p>
+<p>When "FM carrier" is not ticked and the normal trace is not a clean pass, the kit also tries FM mode, next to burst mode.
+FM mode is used when its trace is a clean pass and, if burst mode also gives one, FM has the lower point noise and at
+least as many points. The log says which mode was used and why. A tick forces FM mode.</p>
 <h2>Output</h2>
 <p><a href="iq_to_trace.py"><code>iq_to_trace.py</code></a></p>
 <table>
